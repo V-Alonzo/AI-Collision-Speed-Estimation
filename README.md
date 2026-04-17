@@ -47,3 +47,7 @@ Este módulo actúa como capa de control de inventario de archivos, asegurando c
 ### Preguntas Cesvi - 23 Abr
 - Necesitamos hacer una muestra paso a paso del calculo y obtención de resultados actuales con las variables que se tienen y que pasos se quieren omitir.
 - Preguntar exactamente sobre su necesidad principal
+
+# Anexos
+- Tabla SOTA: https://docs.google.com/document/d/1VRIYabN36LS5DunLxKg6cvVOSwVMu1Yo3Bf-Iw90KrY/edit?usp=sharing
+
