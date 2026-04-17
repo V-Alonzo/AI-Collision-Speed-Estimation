@@ -1,0 +1,177 @@
+{
+    "Vehiculos": {
+        "VehiculoX": {
+            "DatosGenerales": {
+                "Marca": "",
+                "Tipo" : "",
+                "Modelo": "",
+                "Color": "",
+                "Placas": "",
+                "NumeroSerie": "",
+                "RolEnSiniestro": "Activo (quién chocó) / Pasivo (quién fue chocado) / Peatón / Otro"
+            },
+            "PropiedadesFisicas": {
+                "_comment": "Para esta sección, no es necesario colocar las unidades de medida, sólo valor.",
+                "PesoVehiculo_kg": "",
+                "PesoOcupantes_kg": "",
+                "PesoAccesorios_kg": "",
+                "PesoCarga_kg": "",
+                "PesoTotal_kg": ""
+            },
+
+            "Dimensiones": {
+                "_comment": "Para esta sección, no es necesario colocar las unidades de medida, sólo valor.",
+                "Largo_mm": "",
+                "Ancho_mm": "",
+                "Alto_mm": "",
+                "DistanciaEntreEjes_mm": "",
+                "EntreviaDelantera_mm": "",
+                "EntreviaTrasera_mm": ""
+            },
+
+            "DanosPorZona": {
+                "_comment": "Para esta sección, no es necesario construir aquellas ramas que no tuvieron daños.",
+                "Frontal": {
+                    "TipoDano": "",
+                    "DireccionImpacto": "",
+                    "Descripcion": "",
+                    "ComponentesAfectados": [],
+                    "imagenes" : ["Key dentro de la ruta siniestro -> imagenes"]
+                },
+
+                "Posterior": {
+                    "TipoDano": "",
+                    "DireccionImpacto": "",
+                    "Descripcion": "",
+                    "ComponentesAfectados": [],
+                    "imagenes" : ["Key dentro de la ruta siniestro -> imagenes"]
+                },
+
+                "LadoDerecho": {
+                    "TipoDano": "",
+                    "DireccionImpacto": "",
+                    "Descripcion": "",
+                    "ComponentesAfectados": [],
+                    "imagenes" : ["Key dentro de la ruta siniestro -> imagenes"]
+                },
+
+                "LadoIzquierdo": {
+                    "TipoDano": "",
+                    "DireccionImpacto": "",
+                    "Descripcion": "",
+                    "ComponentesAfectados": [],
+                    "imagenes" : ["Key dentro de la ruta siniestro -> imagenes"]
+                },
+
+                "Neumaticos": {
+                    "Condicion": "",
+                    "Descripcion": ""
+                }
+
+            }
+        }
+    },
+    
+    "Ambiente": 
+        {
+            "LugarHechos": {
+                "TipoVia": "",
+                "NombreVia": "",
+                "Kilometro": "",
+                "Tramo": "",
+                "Carril": "",
+                "Latitud": "",
+                "Longitud": "",
+                "DireccionGeografica": ""
+            },
+
+            "CaracteristicasSitio": {
+                "MaterialSuperficie": "",
+                "CondicionSuperficie": "",
+                "TipoViaGeometria": "",
+                "TipoViaInterseccion":"",
+                "SentidosCirculacion": "",
+                "NumeroCarrilesPorSentido": "",
+                "AnchoCarriles_m": "",
+                "Acotamiento_m": "",
+                "SeparacionEntreSentidos": "",
+                "SeparacionEntreCarriles": "",
+                "SenalizacionHorizontal": "",
+                "CondicionSenalizacionHorizontal": "",
+                "SenalizacionVertical": "",
+                "CondicionSenalizacionVertical": ""
+            },
+
+            "GeometriaVia": {
+                "Pendiente_grados": "",
+                "PendienteDescripcion": "",
+                "Curvatura": "",
+                "TipoCurva": "",
+                "Peralte": "",
+                "LongitudTramoRecto_m": "",
+                "ElementosEspeciales": ""
+            },
+
+            "EvidenciaFisica": {
+                "EvidenciaFisicaX": {
+                    "HuellaFrenado_m": "",
+                    "TipoHuella": "",
+                    "DistanciaPuntoInicialFinal_m": "",
+                    "HuellaRodamiento": "",
+                    "RestosMateriales": "",
+                    "TrayectoriaPostImpacto": "",
+                    "PosicionFinalVehiculo": "",
+                    "Imagenes" : ["Key dentro de la ruta siniestro -> imagenes"]
+                }
+                
+            },
+
+            "Entorno": {
+                "Vegetacion": "",
+                "Obstaculos": "",
+                "InfraestructuraCercana": "",
+                "CondicionesIluminacion": ""
+            },
+
+            "CondicionesAmbientales": {
+                "CondicionClimatica": "",
+                "Visibilidad": "",
+                "IluminacionNaturalOArtificial": ""
+            }
+
+        },
+    
+    "Siniestro":
+        {
+            "DetallesBasicos": {
+                "Fecha": "",
+                "Hora": "",
+                "TipoSiniestro": "",
+                "Descripciones": 
+                    {
+                        "DescripcionPersonaX":{
+                            "Autor": "",
+                            "Contenido": ""
+                        }
+
+                    }
+
+            },
+            
+            "TargetVariable": {
+                "VelocidadAproximadaVehiculo": "km/h"
+            },
+
+            "Imagenes" : {
+                "ImagenX":
+                    {
+                        "Pagina" : "",
+                        "TipoFoto": "",
+                        "Coordenadas" : "[x0, y0, x1, y1]",
+                        "Confianza" : "confidence_score in [0, 1]"
+                    }
+            }
+            
+        }
+
+}

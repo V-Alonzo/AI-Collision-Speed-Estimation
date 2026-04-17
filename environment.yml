@@ -1,0 +1,9 @@
+name: CESVI
+channels:
+  - defaults
+dependencies:
+  - python=3.13
+  - openai
+  - python-dotenv
+  - pandas
+  - pymupdf

@@ -1,0 +1,1 @@
+Exclusivamente debes generar un texto .json que tenga la estructura descrita subsecuentemente, no debes añadir nada más.
