@@ -1,0 +1,123 @@
+{
+  "Siniestro": {
+    "DetallesBasicos": {
+      "Fecha": "string (formato AAAA-MM-DD)",
+      "Hora": "string (formato HH:MM)",
+      "TipoSiniestro": "enum: [Colisión entre vehículos, Atropellamiento, Caída de pasajero, Volcadura, Salida del camino, Colisión con objeto fijo, Otro]",
+      "PuntoClave": "enum: [Freno brusco, Volanteo, Aceleracion, Sin reaccion, Rebase fallido]",
+      "TipoIndicio": "enum: [Plástico, Vidrio, Pintura, Neumático, Metal, Otro]"
+    },
+    "DescripcionesTestimonios": [
+      {
+        "Autor": "string",
+        "Contenido": "string",
+        "PercepcionReal": "enum: [Distracción, Visibilidad reducida, Punto ciego, Obstáculo repentino, Fatiga]"
+      }
+    ],
+    "TargetVariable": {
+      "VelocidadAproximadaVehiculo_km_h": "number"
+    },
+    "CatalogoImagenes": [
+      {
+        "id_imagen": "string (identificador único, ej. IMG_01)",
+        "PaginaPDF": "number",
+        "TipoFoto": "enum: [Frontal, Lateral Derecho, Lateral Izquierdo, Posterior, Partes Bajas, Habitáculo, Lugar de los Hechos, Objeto Involucrado]",
+        "Coordenadas_BBox": "array de numbers: [x0, y0, x1, y1]",
+        "ConfianzaModelo": "number (0 a 1)"
+      }
+    ]
+  },
+  "Ambiente": {
+    "UbicacionGeografica": {
+      "TipoVia": "enum: [Autopista, Carretera federal, Carretera estatal, Vialidad urbana primaria, Vialidad urbana secundaria, Camino rural, Otra]",
+      "NombreVia": "string",
+      "Kilometro": "string",
+      "Tramo": "string",
+      "Carril": "string",
+      "Latitud": "number",
+      "Longitud": "number",
+      "DireccionGeografica": "string",
+      "OrientacionVia": "enum: [Norte - Sur, Sur - Norte, Este - Oeste, Oeste - Este, Noroeste - Sureste, Sureste - Noroeste, Noreste - Sureste, Sureste - Noreste, Suroeste - Noreste, Noreste - Suroeste, Noroeste - Suroeste, Suroeste - Noroeste]",
+      "VelocidadMaxima_km_h": "number"
+    },
+    "InfraestructuraYClima": {
+      "MaterialPavimento": "enum: [Asfalto, Concreto, Adoquin, Terraceria, Grava]",
+      "CondicionPavimento": "enum: [Buenas condiciones, Malas condiciones]",
+      "CondicionSuperficie": "enum: [Seco, Mojado, Hielo, Nieve]",
+      "SentidosCirculacion": "enum: [Un sentido, Doble sentido]",
+      "NumeroCarrilesPorSentido": "number",
+      "AnchoCarriles_m": "number",
+      "Acotamiento_m": "number",
+      "SeparacionEntreSentidos": "string",
+      "SeparacionEntreCarriles": "string",
+      "CondicionClimatica": "enum: [Soleado, LLuvioso, Nublado, Niebla - Neblina, Granizo, Noche]",
+      "Visibilidad": "string",
+      "IluminacionNaturalOArtificial": "string"
+    },
+    "GeometriaYSenalizacion": {
+      "TipoViaGeometria": "enum: [Recto, Curva, Rampa, Pendiente]",
+      "TipoViaInterseccion": "enum: [Cruce simple, Glorieta, T, Y, Paso a desnivel]",
+      "Pendiente_grados": "number",
+      "PendienteDescripcion": "string",
+      "Curvatura": "string",
+      "TipoCurva": "string",
+      "Peralte": "string",
+      "LongitudTramoRecto_m": "number",
+      "ElementosEspeciales": "string",
+      "SenalizacionHorizontal": "enum: [Líneas continuas, Líneas discontinuas, Paso peatonal, Sentidos de circulación, Otro]",
+      "CondicionSenalizacionHorizontal": "string",
+      "SenalizacionVertical": "enum: [Alto, Ceda el paso, Límite de velocidad, Otro]",
+      "CondicionSenalizacionVertical": "string"
+    },
+    "EvidenciaFisicaEnSitio": [
+      {
+        "TrayectoriaPostImpacto": "enum: [Recta, Rotacion, Derrape, Vuelco lateral, Vuelco total, Proyeccion fuera de via]",
+        "PosicionFinalVehiculo": "string",
+        "ReferenciaImagenes_IDs": ["array de strings (referencia a CatalogoImagenes)"]
+      }
+    ]
+  },
+  "Vehiculos": {
+    "id_vehiculo : string (identificador único, ej. VEH_01)" : {
+      "DatosGenerales": {
+        "Marca": "string",
+        "Tipo": "string",
+        "Modelo": "string",
+        "Color": "enum: [Blanco, Negro, Gris, Azul, Rojo, Café / Marron, Verde, Naranja, Otro]",
+        "Placas": "string",
+        "NumeroSerie": "string",
+        "RolEnSiniestro": "enum: [Activo, Pasivo, Peatón, Otro]",
+        "PosicionInicialVehiculo": "enum: [Estacionado, Circulando, Detenido, Reversa, Invasión carril, Cambio de carril]"
+      },
+      "PropiedadesFisicas_kg": {
+        "PesoVehiculo": "number",
+        "PesoOcupantes": "number",
+        "PesoAccesorios": "number",
+        "PesoEquipaje": "number",
+        "PesoTotal": "number"
+      },
+      "Dimensiones_mm": {
+        "Largo": "number",
+        "Ancho": "number",
+        "Alto": "number",
+        "DistanciaEntreEjes": "number",
+        "EntreviaDelantera": "number",
+        "EntreviaTrasera": "number"
+      },
+      "EstadoNeumaticos": {
+        "Condicion": "enum: [Nuevo, Usado]",
+        "Descripcion": "string"
+      },
+      "DanosRegistrados": [
+        {
+          "ZonaVehiculo": "enum: [Parte Frontal, Vértice Delantero Derecho, Lado Derecho, Vértice Trasero Derecho, Parte Trasera, Vértice Trasero Izquierdo, Lado Izquierdo, Vértice Delantero Izquierdo, Toldo, Hábitaculo, Partes Bajas]",
+          "TipoDano": "array de enums: [Hundimiento, Corrimiento, Tallón, Ruptura, Repercusión]",
+          "ConsecuenciaDano": "enum: [Desprendimiento, Desplazamiento, Impregnación, Resquebrajamiento, Oxidación, Desacople, Derrame de líquidos automotrices, Desacople de componentes mecánicos]",
+          "DireccionImpacto": "enum: [Adelante hacia atras, Atras hacia adelante, Izquierda a derecha, Derecha a izquierda, Arriba hacia abajo, Abajo hacia arriba]",
+          "CuerpoGenerador": "enum: [Duro, Blando]",
+          "ReferenciaImagenes_IDs": ["array de strings (referencia a CatalogoImagenes)"]
+        }
+      ]
+    }
+  }
+}
