@@ -23,7 +23,19 @@ conda env create -f environment.yml
 conda activate CESVI
 ```
 
-### 2. Configurar la API de OpenAI
+### 2. Configuración de los Modelos YOLO
+
+**Modelo de YOLO para la Identifiación de Autos en Imágenes**
+Modelo: `yolo11l.pt``
+Instalación: Este modelo se descargará automáticamente la primera vez que se ejecute el código y se guardará en `utils/Preprocessing/ImagesExtractionClassification/models` bajo el nombre `yolo11l.pt`.
+
+**Modelo de YOLO para la Identifiación de Piezas de Autos en Imágenes**
+Modelo: `yolo11l.pt` con fine-tuning para identificación de piezas.
+Instalación: Deberás ejecutar el código alojado en `utils/Preprocessing/ImagesExtractionClassification/models/YOLO_Pieces_Fine_Tuning.ipynb` en una plataforma como
+Google Colab. Una vez que el proceso de fine-tuning finalice, deberás descargar el modelo "best.pt" y alojarlo en `utils/Preprocessing/ImagesExtractionClassification/models/` bajo el nombre `fine_tuned_yolo_car_pieces.pt`
+
+
+### 3. Configurar la API de OpenAI
 
 El código actual no carga un archivo `.env`. La autenticación depende de la configuración estándar del SDK de OpenAI, por lo que debe existir la variable de entorno `OPENAI_API_KEY` en la sesión donde se ejecute el proyecto.
 
@@ -33,7 +45,7 @@ Ejemplo:
 export OPENAI_API_KEY="tu_api_key"
 ```
 
-### 3. Rutas y Parámetros Locales
+### 4. Rutas y Parámetros Locales
 
 La configuración operativa está distribuida en dos archivos:
 
