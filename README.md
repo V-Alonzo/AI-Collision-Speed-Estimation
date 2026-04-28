@@ -26,11 +26,15 @@ conda activate CESVI
 ### 2. Configuración de los Modelos YOLO
 
 **Modelo de YOLO para la Identifiación de Autos en Imágenes**
-Modelo: `yolo11l.pt``
+</br>
+Modelo: `yolo11l.pt`
+</br>
 Instalación: Este modelo se descargará automáticamente la primera vez que se ejecute el código y se guardará en `utils/Preprocessing/ImagesExtractionClassification/models` bajo el nombre `yolo11l.pt`.
 
 **Modelo de YOLO para la Identifiación de Piezas de Autos en Imágenes**
+</br>
 Modelo: `yolo11l.pt` con fine-tuning para identificación de piezas.
+</br>
 Instalación: Deberás ejecutar el código alojado en `utils/Preprocessing/ImagesExtractionClassification/models/YOLO_Pieces_Fine_Tuning.ipynb` en una plataforma como
 Google Colab. Una vez que el proceso de fine-tuning finalice, deberás descargar el modelo "best.pt" y alojarlo en `utils/Preprocessing/ImagesExtractionClassification/models/` bajo el nombre `fine_tuned_yolo_car_pieces.pt`
 
@@ -79,9 +83,9 @@ El módulo `utils/Preprocessing/filesManager.py` centraliza la administración d
 
 Responsabilidades actuales:
 
-- Subir a OpenAI los PDFs ubicados en `Resources/Reports/NotUploaded`,
-- Registrar la relación `ID, Nombre` en `Resources/Reports/IDs.csv`,
-- Mover los PDFs cargados a `Resources/Reports/Uploaded`,
+- Subir a OpenAI los PDFs ubicados en `Resources/Reports/NotUploaded`.
+- Registrar la relación `ID, Nombre` en `Resources/Reports/IDs.csv`.
+- Mover los PDFs cargados a `Resources/Reports/Uploaded`.
 - Recuperar metadatos de archivos ya registrados en el CSV aunque no hayan sido cargados en la ejecución actual.
 
 Flujo implementado:
@@ -104,14 +108,14 @@ La canalización de imágenes está en `utils/Preprocessing/ImagesExtractionClas
 
 Cada imagen extraída se clasifica inmediatamente con YOLO para decidir si contiene autos:
 
-- si detecta autos, se guarda en `CARS/`,
-- si no detecta autos, se guarda en `NOCARS/`.
+- Si detecta autos, se guarda en `CARS/`.
+- Si no detecta autos, se guarda en `NOCARS/`.
 
 #### b. Clasificación de Piezas Automotrices
 
 `pieces_classifier.py` toma las imágenes de `NOCARS/` y aplica un segundo modelo YOLO afinado para separar:
 
-- `PIECES/`: imágenes sin auto completo pero con piezas relevantes,
+- `PIECES/`: imágenes sin auto completo pero con piezas relevantes.
 - `NOPIECES/`: imágenes que no contienen ni autos ni piezas relevantes.
 
 #### c. Clasificación Foto vs. No Foto
@@ -127,7 +131,7 @@ La decisión combina:
 
 Las salidas se copian en:
 
-- `PHOTOS/`: imágenes clasificadas como fotografías,
+- `PHOTOS/`: imágenes clasificadas como fotografías.
 - `NOPHOTOS/`: imágenes clasificadas como render, dibujo o material no fotográfico.
 
 ### Estructura de Salida de Imágenes
@@ -164,9 +168,9 @@ Detalles importantes:
 
 Las salidas se escriben en:
 
-```text
+`
 Resources/Reports/Preprocessed/JSONs/<nombre_pdf>.txt
-```
+`
 
 En el estado actual, estos archivos son `.txt` con respuestas JSON concatenadas por etapa; no existe todavía una consolidación automática a un único `.json` final por reporte.
 
