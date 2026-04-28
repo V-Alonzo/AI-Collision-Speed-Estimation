@@ -4,9 +4,32 @@ import shutil
 from utils.Preprocessing.ImagesExtractionClassification.photo_classifier import (
     get_photo_clip_context,
     is_photograph,
+    
 )
 
 from configurations import IMAGE_EXTENSIONS
+
+from imagededup.methods import PHash
+from imagededup.utils import plot_duplicates
+
+
+def remove_duplicate_images(photos_dir):
+    print(f"Detecting duplicate images in {photos_dir}...")
+
+    p_hasher = PHash()
+
+    encodings = p_hasher.encode_images(photos_dir)
+
+    duplicates = p_hasher.find_duplicates(encoding_map=encodings, max_distance_threshold=0)
+
+    duplicatedImageNames = [key for key in duplicates if len(duplicates[key]) > 0]
+    duplicatedImageNames = set(duplicatedImageNames)
+
+    for duplicatedImageName in duplicatedImageNames:
+        os.remove(os.path.join(photos_dir, duplicatedImageName))
+
+    print(f"Duplicate images removed: {len(duplicatedImageNames)}")
+
 
 
 def classify_photos_from_cars_and_pieces(

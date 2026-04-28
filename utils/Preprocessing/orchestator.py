@@ -12,7 +12,7 @@ def extractImagesFromUploadedPDFs():
             break
 
 def beginPreprocessing():
-    filesGPT = performFilesProcessing()
+    #filesGPT = performFilesProcessing()
     
     extractImagesFromUploadedPDFs()
 

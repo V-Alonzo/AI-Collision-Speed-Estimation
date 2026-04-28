@@ -73,8 +73,6 @@ Con el ambiente activo y la API configurada:
 python main.py
 ```
 
-La ejecución actual dispara el flujo completo de preprocesamiento definido en `utils/Preprocessing/orchestator.py`.
-
 ## Pipeline Actual de Preprocesamiento
 
 ### 1. Carga y Recuperación de PDFs en OpenAI
@@ -111,14 +109,27 @@ Cada imagen extraída se clasifica inmediatamente con YOLO para decidir si conti
 - Si detecta autos, se guarda en `CARS/`.
 - Si no detecta autos, se guarda en `NOCARS/`.
 
-#### b. Clasificación de Piezas Automotrices
+#### b. Eliminación de Imágenes Duplicadas
+
+Antes de continuar con las clasificaciones secundarias, `photos_classifier.py` ejecuta una deduplicación exacta sobre las carpetas `CARS/` y `NOCARS/`.
+
+Características de esta etapa:
+
+- Usa `imagededup` con `PHash` para generar hashes perceptuales.
+- Busca duplicados con `max_distance_threshold=0`, es decir, coincidencia exacta a nivel de hash.
+- Elimina de disco las imágenes repetidas detectadas antes de pasar a las siguientes etapas.
+- Reporta por consola cuántos archivos fueron removidos en cada carpeta.
+
+Esta limpieza reduce ruido en la clasificación posterior y evita procesar múltiples veces la misma evidencia visual extraída del PDF.
+
+#### c. Clasificación de Piezas Automotrices
 
 `pieces_classifier.py` toma las imágenes de `NOCARS/` y aplica un segundo modelo YOLO afinado para separar:
 
 - `PIECES/`: imágenes sin auto completo pero con piezas relevantes.
 - `NOPIECES/`: imágenes que no contienen ni autos ni piezas relevantes.
 
-#### c. Clasificación Foto vs. No Foto
+#### d. Clasificación Foto vs. No Foto
 
 `photos_classifier.py` procesa las carpetas `CARS/` y `PIECES/` para decidir si una imagen es una fotografía real o material no fotográfico.
 
@@ -134,9 +145,21 @@ Las salidas se copian en:
 - `PHOTOS/`: imágenes clasificadas como fotografías.
 - `NOPHOTOS/`: imágenes clasificadas como render, dibujo o material no fotográfico.
 
+#### e. Limpieza Automática de Artefactos Intermedios
+
+Una vez que termina la clasificación foto/no-foto, el orquestador elimina automáticamente las carpetas intermedias que solo fueron necesarias durante el procesamiento:
+
+- `CARS/`
+- `NOCARS/`
+- `PIECES/`
+- `NOPIECES/`
+- `NOPHOTOS/`
+
+Con esto, la salida persistente se concentra únicamente en las imágenes finales útiles para etapas posteriores.
+
 ### Estructura de Salida de Imágenes
 
-Para cada PDF se crea una carpeta con esta forma:
+Durante la ejecución se crea una estructura temporal con esta forma:
 
 ```text
 Resources/Reports/Preprocessed/images/<nombre_pdf>/YOLOCARS/
@@ -148,7 +171,24 @@ Resources/Reports/Preprocessed/images/<nombre_pdf>/YOLOCARS/
 └── PIECES/
 ```
 
-### 3. Extracción Estructurada con GPT-5
+Al finalizar el pipeline actual, solo se conserva la salida final:
+
+```text
+Resources/Reports/Preprocessed/images/<nombre_pdf>/YOLOCARS/
+└── PHOTOS/
+```
+
+### 3. Ejecución Segura y Medición de Tiempo
+
+`main.py` encapsula la ejecución dentro de `if __name__ == "__main__":`, lo que evita errores de `multiprocessing` al utilizar librerías que crean procesos hijos durante la deduplicación en macOS y otros entornos con estrategia `spawn`.
+
+Además, el punto de entrada imprime:
+
+- Marca temporal de inicio.
+- Marca temporal de fin.
+- Tiempo total de ejecución en segundos.
+
+### 4. Extracción Estructurada con GPT-5
 
 El módulo `utils/Preprocessing/Preprocessor.py` toma la lista de archivos GPT y ejecuta una serie ordenada de prompts definidos en `utils/Preprocessing/promptsAI.py`.
 
