@@ -62,3 +62,4 @@ def performFilesProcessing():
     filesGPT += retrieveMissingGptFiles(filesGPT, f"{REPORTS_PATH_GENERAL}/IDs.csv")
 
     return filesGPT
+    
