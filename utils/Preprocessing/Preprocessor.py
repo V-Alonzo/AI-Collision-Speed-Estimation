@@ -1,27 +1,25 @@
 from openai import OpenAI
-from promptsAI import PROMPTS_EXTRACTION_ORDERING, preprocessExtractionPrompt
+from utils.Preprocessing.promptsAI import PROMPTS_EXTRACTION_ORDERING, preprocessExtractionPrompt
 import pandas as pd
+from PATHS import *
 import dotenv
-import os
+
+dotenv.load_dotenv()
+
+client = None
 
 
 def performPreprocessing(filesGPT):
+    global client
+    
     client = OpenAI()
 
-    dotenv.load_dotenv()
-
-    idsNamesCSVPath = os.getenv("IDS_NAMES_GPT_FILES_CSV")
-    preprocessedJSONsPath = os.getenv("PREPROCESSED_JSONS_PATH")
-
-    IDsFilesGPTDF = pd.read_csv(idsNamesCSVPath)
+    IDsFilesGPTDF = pd.read_csv(IDS_NAMES_GPT_FILES_CSV)
 
     for fileGPT in filesGPT:
         finalResponse = ""
         catalogoImagenes = None
         fileName = IDsFilesGPTDF[IDsFilesGPTDF["ID"] == fileGPT.id]["Nombre"].values[0]
-
-        if "6" not in fileName:
-            continue
 
         for extractionPrompt in PROMPTS_EXTRACTION_ORDERING:
 
@@ -58,9 +56,6 @@ def performPreprocessing(filesGPT):
 
             finalResponse += responseContent + "\n"
 
-        with open(f"{preprocessedJSONsPath}/{fileName}.txt", "w") as textFile:
+        with open(f"{PREPROCESSED_JSONS_PATH}/{fileName}.txt", "w") as textFile:
             textFile.write(finalResponse)
-        
-        break
-
 

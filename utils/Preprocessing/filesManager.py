@@ -1,16 +1,14 @@
 from openai import OpenAI
-from dotenv import load_dotenv
 import os
 import shutil
 from pandas import read_csv
+from PATHS import *
+import dotenv
 
-CESVI_REPORTS_PATH_NOT_UPLOADED = None
-CESVI_REPORTS_PATH_UPLOADED = None
-CESVI_REPORTS_PATH_GENERAL = None
-GPT_EXTRACTION_PROMPT = None
-IDS_NAMES_GPT_FILES_CSV = None
 
 client = None
+dotenv.load_dotenv()
+
 
 def uploadPDFFileOpenAI(filePath):
 
@@ -30,7 +28,7 @@ def uploadPDFFiles(folderPath):
         if file.endswith(".pdf"):
             fileGPT = uploadPDFFileOpenAI(f"{folderPath}/{file}")
             fileGPTs.append(fileGPT)
-            shutil.move(f"{folderPath}/{file}", f"{CESVI_REPORTS_PATH_UPLOADED}/{file}")
+            shutil.move(f"{folderPath}/{file}", f"{REPORTS_PATH_UPLOADED}/{file}")
     return fileGPTs
 
 
@@ -55,19 +53,12 @@ def retrieveMissingGptFiles(filesGPT, IDsFilePath):
     return missingFiles
 
 def beginInitialConfiguration():
-    global CESVI_REPORTS_PATH_NOT_UPLOADED, CESVI_REPORTS_PATH_UPLOADED, CESVI_REPORTS_PATH_GENERAL, GPT_EXTRACTION_PROMPT, client, IDS_NAMES_GPT_FILES_CSV
-    load_dotenv(".env")
-    CESVI_REPORTS_PATH_NOT_UPLOADED = os.getenv("CESVI_REPORTS_PATH_NOT_UPLOADED")
-    CESVI_REPORTS_PATH_UPLOADED = os.getenv("CESVI_REPORTS_PATH_UPLOADED")
-    CESVI_REPORTS_PATH_GENERAL = os.getenv("CESVI_REPORTS_PATH_GENERAL")
-    GPT_EXTRACTION_PROMPT = os.getenv("INFORMATION_EXTRACTION_GPT_PROMPT")
-    IDS_NAMES_GPT_FILES_CSV = os.getenv("IDS_NAMES_GPT_FILES_CSV")
-
+    global client
     client = OpenAI()
 
 def performFilesProcessing():
     beginInitialConfiguration()
-    filesGPT = uploadPDFFiles(CESVI_REPORTS_PATH_NOT_UPLOADED)
-    filesGPT += retrieveMissingGptFiles(filesGPT, f"{CESVI_REPORTS_PATH_GENERAL}/IDs.csv")
+    filesGPT = uploadPDFFiles(REPORTS_PATH_NOT_UPLOADED)
+    filesGPT += retrieveMissingGptFiles(filesGPT, f"{REPORTS_PATH_GENERAL}/IDs.csv")
 
     return filesGPT

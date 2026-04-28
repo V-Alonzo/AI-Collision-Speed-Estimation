@@ -115,12 +115,13 @@ GPT_EXTRACTION_ENVIRONMENT_IMAGES = GPT_GENERAL_EXTRACTION_INSTRUCTIONS +"""
     {
       "TrayectoriaPostImpacto": "enum: [Recta, Rotacion, Derrape, Vuelco lateral, Vuelco total, Proyeccion fuera de via]",
       "PosicionFinalVehiculo": "string",
-      "ReferenciaImagenes_IDs": ["array de strings (referencia a CatalogoImagenes) usando los IDs de las imágenes correspondientes."]
+      "ReferenciaImagenes_IDs": ["array de strings que contiene los IDs del diccionario CatalogoImagenes"]
     }
   ]
 }
 
-La estructura que se coloca debajo es para tu referencia, no debes colocarlo en tu respuesta.
+Utiliza la siguiente estructura para encontrar los IDs de las imagenes que correspondan a la evidencia fisica del sitio.
+No coloques en tu respuesta la estructura, esta es solo para tu referencia.
 {"CatalogoImagenes"}
 
 """
@@ -174,14 +175,14 @@ GPT_EXTRACTION_VEHICLES_IMAGES = GPT_GENERAL_EXTRACTION_INSTRUCTIONS +"""
           "ConsecuenciaDano": "enum: [Desprendimiento, Desplazamiento, Impregnación, Resquebrajamiento, Oxidación, Desacople, Derrame de líquidos automotrices, Desacople de componentes mecánicos]",
           "DireccionImpacto": "enum: [Adelante hacia atras, Atras hacia adelante, Izquierda a derecha, Derecha a izquierda, Arriba hacia abajo, Abajo hacia arriba]",
           "CuerpoGenerador": "enum: [Duro, Blando]",
-          "ReferenciaImagenes_IDs": ["array de strings (referencia a CatalogoImagenes)"]
+          "ReferenciaImagenes_IDs": ["array de strings que son IDs de CatalogoImagenes"]
         }
       ]
     }
   }
 
-La estructura que se coloca debajo es para tu referencia, no debes colocarlo en tu respuesta.
-{"CatalogoImagenes"}
+Utiliza la siguiente estructura para encontrar los IDs de las imagenes que correspondan a la evidencia fisica del sitio.
+No coloques en tu respuesta la estructura, esta es solo para tu referencia.
 
 """
 
@@ -195,9 +196,7 @@ def preprocessExtractionPrompt(BASE_EXTRACTION_PROMPT : str, replacements : dict
 
 
 PROMPTS_EXTRACTION_ORDERING = [
-    GPT_EXTRACTION_SINISTER_IMAGES, #NO CAMBIAR EL ÓRDEN DE ESTE PROMPT, DEBE SER EL PRIMERO
-    GPT_EXTRACTION_SINISTER, 
-    GPT_EXTRACTION_ENVIRONMENT_IMAGES, 
+    GPT_EXTRACTION_SINISTER_IMAGES, #Do not change the order of this prompt, it needs to be the first one executed.
     GPT_EXTRACTION_ENVIRONMENT,
     GPT_EXTRACTION_VEHICLES_IMAGES,
     GPT_EXTRACTION_VEHICLES

@@ -1,5 +1,19 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+utils/Preprocessing/__pycache__
+
+utils/Preprocessing/ImagesExtractionClassification/models/*.pt
+Resources/Reports/Preprocessed/JSONs/*.json
+Resources/Reports/Preprocessed/JSONs/*.txt
+Resources/Reports/Preprocessed/PDFs/*.pdf
+Resources/Reports/Uploaded/*.pdf
+Resources/Reports/NotUploaded/*.pdf
+Resources/Reports/Preprocessed/images/*/
+
+
+utils/__pycache__/*.pyc
+utils/Preprocessing/ImagesExtractionClassification/__pycache__/*.pyc
+
 # dependencies
 /node_modules
 /.pnp
