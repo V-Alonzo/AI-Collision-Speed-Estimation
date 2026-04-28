@@ -157,6 +157,20 @@ Una vez que termina la clasificación foto/no-foto, el orquestador elimina autom
 
 Con esto, la salida persistente se concentra únicamente en las imágenes finales útiles para etapas posteriores.
 
+#### f. Generación de PDF Consolidado de Evidencia Fotográfica
+
+Una vez que se obtiene la carpeta `PHOTOS/`, el orquestador de `ImagesExtractionClassification/orchestator.py` invoca `generate_images_pdf()` de `pdf_creator.py` para crear un único PDF final por reporte.
+
+Cómo funciona `generate_images_pdf(images_directory, output_pdf_path, pdf_name)`:
+
+1. Lee las imágenes de `PHOTOS/`.
+2. Convierte cada imagen a RGB y la serializa como PDF individual temporal en un directorio efímero (`tempfile.TemporaryDirectory`).
+3. Une los PDFs temporales usando PyMuPDF (`fitz`) con `insert_pdf`.
+4. Guarda el PDF consolidado en `YOLOCARS/` con nombre `<nombre_reporte>.pdf`.
+5. Elimina automáticamente los archivos temporales al salir del contexto.
+
+En consecuencia, `begin_extraction(source_pdf_path)` termina no solo con las fotos clasificadas, sino también con un entregable único que facilita revisión humana, trazabilidad y consumo por etapas posteriores.
+
 ### Estructura de Salida de Imágenes
 
 Durante la ejecución se crea una estructura temporal con esta forma:
@@ -175,7 +189,8 @@ Al finalizar el pipeline actual, solo se conserva la salida final:
 
 ```text
 Resources/Reports/Preprocessed/images/<nombre_pdf>/YOLOCARS/
-└── PHOTOS/
+├── PHOTOS/
+└── <nombre_pdf>.pdf
 ```
 
 ### 3. Ejecución Segura y Medición de Tiempo
@@ -251,7 +266,8 @@ Uso recomendado:
 - `utils/Preprocessing/filesManager.py`: inventario, carga y recuperación de PDFs.
 - `utils/Preprocessing/Preprocessor.py`: extracción estructurada con OpenAI.
 - `utils/Preprocessing/promptsAI.py`: prompts y orden de extracción.
-- `utils/Preprocessing/ImagesExtractionClassification/`: extracción y clasificación de imágenes.
+- `utils/Preprocessing/ImagesExtractionClassification/orchestator.py`: secuencia completa de extracción/clasificación de imágenes, limpieza de artefactos y construcción del PDF final de evidencia.
+- `utils/Preprocessing/ImagesExtractionClassification/pdf_creator.py`: conversión de imágenes finales (`PHOTOS/`) a un PDF consolidado por reporte.
 - `PATHS.py`: rutas operativas.
 - `configurations.py`: hiperparámetros y etiquetas de clasificación.
 

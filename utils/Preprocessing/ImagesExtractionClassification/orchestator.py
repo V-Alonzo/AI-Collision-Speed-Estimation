@@ -14,6 +14,10 @@ from utils.Preprocessing.ImagesExtractionClassification.photos_classifier import
 from utils.Preprocessing.ImagesExtractionClassification.photos_classifier import (
     remove_duplicate_images,
 )
+from utils.Preprocessing.ImagesExtractionClassification.pdf_creator import (
+    generate_images_pdf,
+)
+
 
 import shutil
 
@@ -52,5 +56,8 @@ def begin_extraction(source_pdf_path):
     shutil.rmtree(output_dirs["pieces"])
     shutil.rmtree(output_dirs["no_pieces"])
     shutil.rmtree(output_dirs["no_photos"])
+
+    # Generate PDF with the classified photos
+    generate_images_pdf(output_dirs["photos"], output_dirs["yolo_cars"], output_dirs["output"].split("/")[-1])
 
     print("Pipeline of Images Extraction and Classification completed.")

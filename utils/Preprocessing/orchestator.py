@@ -12,8 +12,8 @@ def extractImagesFromUploadedPDFs():
             break
 
 def beginPreprocessing():
-    #filesGPT = performFilesProcessing()
+    filesGPT = performFilesProcessing()
     
     extractImagesFromUploadedPDFs()
 
-    #jsonConversions = performPreprocessing(filesGPT)
+    jsonConversions = performPreprocessing(filesGPT)
