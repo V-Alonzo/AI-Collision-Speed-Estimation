@@ -12,7 +12,16 @@ dotenv.load_dotenv()
 
 def uploadPDFFileOpenAI(filePath):
 
+    fileName = filePath.split("/")[-1]
+
     with open(IDS_NAMES_GPT_FILES_CSV, "a") as idsFile:
+
+        filesIDsDF = read_csv(IDS_NAMES_GPT_FILES_CSV)
+        
+        if fileName in filesIDsDF["Nombre"].values:
+            existingID = filesIDsDF[filesIDsDF["Nombre"] == fileName]["ID"].values[0]
+            return client.files.retrieve(existingID)
+
         with open(filePath, "rb") as reportFile:
             fileGPT = client.files.create(
                 file = reportFile,

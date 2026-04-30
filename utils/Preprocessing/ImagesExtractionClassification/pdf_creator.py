@@ -4,12 +4,18 @@ import tempfile
 import fitz
 from PIL import Image
 
+from utils.Preprocessing.filesManager import uploadPDFFileOpenAI
+
+def uploadPDFFileToGPTFiles(pdf_path):
+
+    uploadPDFFileOpenAI(pdf_path)
+
 
 def generate_images_pdf(images_directory, output_pdf_path, pdf_name):
 
     images = os.listdir(images_directory)
     
-    final_pdf_path = os.path.join(output_pdf_path, f"{pdf_name}.pdf")
+    final_pdf_path = os.path.join(output_pdf_path, f"{pdf_name}_images.pdf")
 
     with tempfile.TemporaryDirectory() as temp_dir:
         individual_pdfs = []
@@ -35,5 +41,7 @@ def generate_images_pdf(images_directory, output_pdf_path, pdf_name):
             merged_pdf.save(final_pdf_path)
         finally:
             merged_pdf.close()
+
+    uploadPDFFileToGPTFiles(final_pdf_path)
 
     return final_pdf_path

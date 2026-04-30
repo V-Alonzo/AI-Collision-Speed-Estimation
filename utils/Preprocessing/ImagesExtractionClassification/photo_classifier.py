@@ -79,7 +79,7 @@ def is_photograph(image_path, clip_context):
     noise = noise_score(image_path)
 
     photo_probability = probabilities[0]
-    non_photo_probability = probabilities[1] + probabilities[2]
+    non_photo_probability = sum(probabilities[1:])
 
     total = photo_probability + non_photo_probability
 

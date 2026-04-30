@@ -9,11 +9,10 @@ def extractImagesFromUploadedPDFs():
         if fileName.endswith(".pdf"):
             sourcePDFPath = f"{REPORTS_PATH_UPLOADED}/{fileName}"
             imageProcessingOrchestator.begin_extraction(sourcePDFPath)
-            break
 
 def beginPreprocessing():
     filesGPT = performFilesProcessing()
     
-    extractImagesFromUploadedPDFs()
+    #extractImagesFromUploadedPDFs()
 
     jsonConversions = performPreprocessing(filesGPT)

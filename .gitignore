@@ -9,6 +9,7 @@ Resources/Reports/Preprocessed/PDFs/*.pdf
 Resources/Reports/Uploaded/*.pdf
 Resources/Reports/NotUploaded/*.pdf
 Resources/Reports/Preprocessed/images/*/
+Resources/Reports/Preprocessed/images/*.pdf
 
 
 utils/__pycache__/*.pyc

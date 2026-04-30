@@ -2,6 +2,7 @@ import os
 from collections import defaultdict
 
 import cv2
+from matplotlib import pyplot as plt
 from ultralytics import YOLO
 
 from PATHS import (
@@ -12,6 +13,8 @@ from configurations import (
     CARS_CLASSES as carsClasses,
     PIECES_CLASSES as piecesClasses,
 )
+
+from configurations import MINIMUM_BOX_AREA_THRESHOLD
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
@@ -25,11 +28,20 @@ def classify_with_model(image, model, classes=None, draw_outputs=False):
 
     results = model.predict(image, classes=classes, verbose=False)
 
+    areaImagePixels = image.shape[0] * image.shape[1]
+    reallySmallBoxes = 0
+
     if results[0].boxes is not None and len(results[0].boxes) > 0:
         boxes = results[0].boxes.xyxy.cpu()
         class_indices = results[0].boxes.cls.int().cpu().tolist()
 
         for box, class_index in zip(boxes, class_indices):
+            boxArea = (box[2] - box[0]) * (box[3] - box[1])
+
+            if boxArea / areaImagePixels < MINIMUM_BOX_AREA_THRESHOLD:
+                reallySmallBoxes += 1
+                #continue
+
             x1, y1, x2, y2 = map(int, box)
             class_name = class_list[class_index]
             class_counts[class_name] += 1
@@ -41,30 +53,16 @@ def classify_with_model(image, model, classes=None, draw_outputs=False):
                 cv2.circle(image, (center_x, center_y), 4, (0, 0, 255), -1)
                 cv2.putText(
                     image,
-                    class_name,
+                    f"{class_name} :{boxArea / areaImagePixels:.2f}",
                     (x1, y1 - 10),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     0.5,
-                    (0, 255, 0),
+                    (255, 0, 0),
                     2,
                 )
                 cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-    has_detections = len(class_counts) > 0
-
-    if draw_outputs and has_detections:
-        y_offset = 30
-        for class_name, count in class_counts.items():
-            cv2.putText(
-                image,
-                f"{class_name}: {count}",
-                (50, y_offset),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.8,
-                (0, 255, 0),
-                2,
-            )
-            y_offset += 30
+    has_detections = reallySmallBoxes < len(results[0].boxes) if results[0].boxes is not None else False
 
     return image, has_detections
 

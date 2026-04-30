@@ -14,8 +14,11 @@ PHOTO_TEXT_LABELS = [
     "photograph",
     "a 3D render",
     "a drawing",
+    "a diagram",
+    "satelital image"
 ]
 
 IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".webp", ".tiff")
 
-IS_PHOTOGRAPH_PROBABILITY_THRESHOLD = 0.6
+IS_PHOTOGRAPH_PROBABILITY_THRESHOLD = 0.8
+MINIMUM_BOX_AREA_THRESHOLD = 0.25 #Percentage

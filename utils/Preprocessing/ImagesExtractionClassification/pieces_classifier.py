@@ -6,7 +6,7 @@ from utils.Preprocessing.ImagesExtractionClassification.yolo_classifier import c
 
 from configurations import IMAGE_EXTENSIONS
 
-def classify_pieces_from_no_cars(no_cars_input_dir_path, pieces_output_dir_path, no_pieces_output_dir_path):
+def classify_pieces_from_no_cars(no_cars_input_dir_path, pieces_output_dir_path, no_pieces_output_dir_path, draw_outputs=False):
     print("Looking for pieces in images without cars...")
     if not os.path.exists(no_cars_input_dir_path):
         print(f"NOCARS directory does not exist: '{no_cars_input_dir_path}'")
@@ -26,7 +26,8 @@ def classify_pieces_from_no_cars(no_cars_input_dir_path, pieces_output_dir_path,
             print(f"Could not read image: '{input_path}'")
             continue
 
-        modified_image, has_pieces = classify_pieces_image(image, draw_outputs=False)
+        modified_image, has_pieces = classify_pieces_image(image, draw_outputs=draw_outputs)
+
         base_name, _ = os.path.splitext(file_name)
 
         if has_pieces:

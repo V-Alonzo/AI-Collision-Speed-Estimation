@@ -18,6 +18,9 @@ from utils.Preprocessing.ImagesExtractionClassification.pdf_creator import (
     generate_images_pdf,
 )
 
+from PATHS import *
+
+
 
 import shutil
 
@@ -40,6 +43,7 @@ def begin_extraction(source_pdf_path):
         output_dirs["no_cars"],
         output_dirs["pieces"],
         output_dirs["no_pieces"],
+        draw_outputs=False
     )
     
     #Classify images with cars and pieces as photos or not.
@@ -50,14 +54,15 @@ def begin_extraction(source_pdf_path):
         output_dirs["no_photos"],
     )
 
+    # Generate PDF with the classified photos
+    generate_images_pdf(output_dirs["photos"], PREPROCESSED_IMAGES_PATH, output_dirs["output"].split("/")[-1])
+
     #Remove unnecessary directories
     shutil.rmtree(output_dirs["cars"])
     shutil.rmtree(output_dirs["no_cars"])
     shutil.rmtree(output_dirs["pieces"])
     shutil.rmtree(output_dirs["no_pieces"])
     shutil.rmtree(output_dirs["no_photos"])
-
-    # Generate PDF with the classified photos
-    generate_images_pdf(output_dirs["photos"], output_dirs["yolo_cars"], output_dirs["output"].split("/")[-1])
+    shutil.rmtree(output_dirs["output"])
 
     print("Pipeline of Images Extraction and Classification completed.")
