@@ -1,4 +1,5 @@
 import json
+import re
 from typing import Any, Dict, List, Tuple
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -7,12 +8,23 @@ import os
 from pathlib import Path
 
 from configurations import PHOTO_TEXT_LABELS
+from utils.Preprocessing.ImagesExtractionClassification.photo_classifier import clip_score
+from utils.Preprocessing.ImagesExtractionClassification.photo_classifier import get_clip_context
 from utils.Preprocessing.ImagesExtractionClassification.photo_classifier import get_photo_clip_context
 from utils.Preprocessing.ImagesExtractionClassification.photo_classifier import is_photograph
 from utils.Preprocessing.ImagesExtractionClassification.yolo_classifier import classify_cars_image, classify_damages_image
+from utils.Preprocessing.NHTSADatabaseExtraction.ciren_client import extract_case_summary
+from utils.Preprocessing.NHTSADatabaseExtraction.ciren_client import fetch_ciren_case_detail
+from utils.Preprocessing.NHTSADatabaseExtraction.ciren_client import fetch_ciren_case_index
+from utils.Preprocessing.NHTSADatabaseExtraction.ciren_client import iter_vehicle_image_candidates
 
 BASE_URL = "https://nrd.api.nhtsa.dot.gov/nhtsa/vehicle/api/v1/vehicle-database-test-results"
+VEHICLE_CROP_PADDING_RATIO = 0.08
+MINIMUM_VEHICLE_CROP_SIDE_PX = 64
+CIREN_IMAGES_OUTPUT_DIR = "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN"
+CIREN_CACHE_OUTPUT_PATH = "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/JSONs/cacheCIREN.json"
 
+_PHOTO_CLIP_CONTEXT = None
 
 def get_json(url: str) -> Dict[str, Any]:
     """Executes a GET request and returns the response as JSON dict."""
@@ -184,30 +196,279 @@ def get_valid_test(start_page: int = 1, end_page: int = 1, count: int = 1, outpu
     return valid_tests, output_path
 
 
-def isValidImage(imagePath: str) -> Dict[str, Any]:
+def _get_nhtsa_photo_clip_context() -> Dict[str, Any]:
+    global _PHOTO_CLIP_CONTEXT
+
+    if _PHOTO_CLIP_CONTEXT is None:
+        _PHOTO_CLIP_CONTEXT = get_photo_clip_context(photoTextLabels=PHOTO_TEXT_LABELS)
+
+    return _PHOTO_CLIP_CONTEXT
+
+
+def _delete_file_if_exists(file_path: str) -> None:
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+
+def _clamp_vehicle_crop_bounds(box, image_width: int, image_height: int) -> Tuple[int, int, int, int] | None:
+    x1, y1, x2, y2 = [int(value) for value in box]
+
+    box_width = x2 - x1
+    box_height = y2 - y1
+
+    if box_width <= 0 or box_height <= 0:
+        return None
+
+    padding_x = max(4, int(box_width * VEHICLE_CROP_PADDING_RATIO))
+    padding_y = max(4, int(box_height * VEHICLE_CROP_PADDING_RATIO))
+
+    x1 = max(0, x1 - padding_x)
+    y1 = max(0, y1 - padding_y)
+    x2 = min(image_width, x2 + padding_x)
+    y2 = min(image_height, y2 + padding_y)
+
+    if x2 - x1 < MINIMUM_VEHICLE_CROP_SIDE_PX or y2 - y1 < MINIMUM_VEHICLE_CROP_SIDE_PX:
+        return None
+
+    return x1, y1, x2, y2
+
+
+def _extract_candidate_vehicle_crops(image, boxes) -> List[Tuple[int, Any]]:
+    image_height, image_width = image.shape[:2]
+    candidate_crops: List[Tuple[int, Any]] = []
+
+    for idx, box in enumerate(boxes):
+        crop_bounds = _clamp_vehicle_crop_bounds(box, image_width=image_width, image_height=image_height)
+
+        if crop_bounds is None:
+            continue
+
+        x1, y1, x2, y2 = crop_bounds
+        cropped_image = image[y1:y2, x1:x2]
+
+        if cropped_image.size == 0:
+            continue
+
+        candidate_crops.append((idx, cropped_image))
+
+    return candidate_crops
+
+
+def _build_damaged_vehicle_output_path(image_path: str) -> str:
+    source_path = Path(image_path)
+    return str(source_path.with_name(f"{source_path.stem}_damaged_vehicle.jpg"))
+
+
+def _build_damaged_vehicle_output_path_with_custom_stem(image_path: str, output_stem: str | None = None) -> str:
+    if not output_stem:
+        return _build_damaged_vehicle_output_path(image_path)
+
+    source_path = Path(image_path)
+    return str(source_path.with_name(f"{output_stem}.jpg"))
+
+
+def isValidImage(imagePath: str, output_stem: str | None = None) -> List[str]:
     image = cv2.imread(imagePath)
-    image, has_cars, boxes = classify_cars_image(image, draw_outputs=True)
+
+    if image is None:
+        _delete_file_if_exists(imagePath)
+        return []
+
+    image, has_cars, boxes = classify_cars_image(image, draw_outputs=False)
 
     if not has_cars:
-        os.remove(imagePath)
-        return
+        _delete_file_if_exists(imagePath)
+        return []
 
-    clip_context = get_photo_clip_context(photoTextLabels=PHOTO_TEXT_LABELS)
-    isCarPhoto = is_photograph(imagePath, clip_context, [0], [i for i in range(1, len(PHOTO_TEXT_LABELS))])
+    clip_context = _get_nhtsa_photo_clip_context()
+    isCarPhoto = is_photograph(
+        imagePath,
+        clip_context,
+        [0],
+        [i for i in range(1, len(PHOTO_TEXT_LABELS))],
+    )
 
     if(not isCarPhoto["isPhoto"]):
-        os.remove(imagePath)
-        return
+        _delete_file_if_exists(imagePath)
+        return []
     
-    os.remove(imagePath)
+    saved_crops: List[str] = []
 
-    for idx,box in enumerate(boxes):
-        x1, y1, x2, y2 = map(int, box)
-        cropped_image = image[y1:y2, x1:x2]
-        is_damaged = classify_damages_image(cropped_image, applyMinimumBoxAreaThreshold=False, draw_outputs=True)
+    image, is_damaged, boxes = classify_damages_image(image, applyMinimumBoxAreaThreshold=False, draw_outputs=False)
 
-        if is_damaged:
-            cv2.imwrite(f"{imagePath}_damaged_car_{idx}.jpg", cropped_image)
+    if not is_damaged:
+        _delete_file_if_exists(imagePath)
+        return []
+
+    output_path = _build_damaged_vehicle_output_path_with_custom_stem(imagePath, output_stem=output_stem)
+    cv2.imwrite(output_path, image)
+    saved_crops.append(output_path)
+
+    _delete_file_if_exists(imagePath)
+
+    return saved_crops
+
+
+def _sanitize_metadata_for_filename(value: Any, fallback: str = "Unknown") -> str:
+    if value is None:
+        return fallback
+
+    normalized = str(value).strip()
+    if not normalized:
+        return fallback
+
+    normalized = normalized.replace("/", "-")
+    normalized = normalized.replace("\\", "-")
+    normalized = normalized.replace("`", "")
+    normalized = re.sub(r"\s+", "-", normalized)
+    normalized = re.sub(r"[^A-Za-z0-9._-]", "", normalized)
+    normalized = re.sub(r"-+", "-", normalized).strip("-._")
+
+    return normalized or fallback
+
+
+def _read_cached_results(cache_path: str) -> Dict[str, Dict[str, Any]]:
+    if os.path.isfile(cache_path):
+        with open(cache_path, "r") as cache_file:
+            payload = json.load(cache_file)
+            if isinstance(payload, dict):
+                return payload
+    return {}
+
+
+def _write_cached_results(cache_path: str, payload: Dict[str, Dict[str, Any]]) -> None:
+    os.makedirs(os.path.dirname(cache_path), exist_ok=True)
+    with open(cache_path, "w") as cache_file:
+        json.dump(payload, cache_file, indent=4)
+
+
+def _build_ciren_output_stem(summary: Dict[str, Any], sequence: int, vehicle_number: Any = None) -> str:
+
+    total_delta_v = summary.get("totalDeltaV") or summary.get("highestDeltaVTotal") or "UnknownDeltaV"
+    severity = summary.get("mais") or summary.get("severityDescription") or "UnknownSeverity"
+    vehicle_number = f"Vehicle{vehicle_number}" if vehicle_number is not None else "UnknownVehicle"
+
+    return (
+        f"{_sanitize_metadata_for_filename(total_delta_v)}_"
+        f"{_sanitize_metadata_for_filename(severity)}_"
+        f"{sequence:03d}_"
+        f"{_sanitize_metadata_for_filename(vehicle_number)}"
+    )
+
+
+def _build_ciren_case_output_dir(case_number: Any, output_dir: str) -> str:
+    normalized_case_number = _sanitize_metadata_for_filename(case_number, fallback="UnknownCase")
+    return os.path.join(output_dir, normalized_case_number)
+
+
+def _save_ciren_candidate_image(image_bytes: bytes, output_path: str) -> None:
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "wb") as image_file:
+        image_file.write(image_bytes)
+
+
+def download_valid_ciren_images(
+    output_dir: str = CIREN_IMAGES_OUTPUT_DIR,
+    cache_path: str = CIREN_CACHE_OUTPUT_PATH,
+    ciren_ids: List[int] | None = None,
+) -> Dict[str, Dict[str, Any]]:
+    cached_cases = _read_cached_results(cache_path)
+
+    ciren_cases = fetch_ciren_case_index()
+    selected_ids = set(ciren_ids or [])
+    if selected_ids:
+        ciren_cases = [case for case in ciren_cases if case.get("cirenId") in selected_ids]
+
+    print(f"Found {len(ciren_cases)} CIREN cases in Crash Viewer.")
+
+    for case_entry in ciren_cases:
+        ciren_id = case_entry.get("cirenId")
+        if not isinstance(ciren_id, int):
+            continue
+
+        cache_key = str(ciren_id)
+        cached_case = cached_cases.get(cache_key, {})
+        if cached_case.get("validatedImages"):
+            print(f"CIREN case {ciren_id} already processed. Skipping.")
+            continue
+
+        print(f"Processing CIREN case {ciren_id}...")
+
+        case_payload: Dict[str, Any] = {
+            "cirenId": ciren_id,
+            "make": case_entry.get("make"),
+            "model": case_entry.get("model"),
+            "modelYear": case_entry.get("modelYear"),
+            "errors": [],
+            "validatedImages": [],
+            "candidateImages": [],
+        }
+
+        try:
+            detail_payload = fetch_ciren_case_detail(ciren_id)
+            summary = extract_case_summary(detail_payload)
+
+            case_payload.update(
+                {
+                    "caseId": summary.get("caseId"),
+                    "caseNumber": summary.get("cirenId") or ciren_id,
+                    "mais": summary.get("mais"),
+                    "totalDeltaV": summary.get("totalDeltaV"),
+                    "objectContact": summary.get("objectContact"),
+                    "category": summary.get("category"),
+                    "vehicleMake": summary.get("make"),
+                    "vehicleModel": summary.get("model"),
+                    "vehicleModelYear": summary.get("modelYear"),
+                }
+            )
+
+            case_output_dir = _build_ciren_case_output_dir(case_payload["caseNumber"], output_dir)
+            os.makedirs(case_output_dir, exist_ok=True)
+
+            validated_sequence = 1
+            candidate_sequence = 1
+            for image_candidate in iter_vehicle_image_candidates(ciren_id, detail_payload):
+                output_stem = _build_ciren_output_stem(summary, validated_sequence, image_candidate.vehicle_number)
+                candidate_stem = f"__candidate__{_build_ciren_output_stem(summary, candidate_sequence, image_candidate.vehicle_number)}"
+                candidate_file_path = os.path.join(case_output_dir, f"{candidate_stem}.jpg")
+                _save_ciren_candidate_image(image_candidate.image_bytes, candidate_file_path)
+
+                try:
+                    validated_images = isValidImage(candidate_file_path, output_stem=output_stem)
+                finally:
+                    _delete_file_if_exists(candidate_file_path)
+
+                case_payload["candidateImages"].append(
+                    {
+                        "vehicleNumber": image_candidate.vehicle_number,
+                        "subtype": image_candidate.subtype,
+                        "description": image_candidate.description,
+                        "objectID": image_candidate.object_id,
+                        "photoId": image_candidate.photo_id,
+                    }
+                )
+
+                if validated_images:
+                    case_payload["validatedImages"].extend(validated_images)
+                    validated_sequence += len(validated_images)
+
+                candidate_sequence += 1
+
+            if not case_payload["validatedImages"]:
+                case_payload["errors"].append("No damaged vehicle photographs passed the current pipeline.")
+                if not os.listdir(case_output_dir):
+                    os.rmdir(case_output_dir)
+
+            if os.listdir(case_output_dir) == []:
+                os.rmdir(case_output_dir)
+
+        except Exception as exc:
+            case_payload["errors"].append(str(exc))
+
+        cached_cases[cache_key] = case_payload
+        _write_cached_results(cache_path, cached_cases)
+
+    return cached_cases
 
 def downloadImage(url: str, output_path: str) -> bool:
     """Downloads an image from a URL and saves it to the specified output path."""
@@ -284,6 +545,17 @@ def download_valid_images(valid_tests: Dict[str, Dict[str, Any]], output_dir: st
 
 
 def beginExtraction():
-    valid_tests, resultsPath = get_valid_test(start_page=1, end_page=4, count=1000, output_path="utils/Preprocessing/NHTSADatabaseExtraction/Extraction/JSONs")
-    print(f"Total valid tests with positive closing speed: {len(valid_tests)}")
-    download_valid_images(valid_tests, output_dir="utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images")
+    #valid_tests, resultsPath = get_valid_test(start_page=1, end_page=4, count=1000, output_path="utils/Preprocessing/NHTSADatabaseExtraction/Extraction/JSONs")
+    beginCirenExtraction(ciren_ids= list(range(1,5000)))
+    #print(f"Total valid tests with positive closing speed: {len(valid_tests)}")
+    #download_valid_images(valid_tests, output_dir="utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images")
+
+
+def beginCirenExtraction(ciren_ids: List[int] | None = None):
+    ciren_cases = download_valid_ciren_images(
+        output_dir=CIREN_IMAGES_OUTPUT_DIR,
+        cache_path=CIREN_CACHE_OUTPUT_PATH,
+        ciren_ids=ciren_ids,
+    )
+    valid_case_count = sum(1 for case_payload in ciren_cases.values() if case_payload.get("validatedImages"))
+    print(f"Total CIREN cases with validated damaged vehicle photos: {valid_case_count}")

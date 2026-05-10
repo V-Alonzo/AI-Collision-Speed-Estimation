@@ -163,36 +163,5 @@ def classify_cars_image(image, draw_outputs=False, applyMinimumBoxAreaThreshold=
 def classify_pieces_image(image, draw_outputs=False, applyMinimumBoxAreaThreshold=True):
     return classify_with_model(image, piecesModel, piecesClasses, draw_outputs=draw_outputs, applyMinimumBoxAreaThreshold=applyMinimumBoxAreaThreshold)
 
-def classify_damages_image(image, draw_outputs=False, applyMinimumBoxAreaThreshold=False, dent_threshold=0.7):
-
-    pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    pil_image = _resize_damage_image(pil_image)
-
-    processor, model, prompt_text = _get_damage_vlm_components()
-
-    inputs = processor(
-        text=[prompt_text],
-        images=[pil_image],
-        padding=False,
-        return_tensors="pt",
-    ).to(_DAMAGE_VLM_DEVICE)
-
-    with torch.inference_mode():
-        outputs = model.generate(
-            **inputs,
-            max_new_tokens=4,
-            do_sample=False,
-            use_cache=True,
-        )
-    generated_ids = [
-        output_ids[len(input_ids):]
-        for input_ids, output_ids in zip(inputs.input_ids, outputs)
-    ]
-
-    response = processor.batch_decode(
-        generated_ids,
-        skip_special_tokens=True,
-        clean_up_tokenization_spaces=False,
-    )[0].strip()
-
-    return "DAMAGED" in response.upper()
+def classify_damages_image(image, draw_outputs=False, applyMinimumBoxAreaThreshold=False):
+    return classify_with_model(image, damagesModel, damagesClasses, draw_outputs=draw_outputs, applyMinimumBoxAreaThreshold=applyMinimumBoxAreaThreshold)

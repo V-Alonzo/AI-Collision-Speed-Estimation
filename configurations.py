@@ -9,7 +9,7 @@ CARS_CLASSES = [2,5,7]
 
 # Damaged Classes are {0: "Broken Glass", 1: "Dent", 2: "Scratch", 3: "Wreck"}
 
-DAMAGES_CLASSES = [0, 1, 2, 3]
+DAMAGES_CLASSES = [1, 3]
 
 PIECES_CLASSES = None
 

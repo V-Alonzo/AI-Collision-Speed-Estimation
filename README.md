@@ -78,6 +78,36 @@ Con el ambiente activo y la API configurada:
 python main.py
 ```
 
+### Extracción CIREN
+
+Además del flujo NHTSA existente, el repositorio ahora incluye una ruta paralela para extraer casos desde Crash Viewer CIREN sin modificar el comportamiento actual de `beginExtraction()`.
+
+Entrada nueva:
+
+- `utils/Preprocessing/NHTSADatabaseExtraction/orchestator.py` expone `beginCirenExtraction(ciren_ids=None)`.
+- Si `ciren_ids` es `None`, recorre el índice público completo de CIREN.
+- Si `ciren_ids` recibe una lista, procesa únicamente esos casos, por ejemplo `[527]`.
+
+Supuestos operativos de este flujo:
+
+- El sitio `crashviewer.nhtsa.dot.gov` está protegido contra clientes HTTP básicos, por lo que la extracción usa `curl_cffi` para impersonar un navegador real.
+- El pipeline visual reutilizado es el mismo del flujo actual: detección de autos, filtro foto/no-foto con CLIP y validación de daños con YOLO más compuerta CLIP.
+- Las candidatas CIREN se obtienen desde la galería pública `Vehicle Images` del caso, priorizando subtipos exteriores del vehículo.
+
+Salidas CIREN:
+
+- Imágenes validadas: `utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/<CaseNumber>/`
+- Cache independiente: `utils/Preprocessing/NHTSADatabaseExtraction/Extraction/JSONs/cacheCIREN.json`
+- Nombre de archivo: `<TotalDeltaV|Unknown>_<MAIS|Unknown>_<seq>.jpg`
+
+Ejemplo de uso desde Python:
+
+```python
+from utils.Preprocessing.NHTSADatabaseExtraction.orchestator import beginCirenExtraction
+
+beginCirenExtraction(ciren_ids=[527])
+```
+
 ## Pipeline Actual de Preprocesamiento
 
 ### 1. Carga y Recuperación de PDFs en OpenAI
