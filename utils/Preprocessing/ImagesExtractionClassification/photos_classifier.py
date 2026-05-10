@@ -39,7 +39,7 @@ def classify_photos_from_cars_and_pieces(
     no_photos_output_dir_path,
 ):
     print("Looking for photos in images with cars and pieces...")
-    clip_context = get_photo_clip_context()
+    clip_context = get_photo_clip_context(generateNewContext=True)
 
     source_directories = [
         ("CARS", cars_input_dir_path),

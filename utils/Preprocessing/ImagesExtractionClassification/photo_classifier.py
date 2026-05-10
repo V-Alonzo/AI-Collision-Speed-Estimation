@@ -8,14 +8,14 @@ from configurations import PHOTO_TEXT_LABELS
 from configurations import IS_PHOTOGRAPH_PROBABILITY_THRESHOLD
 
 
-clipPhotoContext = None
+clipContexts = {}
 
 
-def get_photo_clip_context():
-    global clipPhotoContext
+def get_clip_context(text_labels, context_name, generateNewContext=False):
+    global clipContexts
 
-    if clipPhotoContext is not None:
-        return clipPhotoContext
+    if context_name in clipContexts and not generateNewContext:
+        return clipContexts[context_name]
 
     device = "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -25,17 +25,25 @@ def get_photo_clip_context():
     )
     model = model.to(device)
     tokenizer = open_clip.get_tokenizer("ViT-B-32")
-    text_tokens = tokenizer(PHOTO_TEXT_LABELS).to(device)
+    text_tokens = tokenizer(text_labels).to(device)
 
-    clipPhotoContext = {
+    clip_context = {
         "torch": torch,
         "model": model,
         "preprocess": preprocess,
         "text_tokens": text_tokens,
         "device": device,
         "image_class": Image,
+        "labels": text_labels,
     }
-    return clipPhotoContext
+
+    clipContexts[context_name] = clip_context
+    return clip_context
+
+
+def get_photo_clip_context(photoTextLabels=PHOTO_TEXT_LABELS, generateNewContext=False):
+    return get_clip_context(photoTextLabels, "photo", generateNewContext)
+
 
 
 def clip_score(image_path, clip_context):
@@ -61,25 +69,12 @@ def clip_score(image_path, clip_context):
     return probabilities
 
 
-def noise_score(image_path):
-    grayscale_image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 
-    if grayscale_image is None:
-        return 0.0
-
-    blurred_image = cv2.GaussianBlur(grayscale_image, (3, 3), 0)
-    noise = grayscale_image - blurred_image
-    noise_std = np.std(noise)
-
-    return min(noise_std / 20.0, 1.0)
-
-
-def is_photograph(image_path, clip_context):
+def is_photograph(image_path, clip_context, indexesIsPhotoProbabilities = [0], indexesNonPhotoProbabilities = [i for i in range(1, len(PHOTO_TEXT_LABELS))]):
     probabilities = clip_score(image_path, clip_context)
-    noise = noise_score(image_path)
 
-    photo_probability = probabilities[0]
-    non_photo_probability = sum(probabilities[1:])
+    photo_probability = sum(probabilities[i] for i in indexesIsPhotoProbabilities)
+    non_photo_probability = sum(probabilities[i] for i in indexesNonPhotoProbabilities)
 
     total = photo_probability + non_photo_probability
 
@@ -89,13 +84,14 @@ def is_photograph(image_path, clip_context):
     else:
         photo_probability /= total
         non_photo_probability /= total
+    
+    print(f"PROBABILITIES for '{image_path}': {probabilities}")
 
-    final_score = 0.7 * photo_probability + 0.3 * noise
+    final_score = photo_probability
 
     return {
         "isPhoto": bool(final_score > IS_PHOTOGRAPH_PROBABILITY_THRESHOLD),
         "confidence": float(final_score),
         "clipPhotoScore": float(photo_probability),
         "clipNonPhotoScore": float(non_photo_probability),
-        "noiseScore": float(noise),
     }

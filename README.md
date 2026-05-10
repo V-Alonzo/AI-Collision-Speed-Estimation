@@ -25,18 +25,23 @@ conda activate CESVI
 
 ### 2. Configuración de los Modelos YOLO
 
-**Modelo de YOLO para la Identifiación de Autos en Imágenes**
+**Modelo de YOLO para la Identifiación de Vehículos en Imágenes**
 </br>
 Modelo: `yolo11l.pt`
 </br>
 Instalación: Este modelo se descargará automáticamente la primera vez que se ejecute el código y se guardará en `utils/Preprocessing/ImagesExtractionClassification/models` bajo el nombre `yolo11l.pt`.
 
-**Modelo de YOLO para la Identifiación de Piezas de Autos en Imágenes**
+**Modelo de YOLO para la Identifiación de Piezas de Vehículos en Imágenes**
 </br>
 Modelo: `yolo11l.pt` con fine-tuning para identificación de piezas.
 </br>
-Instalación: Deberás ejecutar el código alojado en `utils/Preprocessing/ImagesExtractionClassification/models/YOLO_Pieces_Fine_Tuning.ipynb` en una plataforma como
-Google Colab. Una vez que el proceso de fine-tuning finalice, deberás descargar el modelo "best.pt" y alojarlo en `utils/Preprocessing/ImagesExtractionClassification/models/` bajo el nombre `fine_tuned_yolo_car_pieces.pt`
+Instalación: Deberás ejecutar la porción de código bajo la sección `YOLO_Pieces_Fine-Tuning` del archivo alojado en `utils/Preprocessing/ImagesExtractionClassification/models/YOLO_Pieces_Fine_Tuning.ipynb` en una plataforma como Google Colab. Una vez que el proceso de fine-tuning finalice, deberás descargar el modelo `best.pt` y alojarlo en `utils/Preprocessing/ImagesExtractionClassification/models/` bajo el nombre `fine_tuned_yolo_car_pieces.pt`
+
+**Modelo de yolo para la Identificación de Daños en Vehículos**
+</br>
+Modelo: `yolo11m.pt` con fine-tuning para identificación de daños en vehículos.
+</br>
+Instalación: Ingresa al Github correspondiente [dando clic aquí](https://github.com/ReverendBayes/YOLO11m-Car-Damage-Detector/tree/main) y descarga el archivo denominado `trained.pt`, renómbralo a `fine_tuned_yolo_car_damages.pt` y guárdalo en la ruta `utils/Preprocessing/ImagesExtractionClassification/models`
 
 
 ### 3. Configurar la API de OpenAI

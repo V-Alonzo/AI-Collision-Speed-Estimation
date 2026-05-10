@@ -11,6 +11,8 @@ Resources/Reports/NotUploaded/*.pdf
 Resources/Reports/Preprocessed/images/*/
 Resources/Reports/Preprocessed/images/*.pdf
 
+utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/*
+
 
 utils/__pycache__/*.pyc
 utils/Preprocessing/ImagesExtractionClassification/__pycache__/*.pyc

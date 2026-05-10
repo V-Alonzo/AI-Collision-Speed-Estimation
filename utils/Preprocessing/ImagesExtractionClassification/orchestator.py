@@ -20,8 +20,6 @@ from utils.Preprocessing.ImagesExtractionClassification.pdf_creator import (
 
 from PATHS import *
 
-
-
 import shutil
 
 def begin_extraction(source_pdf_path):
