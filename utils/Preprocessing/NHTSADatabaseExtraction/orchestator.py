@@ -13,6 +13,7 @@ from utils.Preprocessing.ImagesExtractionClassification.photo_classifier import 
 from utils.Preprocessing.ImagesExtractionClassification.photo_classifier import get_photo_clip_context
 from utils.Preprocessing.ImagesExtractionClassification.photo_classifier import is_photograph
 from utils.Preprocessing.ImagesExtractionClassification.yolo_classifier import classify_cars_image, classify_damages_image
+from utils.Preprocessing.NHTSADatabaseExtraction.ciren_client import extract_case_general_vehicle
 from utils.Preprocessing.NHTSADatabaseExtraction.ciren_client import extract_case_summary
 from utils.Preprocessing.NHTSADatabaseExtraction.ciren_client import fetch_ciren_case_detail
 from utils.Preprocessing.NHTSADatabaseExtraction.ciren_client import fetch_ciren_case_index
@@ -23,6 +24,12 @@ VEHICLE_CROP_PADDING_RATIO = 0.08
 MINIMUM_VEHICLE_CROP_SIDE_PX = 64
 CIREN_IMAGES_OUTPUT_DIR = "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN"
 CIREN_CACHE_OUTPUT_PATH = "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/JSONs/cacheCIREN.json"
+CIREN_GENERAL_VEHICLE_METADATA_KEYS = (
+    "bodyCategory",
+    "bodyType",
+    "vehicleClass",
+    "vehicleHasTrailer",
+)
 
 _PHOTO_CLIP_CONTEXT = None
 
@@ -267,30 +274,32 @@ def _build_damaged_vehicle_output_path_with_custom_stem(image_path: str, output_
     return str(source_path.with_name(f"{output_stem}.jpg"))
 
 
-def isValidImage(imagePath: str, output_stem: str | None = None) -> List[str]:
+def isValidImage(imagePath: str, output_stem: str | None = None, subtype: str | None = None, isFromNHTSA: bool = True) -> List[str]:
     image = cv2.imread(imagePath)
 
     if image is None:
         _delete_file_if_exists(imagePath)
         return []
+    
+    if isFromNHTSA:
 
-    image, has_cars, boxes = classify_cars_image(image, draw_outputs=False)
+        image, has_cars, boxes = classify_cars_image(image, draw_outputs=False)
 
-    if not has_cars:
-        _delete_file_if_exists(imagePath)
-        return []
+        if not has_cars:
+            _delete_file_if_exists(imagePath)
+            return []
 
-    clip_context = _get_nhtsa_photo_clip_context()
-    isCarPhoto = is_photograph(
-        imagePath,
-        clip_context,
-        [0],
-        [i for i in range(1, len(PHOTO_TEXT_LABELS))],
-    )
+        clip_context = _get_nhtsa_photo_clip_context()
+        isCarPhoto = is_photograph(
+            imagePath,
+            clip_context,
+            [0],
+            [i for i in range(1, len(PHOTO_TEXT_LABELS))],
+        )
 
-    if(not isCarPhoto["isPhoto"]):
-        _delete_file_if_exists(imagePath)
-        return []
+        if(not isCarPhoto["isPhoto"]):
+            _delete_file_if_exists(imagePath)
+            return []
     
     saved_crops: List[str] = []
 
@@ -342,6 +351,11 @@ def _write_cached_results(cache_path: str, payload: Dict[str, Dict[str, Any]]) -
         json.dump(payload, cache_file, indent=4)
 
 
+def _remove_dir_if_empty(dir_path: str | None) -> None:
+    if dir_path and os.path.isdir(dir_path) and not os.listdir(dir_path):
+        os.rmdir(dir_path)
+
+
 def _build_ciren_output_stem(summary: Dict[str, Any], sequence: int, vehicle_number: Any = None) -> str:
 
     total_delta_v = summary.get("totalDeltaV") or summary.get("highestDeltaVTotal") or "UnknownDeltaV"
@@ -388,25 +402,31 @@ def download_valid_ciren_images(
 
         cache_key = str(ciren_id)
         cached_case = cached_cases.get(cache_key, {})
-        if cached_case.get("validatedImages"):
+        cached_case_has_general_vehicle_metadata = all(
+            metadata_key in cached_case for metadata_key in CIREN_GENERAL_VEHICLE_METADATA_KEYS
+        )
+        if cached_case.get("validatedImages") and cached_case_has_general_vehicle_metadata:
             print(f"CIREN case {ciren_id} already processed. Skipping.")
             continue
 
         print(f"Processing CIREN case {ciren_id}...")
+
+        case_output_dir = None
 
         case_payload: Dict[str, Any] = {
             "cirenId": ciren_id,
             "make": case_entry.get("make"),
             "model": case_entry.get("model"),
             "modelYear": case_entry.get("modelYear"),
-            "errors": [],
-            "validatedImages": [],
-            "candidateImages": [],
+            "errors": list(cached_case.get("errors", [])) if isinstance(cached_case.get("errors"), list) else [],
+            "validatedImages": list(cached_case.get("validatedImages", [])) if isinstance(cached_case.get("validatedImages"), list) else [],
+            "candidateImages": list(cached_case.get("candidateImages", [])) if isinstance(cached_case.get("candidateImages"), list) else [],
         }
 
         try:
             detail_payload = fetch_ciren_case_detail(ciren_id)
             summary = extract_case_summary(detail_payload)
+            general_vehicle = extract_case_general_vehicle(detail_payload)
 
             case_payload.update(
                 {
@@ -419,8 +439,17 @@ def download_valid_ciren_images(
                     "vehicleMake": summary.get("make"),
                     "vehicleModel": summary.get("model"),
                     "vehicleModelYear": summary.get("modelYear"),
+                    "bodyCategory": general_vehicle.get("bodyCategory"),
+                    "bodyType": general_vehicle.get("ncsaBodyType") or general_vehicle.get("vpicBodyClass") or general_vehicle.get("finalStageBodyClass"),
+                    "vehicleClass": general_vehicle.get("vehicleClassDescription"),
+                    "vehicleHasTrailer": general_vehicle.get("hasTrailer"),
                 }
             )
+
+            if case_payload["validatedImages"]:
+                cached_cases[cache_key] = case_payload
+                _write_cached_results(cache_path, cached_cases)
+                continue
 
             case_output_dir = _build_ciren_case_output_dir(case_payload["caseNumber"], output_dir)
             os.makedirs(case_output_dir, exist_ok=True)
@@ -428,20 +457,22 @@ def download_valid_ciren_images(
             validated_sequence = 1
             candidate_sequence = 1
             for image_candidate in iter_vehicle_image_candidates(ciren_id, detail_payload):
+                if "TIRE" in image_candidate.description.upper():
+                    continue
                 output_stem = _build_ciren_output_stem(summary, validated_sequence, image_candidate.vehicle_number)
                 candidate_stem = f"__candidate__{_build_ciren_output_stem(summary, candidate_sequence, image_candidate.vehicle_number)}"
                 candidate_file_path = os.path.join(case_output_dir, f"{candidate_stem}.jpg")
                 _save_ciren_candidate_image(image_candidate.image_bytes, candidate_file_path)
 
                 try:
-                    validated_images = isValidImage(candidate_file_path, output_stem=output_stem)
+                    
+                    validated_images = isValidImage(candidate_file_path, output_stem=output_stem, subtype = image_candidate.subtype, isFromNHTSA=False)
                 finally:
                     _delete_file_if_exists(candidate_file_path)
 
                 case_payload["candidateImages"].append(
                     {
                         "vehicleNumber": image_candidate.vehicle_number,
-                        "subtype": image_candidate.subtype,
                         "description": image_candidate.description,
                         "objectID": image_candidate.object_id,
                         "photoId": image_candidate.photo_id,
@@ -456,14 +487,12 @@ def download_valid_ciren_images(
 
             if not case_payload["validatedImages"]:
                 case_payload["errors"].append("No damaged vehicle photographs passed the current pipeline.")
-                if not os.listdir(case_output_dir):
-                    os.rmdir(case_output_dir)
-
-            if os.listdir(case_output_dir) == []:
-                os.rmdir(case_output_dir)
+                _remove_dir_if_empty(case_output_dir)
 
         except Exception as exc:
             case_payload["errors"].append(str(exc))
+
+        _remove_dir_if_empty(case_output_dir)
 
         cached_cases[cache_key] = case_payload
         _write_cached_results(cache_path, cached_cases)

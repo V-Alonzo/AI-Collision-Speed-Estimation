@@ -13,7 +13,7 @@ Resources/Reports/Preprocessed/images/*.pdf
 
 utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/*
 
-utils/Preprocessing/NHTSADatabaseExtraction/__pycache__
+utils/Preprocessing/NHTSADatabaseExtraction/__pycache__/*.pyc
 
 utils/__pycache__/*.pyc
 utils/Preprocessing/ImagesExtractionClassification/__pycache__/*.pyc
@@ -52,3 +52,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.DS_Store

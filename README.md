@@ -2,15 +2,16 @@
 
 ## Descripción General
 
-Este repositorio concentra actualmente la fase de preprocesamiento de reportes de siniestros viales en PDF. El flujo vigente combina:
+Este repositorio reúne la fase de preprocesamiento de reportes de siniestros viales en PDF. El flujo combina:
 
 - Gestión de PDFs y trazabilidad de archivos enviados a OpenAI.
 - Extracción y clasificación de imágenes embebidas en los reportes.
+- Extracción de evidencia visual desde bases públicas de NHTSA y CIREN.
 - Generación de salidas estructuradas con GPT-5 para ambiente, siniestro, vehículos y catálogo de imágenes.
 
-El punto de entrada actual es `main.py` que ejecuta `beginPreprocessing()`.
+El punto de entrada para el flujo de reportes PDF es `main.py`, que ejecuta `beginPreprocessing()`.
 
-## Alcance Actual del Repositorio
+## Alcance del Repositorio
 
 Aunque el proyecto está orientado a estimar velocidad tras un accidente, el código disponible en este repositorio está enfocado en la preparación de datos. La ejecución principal no entrena modelos ni produce una estimación final de velocidad por sí sola; prepara insumos estructurados para etapas posteriores.
 
@@ -39,14 +40,18 @@ Instalación: Deberás ejecutar la porción de código bajo la sección `YOLO_Pi
 
 **Modelo de yolo para la Identificación de Daños en Vehículos**
 </br>
-Modelo: `yolo11m.pt` con fine-tuning para identificación de daños en vehículos.
+Modelo: `yolo26l.pt` con fine-tuning para identificación de daños en vehículos.
 </br>
-Instalación: Ingresa al Github correspondiente [dando clic aquí](https://github.com/ReverendBayes/YOLO11m-Car-Damage-Detector/tree/main) y descarga el archivo denominado `trained.pt`, renómbralo a `fine_tuned_yolo_car_damages.pt` y guárdalo en la ruta `utils/Preprocessing/ImagesExtractionClassification/models`
+Instalación:
 
+1. Ingresa al dataset [dando clic aquí](https://platform.ultralytics.com/senkod/datasets/car-damage-v5v4iyolo26) y descarga el dataset en formato .ndjson.
+2. Abre el archivo ubicado en `utils/Preprocessing/ImagesExtractionClassification/models/YOLO_Pieces_Fine_Tuning.ipynb` haciendo uso de alguna herramienta como Kaggle o Google Colab y ejecuta la porción de código correspondiente a la sección `YOLO_CAR_DAMAGE_FINE_TUNING`. 
+3. Una vez que el fine-tuning finalice, abre la carpeta creada `runs` y dirígete a `detect/train-<valor_mas_alto>/weights` para descargar el modelo `best.pt`.
+4. Finalmente, renómbralo a `fine_tuned_yolo_car_damages.pt`y colócalo dentro de `utils/Preprocessing/ImagesExtractionClassification/models`.
 
 ### 3. Configurar la API de OpenAI
 
-El código actual no carga un archivo `.env`. La autenticación depende de la configuración estándar del SDK de OpenAI, por lo que debe existir la variable de entorno `OPENAI_API_KEY` en la sesión donde se ejecute el proyecto.
+El código no carga un archivo `.env`. La autenticación depende de la configuración estándar del SDK de OpenAI, por lo que debe existir la variable de entorno `OPENAI_API_KEY` en la sesión donde se ejecute el proyecto.
 
 Ejemplo:
 
@@ -63,8 +68,8 @@ La configuración operativa está distribuida en dos archivos:
 
 Parámetros relevantes:
 
-- `REPORTS_PATH_NOT_UPLOADED`: carpeta de PDFs nuevos.
-- `REPORTS_PATH_UPLOADED`: carpeta de PDFs ya procesados o inventariados.
+- `REPORTS_PATH_NOT_UPLOADED`: carpeta de PDFs pendientes de procesamiento.
+- `REPORTS_PATH_UPLOADED`: carpeta de PDFs ya inventariados.
 - `PREPROCESSED_JSONS_PATH`: carpeta de salidas de texto generadas por GPT.
 - `PREPROCESSED_IMAGES_PATH`: carpeta base de imágenes extraídas y clasificadas.
 - `CARS_YOLO_MODEL_PATH`: modelo YOLO para detectar autos.
@@ -78,27 +83,56 @@ Con el ambiente activo y la API configurada:
 python main.py
 ```
 
-### Extracción CIREN
+### Extracción desde NHTSA y CIREN
 
-Además del flujo NHTSA existente, el repositorio ahora incluye una ruta paralela para extraer casos desde Crash Viewer CIREN sin modificar el comportamiento actual de `beginExtraction()`.
+El módulo `utils/Preprocessing/NHTSADatabaseExtraction/orchestator.py` concentra la descarga y validación de imágenes provenientes de fuentes públicas de NHTSA y Crash Viewer CIREN.
 
-Entrada nueva:
+Responsabilidades principales de `orchestator.py`:
 
-- `utils/Preprocessing/NHTSADatabaseExtraction/orchestator.py` expone `beginCirenExtraction(ciren_ids=None)`.
-- Si `ciren_ids` es `None`, recorre el índice público completo de CIREN.
-- Si `ciren_ids` recibe una lista, procesa únicamente esos casos, por ejemplo `[527]`.
+- `get_valid_test(...)`: consulta el catálogo de pruebas instrumentadas de NHTSA, filtra configuraciones válidas, exige `closingSpeed > 0`, incorpora información de vehículos y persiste resultados en `cacheAPI.json`.
+- `download_valid_images(...)`: descarga imágenes de las pruebas NHTSA aprobadas por el filtro, las valida con el pipeline visual y limpia directorios vacíos.
+- `download_valid_ciren_images(...)`: recorre casos CIREN, construye la caché enriquecida del caso y conserva únicamente imágenes que pasan la validación de daño.
+- `beginExtraction()`: invoca `beginCirenExtraction(ciren_ids=list(range(1, 5000)))`.
+- `beginCirenExtraction(ciren_ids=None)`: ejecuta la extracción CIREN sobre el índice completo si `ciren_ids` es `None`, o sobre un subconjunto explícito si recibe una lista como `[527]`.
 
-Supuestos operativos de este flujo:
+#### Cliente Crash Viewer CIREN
 
-- El sitio `crashviewer.nhtsa.dot.gov` está protegido contra clientes HTTP básicos, por lo que la extracción usa `curl_cffi` para impersonar un navegador real.
-- El pipeline visual reutilizado es el mismo del flujo actual: detección de autos, filtro foto/no-foto con CLIP y validación de daños con YOLO más compuerta CLIP.
-- Las candidatas CIREN se obtienen desde la galería pública `Vehicle Images` del caso, priorizando subtipos exteriores del vehículo.
+El módulo `utils/Preprocessing/NHTSADatabaseExtraction/ciren_client.py` encapsula la comunicación con Crash Viewer y entrega candidatos de imagen listos para ser evaluados por el orquestador.
+
+Responsabilidades de `ciren_client.py`:
+
+- `_build_session()`: crea una sesión `curl_cffi` con impersonación de Chrome para evitar los bloqueos que Crash Viewer aplica a clientes HTTP básicos.
+- `fetch_ciren_case_index()`: realiza `POST /api/ciren/cases/search` con `{"filters": []}` para recuperar el índice público de casos.
+- `fetch_ciren_case_detail(ciren_id)`: consulta `GET /api/Ciren/GetCirenCrashDetails` y devuelve el detalle estructurado del caso.
+- `extract_case_summary(...)`: extrae la sección `cirenSummary`.
+- `extract_case_general_vehicle(...)`: selecciona el vehículo general que mejor corresponde con el resumen del caso y expone metadatos como `bodyCategory`, `bodyType`, `vehicleClass` y `hasTrailer`.
+- `iter_vehicle_image_candidates(...)`: consulta `GET /api/Ciren/CaseOverviewTreeResult` para identificar subtipos válidos por vehículo, usa `GET /api/ciren/GetVehThumbnailsByVehNo` para obtener miniaturas, deduplica por `objectID`, intenta descargar la foto completa con `GET /api/ciren/photo/download/{photo_id}` y usa la miniatura como respaldo si la descarga completa falla.
+
+Reglas aplicadas durante la iteración de candidatos CIREN:
+
+- Se descartan subtipos que contengan `INTERIOR`, `EXEMPLAR`, `INT`, `MISCELLANEOUS`, `UNDERCARRIAGE` o `TOP`.
+- Se evita procesar imágenes repetidas del mismo objeto mediante `objectID`.
+- La imagen completa tiene prioridad sobre la miniatura embebida en base64.
 
 Salidas CIREN:
 
 - Imágenes validadas: `utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/<CaseNumber>/`
 - Cache independiente: `utils/Preprocessing/NHTSADatabaseExtraction/Extraction/JSONs/cacheCIREN.json`
-- Nombre de archivo: `<TotalDeltaV|Unknown>_<MAIS|Unknown>_<seq>.jpg`
+- Nombre de archivo validado: `<TotalDeltaV|UnknownDeltaV>_<MAIS|UnknownSeverity>_<seq>_Vehicle<vehNo>.jpg`
+
+Metadatos persistidos por caso en `cacheCIREN.json`:
+
+- Identificadores del caso: `cirenId`, `caseId`, `caseNumber`.
+- Resumen del evento: `mais`, `totalDeltaV`, `objectContact`, `category`.
+- Vehículo principal: `vehicleMake`, `vehicleModel`, `vehicleModelYear`, `bodyCategory`, `bodyType`, `vehicleClass`, `vehicleHasTrailer`.
+- Trazabilidad del proceso: `candidateImages`, `validatedImages`, `errors`.
+
+Validación aplicada por el orquestador a imágenes CIREN:
+
+- Cada candidata se guarda temporalmente en disco dentro del directorio del caso.
+- `isValidImage(..., isFromNHTSA=False)` omite la compuerta de auto/foto usada para NHTSA y evalúa directamente daños con `classify_damages_image(...)`.
+- Si la imagen contiene daño detectable, se reescribe como salida final y se elimina el archivo temporal candidato.
+- Si ninguna imagen del caso supera la validación, el caso conserva el error correspondiente en caché y el directorio vacío se elimina.
 
 Ejemplo de uso desde Python:
 
@@ -108,23 +142,23 @@ from utils.Preprocessing.NHTSADatabaseExtraction.orchestator import beginCirenEx
 beginCirenExtraction(ciren_ids=[527])
 ```
 
-## Pipeline Actual de Preprocesamiento
+## Pipeline de Preprocesamiento
 
 ### 1. Carga y Recuperación de PDFs en OpenAI
 
 El módulo `utils/Preprocessing/filesManager.py` centraliza la administración de reportes PDF.
 
-Responsabilidades actuales:
+Responsabilidades:
 
 - Subir a OpenAI los PDFs ubicados en `Resources/Reports/NotUploaded`.
 - Registrar la relación `ID, Nombre` en `Resources/Reports/IDs.csv`.
 - Mover los PDFs cargados a `Resources/Reports/Uploaded`.
-- Recuperar metadatos de archivos ya registrados en el CSV aunque no hayan sido cargados en la ejecución actual.
+- Recuperar metadatos de archivos ya registrados en el CSV aunque no hayan sido cargados durante la ejecución en curso.
 
 Flujo implementado:
 
 1. `performFilesProcessing()` inicializa el cliente de OpenAI.
-2. `uploadPDFFiles()` sube los PDFs nuevos con `purpose="user_data"`.
+2. `uploadPDFFiles()` sube los PDFs pendientes con `purpose="user_data"`.
 3. Cada archivo subido se registra en `IDs.csv` y se mueve a la carpeta de subidos.
 4. `retrieveMissingGptFiles()` compara los IDs recuperados en la ejecución contra el inventario del CSV y recupera los faltantes.
 5. Se devuelve una lista unificada de archivos GPT que alimenta la etapa de extracción estructurada.
@@ -146,13 +180,13 @@ Cada imagen extraída se clasifica inmediatamente con YOLO para decidir si conti
 
 #### b. Eliminación de Imágenes Duplicadas
 
-Antes de continuar con las clasificaciones secundarias, `photos_classifier.py` ejecuta una deduplicación exacta sobre las carpetas `CARS/` y `NOCARS/`.
+Previo a las clasificaciones secundarias, `photos_classifier.py` ejecuta una deduplicación exacta sobre las carpetas `CARS/` y `NOCARS/`.
 
 Características de esta etapa:
 
 - Usa `imagededup` con `PHash` para generar hashes perceptuales.
 - Busca duplicados con `max_distance_threshold=0`, es decir, coincidencia exacta a nivel de hash.
-- Elimina de disco las imágenes repetidas detectadas antes de pasar a las siguientes etapas.
+- Elimina de disco las imágenes repetidas detectadas previo al resto de etapas.
 - Reporta por consola cuántos archivos fueron removidos en cada carpeta.
 
 Esta limpieza reduce ruido en la clasificación posterior y evita procesar múltiples veces la misma evidencia visual extraída del PDF.
@@ -220,7 +254,7 @@ Resources/Reports/Preprocessed/images/<nombre_pdf>/YOLOCARS/
 └── PIECES/
 ```
 
-Al finalizar el pipeline actual, solo se conserva la salida final:
+Al finalizar el pipeline, solo se conserva la salida final:
 
 ```text
 Resources/Reports/Preprocessed/images/<nombre_pdf>/YOLOCARS/
@@ -242,7 +276,7 @@ Además, el punto de entrada imprime:
 
 El módulo `utils/Preprocessing/Preprocessor.py` toma la lista de archivos GPT y ejecuta una serie ordenada de prompts definidos en `utils/Preprocessing/promptsAI.py`.
 
-Orden actual de extracción:
+Orden de extracción:
 
 1. `GPT_EXTRACTION_SINISTER_IMAGES`
 2. `GPT_EXTRACTION_ENVIRONMENT`
@@ -262,7 +296,7 @@ Las salidas se escriben en:
 Resources/Reports/Preprocessed/JSONs/<nombre_pdf>.txt
 `
 
-En el estado actual, estos archivos son `.txt` con respuestas JSON concatenadas por etapa; no existe todavía una consolidación automática a un único `.json` final por reporte.
+Las salidas se almacenan como archivos `.txt` con respuestas JSON concatenadas por etapa; no existe una consolidación automática a un único `.json` final por reporte.
 
 ## Esquemas de Referencia
 
@@ -288,7 +322,7 @@ Resources/
 
 Uso recomendado:
 
-1. Colocar PDFs nuevos en `Resources/Reports/NotUploaded`.
+1. Colocar PDFs en `Resources/Reports/NotUploaded`.
 2. Verificar que `Resources/Reports/IDs.csv` exista y conserve las columnas `ID,Nombre`.
 3. Ejecutar `python main.py`.
 4. Revisar salidas en `Resources/Reports/Uploaded`, `Resources/Reports/Preprocessed/JSONs` y `Resources/Reports/Preprocessed/images`.
@@ -303,6 +337,8 @@ Uso recomendado:
 - `utils/Preprocessing/promptsAI.py`: prompts y orden de extracción.
 - `utils/Preprocessing/ImagesExtractionClassification/orchestator.py`: secuencia completa de extracción/clasificación de imágenes, limpieza de artefactos y construcción del PDF final de evidencia.
 - `utils/Preprocessing/ImagesExtractionClassification/pdf_creator.py`: conversión de imágenes finales (`PHOTOS/`) a un PDF consolidado por reporte.
+- `utils/Preprocessing/NHTSADatabaseExtraction/orchestator.py`: orquestación de la descarga, validación y cacheo de imágenes de NHTSA y CIREN.
+- `utils/Preprocessing/NHTSADatabaseExtraction/ciren_client.py`: cliente HTTP de Crash Viewer CIREN, selección de metadatos del caso y generación de candidatos de imagen por vehículo.
 - `PATHS.py`: rutas operativas.
 - `configurations.py`: hiperparámetros y etiquetas de clasificación.
 
