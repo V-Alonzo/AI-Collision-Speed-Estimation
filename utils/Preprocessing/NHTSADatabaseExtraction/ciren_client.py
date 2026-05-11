@@ -1,28 +1,34 @@
+"""HTTP client helpers for public Crash Viewer CIREN data extraction."""
+
 import base64
 import binascii
 import json
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List
 
+from configurations import CIREN_BASE_URL
+from configurations import CIREN_CASE_OVERVIEW_MODE
+from configurations import CIREN_IGNORED_SUBTYPE_KEYWORDS
+from configurations import CIREN_REQUEST_TIMEOUT_SECONDS
 
-BASE_URL = "https://crashviewer.nhtsa.dot.gov"
-_DEFAULT_TIMEOUT_SECONDS = 60
-_CIREN_MODE = 3
-
-
+JsonDict = Dict[str, Any]
 
 @dataclass(frozen=True)
 class CirenImageCandidate:
+    """Normalized candidate image emitted by the CIREN gallery traversal."""
+
     ciren_id: int
     vehicle_number: int
     description: str
     object_id: str
     photo_id: int | None
     image_bytes: bytes
-    subtype :str
+    subtype: str
 
 
 def _build_session():
+    """Create an HTTP session that mimics a browser accepted by Crash Viewer."""
+
     try:
         from curl_cffi import requests as curl_requests
     except ImportError as exc:
@@ -35,8 +41,8 @@ def _build_session():
         {
             "Accept": "application/json, text/plain, */*",
             "Accept-Language": "en-US,en;q=0.9",
-            "Origin": BASE_URL,
-            "Referer": f"{BASE_URL}/ciren/searchindex",
+            "Origin": CIREN_BASE_URL,
+            "Referer": f"{CIREN_BASE_URL}/ciren/searchindex",
             "User-Agent": (
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
                 "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
@@ -47,6 +53,8 @@ def _build_session():
 
 
 def _decode_data_url_image(data_url: str) -> bytes:
+    """Decode the base64 payload embedded in a Crash Viewer thumbnail data URL."""
+
     if not data_url or "," not in data_url:
         raise ValueError("Invalid CIREN thumbnail payload.")
 
@@ -58,9 +66,11 @@ def _decode_data_url_image(data_url: str) -> bytes:
 
 
 def _fetch_full_resolution_photo(session, photo_id: int) -> bytes:
+    """Download the highest resolution image available for a CIREN photo id."""
+
     response = session.get(
-        f"{BASE_URL}/api/ciren/photo/download/{photo_id}",
-        timeout=_DEFAULT_TIMEOUT_SECONDS,
+        f"{CIREN_BASE_URL}/api/ciren/photo/download/{photo_id}",
+        timeout=CIREN_REQUEST_TIMEOUT_SECONDS,
     )
     response.raise_for_status()
 
@@ -70,11 +80,13 @@ def _fetch_full_resolution_photo(session, photo_id: int) -> bytes:
     return response.content
 
 
-def _fetch_ciren_case_overview_tree(session, ciren_id: int) -> List[Dict[str, Any]]:
+def _fetch_ciren_case_overview_tree(session, ciren_id: int) -> List[JsonDict]:
+    """Return the overview tree used to discover valid image subtypes per vehicle."""
+
     response = session.get(
-        f"{BASE_URL}/api/Ciren/CaseOverviewTreeResult",
-        params={"cirenID": ciren_id, "mode": _CIREN_MODE},
-        timeout=_DEFAULT_TIMEOUT_SECONDS,
+        f"{CIREN_BASE_URL}/api/Ciren/CaseOverviewTreeResult",
+        params={"cirenID": ciren_id, "mode": CIREN_CASE_OVERVIEW_MODE},
+        timeout=CIREN_REQUEST_TIMEOUT_SECONDS,
     )
     response.raise_for_status()
 
@@ -85,7 +97,9 @@ def _fetch_ciren_case_overview_tree(session, ciren_id: int) -> List[Dict[str, An
     return payload
 
 
-def _parse_case_tree_node_params(raw_params: Any) -> Dict[str, Any]:
+def _parse_case_tree_node_params(raw_params: Any) -> JsonDict:
+    """Parse the serialized params blob found in overview tree nodes."""
+
     if not isinstance(raw_params, str) or not raw_params:
         return {}
     try:
@@ -96,7 +110,9 @@ def _parse_case_tree_node_params(raw_params: Any) -> Dict[str, Any]:
     return payload if isinstance(payload, dict) else {}
 
 
-def _extract_vehicle_image_subtypes(case_overview_tree: List[Dict[str, Any]]) -> Dict[int, List[str]]:
+def _extract_vehicle_image_subtypes(case_overview_tree: List[JsonDict]) -> Dict[int, List[str]]:
+    """Group available Crash Viewer image subtypes by vehicle number."""
+
     subtypes_by_vehicle: Dict[int, List[str]] = {}
 
     for node in case_overview_tree:
@@ -121,7 +137,9 @@ def _extract_vehicle_image_subtypes(case_overview_tree: List[Dict[str, Any]]) ->
     return subtypes_by_vehicle
 
 
-def _unique_vehicle_numbers(detail_payload: Dict[str, Any]) -> List[int]:
+def _unique_vehicle_numbers(detail_payload: JsonDict) -> List[int]:
+    """Collect all distinct vehicle numbers present in CIREN detail sections."""
+
     vehicle_numbers = set()
 
     for vehicle in detail_payload.get("cirenGeneralVehicleVehicles", []):
@@ -137,12 +155,14 @@ def _unique_vehicle_numbers(detail_payload: Dict[str, Any]) -> List[int]:
     return sorted(vehicle_numbers)
 
 
-def fetch_ciren_case_index() -> List[Dict[str, Any]]:
+def fetch_ciren_case_index() -> List[JsonDict]:
+    """Fetch the public CIREN index exposed by Crash Viewer."""
+
     session = _build_session()
     response = session.post(
-        f"{BASE_URL}/api/ciren/cases/search",
+        f"{CIREN_BASE_URL}/api/ciren/cases/search",
         json={"filters": []},
-        timeout=_DEFAULT_TIMEOUT_SECONDS,
+        timeout=CIREN_REQUEST_TIMEOUT_SECONDS,
     )
     response.raise_for_status()
 
@@ -153,12 +173,14 @@ def fetch_ciren_case_index() -> List[Dict[str, Any]]:
     return payload
 
 
-def fetch_ciren_case_detail(ciren_id: int) -> Dict[str, Any]:
+def fetch_ciren_case_detail(ciren_id: int) -> JsonDict:
+    """Fetch the structured detail payload for a specific CIREN case."""
+
     session = _build_session()
     response = session.get(
-        f"{BASE_URL}/api/Ciren/GetCirenCrashDetails",
+        f"{CIREN_BASE_URL}/api/Ciren/GetCirenCrashDetails",
         params={"cirenId": ciren_id},
-        timeout=_DEFAULT_TIMEOUT_SECONDS,
+        timeout=CIREN_REQUEST_TIMEOUT_SECONDS,
     )
     response.raise_for_status()
 
@@ -170,6 +192,8 @@ def fetch_ciren_case_detail(ciren_id: int) -> Dict[str, Any]:
 
 
 def _normalize_vehicle_identity_value(value: Any) -> str:
+    """Normalize make/model/year values so they can be compared reliably."""
+
     if value is None:
         return ""
 
@@ -177,8 +201,10 @@ def _normalize_vehicle_identity_value(value: Any) -> str:
 
 
 def _find_primary_general_vehicle(
-    detail_payload: Dict[str, Any], summary: Dict[str, Any] | None = None
-) -> Dict[str, Any]:
+    detail_payload: JsonDict, summary: JsonDict | None = None
+) -> JsonDict:
+    """Select the general vehicle record that best matches the case summary."""
+
     general_vehicles = detail_payload.get("cirenGeneralVehicleVehicles", [])
     if not isinstance(general_vehicles, list) or not general_vehicles:
         return {}
@@ -229,7 +255,9 @@ def _find_primary_general_vehicle(
     return {}
 
 
-def extract_case_summary(detail_payload: Dict[str, Any]) -> Dict[str, Any]:
+def extract_case_summary(detail_payload: JsonDict) -> JsonDict:
+    """Return the summary section from a CIREN case detail payload."""
+
     summary = detail_payload.get("cirenSummary")
     if not isinstance(summary, dict):
         return {}
@@ -237,7 +265,9 @@ def extract_case_summary(detail_payload: Dict[str, Any]) -> Dict[str, Any]:
     return summary
 
 
-def extract_case_general_vehicle(detail_payload: Dict[str, Any]) -> Dict[str, Any]:
+def extract_case_general_vehicle(detail_payload: JsonDict) -> JsonDict:
+    """Return the main general-vehicle record associated with the case."""
+
     summary = extract_case_summary(detail_payload)
     general_vehicle = _find_primary_general_vehicle(detail_payload, summary=summary)
     if not isinstance(general_vehicle, dict):
@@ -246,25 +276,32 @@ def extract_case_general_vehicle(detail_payload: Dict[str, Any]) -> Dict[str, An
     return general_vehicle
 
 
-def iter_vehicle_image_candidates(ciren_id: int, detail_payload: Dict[str, Any]) -> Iterable[CirenImageCandidate]:
+def _should_ignore_subtype(subtype: str) -> bool:
+    """Return whether a Crash Viewer subtype should be skipped for damage review."""
+
+    subtype_upper = subtype.upper()
+    return any(keyword in subtype_upper for keyword in CIREN_IGNORED_SUBTYPE_KEYWORDS)
+
+
+def iter_vehicle_image_candidates(ciren_id: int, detail_payload: JsonDict) -> Iterable[CirenImageCandidate]:
+    """Yield deduplicated candidate images from the public CIREN vehicle galleries."""
+
     session = _build_session()
     seen_object_ids = set()
     case_overview_tree = _fetch_ciren_case_overview_tree(session, ciren_id)
     subtypes_by_vehicle = _extract_vehicle_image_subtypes(case_overview_tree)
 
-    toIgnoreSubtypesKeywords = ["INTERIOR", "EXEMPLAR", "INT", "MISCELLANEOUS", "UNDERCARRIAGE", "TOP"]
-
     for vehicle_number in _unique_vehicle_numbers(detail_payload):
         for subtype in subtypes_by_vehicle.get(vehicle_number, []):
 
-            if any(keyword in subtype.upper() for keyword in toIgnoreSubtypesKeywords):
+            if _should_ignore_subtype(subtype):
                 print(f"Ignoring subtype {subtype} for vehicle {vehicle_number} in case {ciren_id} due to matching ignore keywords.")
                 continue
 
             response = session.get(
-                f"{BASE_URL}/api/ciren/GetVehThumbnailsByVehNo",
+                f"{CIREN_BASE_URL}/api/ciren/GetVehThumbnailsByVehNo",
                 params={"caseID": ciren_id, "vehNo": vehicle_number, "subType": subtype},
-                timeout=_DEFAULT_TIMEOUT_SECONDS,
+                timeout=CIREN_REQUEST_TIMEOUT_SECONDS,
             )
             response.raise_for_status()
 
