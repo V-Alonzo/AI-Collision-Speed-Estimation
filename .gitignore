@@ -11,6 +11,8 @@ Resources/Reports/NotUploaded/*.pdf
 Resources/Reports/Preprocessed/images/*/
 Resources/Reports/Preprocessed/images/*.pdf
 
+.github/skills
+
 utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/*
 
 utils/Preprocessing/NHTSADatabaseExtraction/__pycache__/*.pyc
