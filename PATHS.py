@@ -7,4 +7,6 @@ PREPROCESSED_JSONS_PATH = f"{PREPROCESSED_FILES_PATH}/JSONs"
 PREPROCESSED_IMAGES_PATH = f"{PREPROCESSED_FILES_PATH}/images"
 CARS_YOLO_MODEL_PATH = 'utils/Preprocessing/ImagesExtractionClassification/models/yolo11l.pt'
 PIECES_YOLO_MODEL_PATH = 'utils/Preprocessing/ImagesExtractionClassification/models/fine_tuned_yolo_car_pieces.pt'
-
+DAMAGES_YOLO_MODEL_PATH = 'utils/Preprocessing/ImagesExtractionClassification/models/fine_tuned_yolo_car_damages.pt'
+CIREN_IMAGES_OUTPUT_DIR = "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN"
+CIREN_CACHE_OUTPUT_PATH = "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/JSONs/cacheCIREN.json"
