@@ -1,4 +1,4 @@
-name: CESVI
+name: VelocityEstimationAI
 channels:
   - conda-forge
   - defaults
