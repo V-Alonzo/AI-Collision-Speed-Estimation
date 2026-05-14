@@ -2,46 +2,39 @@
 
 ## Descripción General
 
-Este repositorio concentra actualmente la fase de preprocesamiento de reportes de siniestros viales en PDF. El flujo vigente combina:
+Este repositorio concentra la preparación de datos para etapas posteriores de análisis y modelado. Actualmente conviven dos flujos principales:
 
-- Gestión de PDFs y trazabilidad de archivos enviados a OpenAI.
-- Extracción y clasificación de imágenes embebidas en los reportes.
-- Generación de salidas estructuradas con GPT-5 para ambiente, siniestro, vehículos y catálogo de imágenes.
+- Extracción pública de imágenes y metadatos desde CIREN y NHTSA.
+- Preprocesamiento histórico de reportes PDF con extracción visual y salidas estructuradas asistidas por OpenAI.
 
-El punto de entrada actual es `main.py` que ejecuta `beginPreprocessing()`.
+El punto de entrada activo en `main.py` ya no ejecuta el preprocesamiento PDF por defecto. Hoy dispara la extracción pública CIREN y después exporta la caché resultante a parquet.
 
 ## Alcance Actual del Repositorio
 
-Aunque el proyecto está orientado a estimar velocidad tras un accidente, el código disponible en este repositorio está enfocado en la preparación de datos. La ejecución principal no entrena modelos ni produce una estimación final de velocidad por sí sola; prepara insumos estructurados para etapas posteriores.
+Aunque el proyecto está orientado a estimar velocidad antes del impacto, el código disponible en este repositorio sigue enfocado en generar insumos limpios y reutilizables. No entrena un modelo final ni produce una estimación de velocidad por sí solo.
 
 ## Configuración del Entorno
 
-### 1. Crear el Ambiente de Conda
+### 1. Crear el ambiente Conda
 
 ```bash
 conda env create -f environment.yml
-conda activate CESVI
+conda activate VelocityEstimationAI
 ```
 
-### 2. Configuración de los Modelos YOLO
+### 2. Verificar modelos locales
 
-**Modelo de YOLO para la Identifiación de Autos en Imágenes**
-</br>
-Modelo: `yolo11l.pt`
-</br>
-Instalación: Este modelo se descargará automáticamente la primera vez que se ejecute el código y se guardará en `utils/Preprocessing/ImagesExtractionClassification/models` bajo el nombre `yolo11l.pt`.
+El flujo actual usa tres modelos visuales:
 
-**Modelo de YOLO para la Identifiación de Piezas de Autos en Imágenes**
-</br>
-Modelo: `yolo11l.pt` con fine-tuning para identificación de piezas.
-</br>
-Instalación: Deberás ejecutar el código alojado en `utils/Preprocessing/ImagesExtractionClassification/models/YOLO_Pieces_Fine_Tuning.ipynb` en una plataforma como
-Google Colab. Una vez que el proceso de fine-tuning finalice, deberás descargar el modelo "best.pt" y alojarlo en `utils/Preprocessing/ImagesExtractionClassification/models/` bajo el nombre `fine_tuned_yolo_car_pieces.pt`
+- Autos: `utils/Preprocessing/ImagesExtractionClassification/models/yolo11l.pt`
+- Piezas: `utils/Preprocessing/ImagesExtractionClassification/models/fine_tuned_yolo_car_pieces.pt`
+- Daños: `utils/Preprocessing/ImagesExtractionClassification/models/fine_tuned_yolo_car_damages.pt`
 
+El modelo base de autos puede descargarse automáticamente cuando Ultralytics lo necesite. Los modelos afinados de piezas y daños deben existir localmente dentro de la carpeta `utils/Preprocessing/ImagesExtractionClassification/models/`.
 
-### 3. Configurar la API de OpenAI
+### 3. Configurar OpenAI solo si usarás el flujo PDF
 
-El código actual no carga un archivo `.env`. La autenticación depende de la configuración estándar del SDK de OpenAI, por lo que debe existir la variable de entorno `OPENAI_API_KEY` en la sesión donde se ejecute el proyecto.
+La extracción pública CIREN/NHTSA no requiere `OPENAI_API_KEY`. Esa variable sigue siendo necesaria únicamente para el flujo de preprocesamiento de PDFs que genera salidas estructuradas con OpenAI.
 
 Ejemplo:
 
@@ -49,196 +42,162 @@ Ejemplo:
 export OPENAI_API_KEY="tu_api_key"
 ```
 
-### 4. Rutas y Parámetros Locales
+### 4. Rutas y parámetros relevantes
 
-La configuración operativa está distribuida en dos archivos:
+La configuración operativa está distribuida principalmente en dos archivos:
 
-- `PATHS.py`: rutas de entrada, salida y modelos.
-- `configurations.py`: clases objetivo, extensiones de imagen y umbral de clasificación foto/no-foto.
+- `PATHS.py`: rutas de modelos, cachés y salidas.
+- `configurations.py`: clases YOLO, umbrales y parámetros de extracción pública.
 
-Parámetros relevantes:
+Parámetros relevantes del estado actual:
 
-- `REPORTS_PATH_NOT_UPLOADED`: carpeta de PDFs nuevos.
-- `REPORTS_PATH_UPLOADED`: carpeta de PDFs ya procesados o inventariados.
-- `PREPROCESSED_JSONS_PATH`: carpeta de salidas de texto generadas por GPT.
-- `PREPROCESSED_IMAGES_PATH`: carpeta base de imágenes extraídas y clasificadas.
-- `CARS_YOLO_MODEL_PATH`: modelo YOLO para detectar autos.
-- `PIECES_YOLO_MODEL_PATH`: modelo YOLO afinado para detectar piezas.
+- `CIREN_IMAGES_OUTPUT_DIR`: carpeta de imágenes validadas de CIREN.
+- `CIREN_CACHE_OUTPUT_PATH`: caché JSON de casos CIREN.
+- `CIREN_PARQUET_OUTPUT_DIR`: carpeta de exportación parquet.
+- `CIREN_DEFAULT_CASE_ID_RANGE`: rango por defecto que usa `main.py` al lanzar CIREN.
+- `NHTSA_ALLOWED_TEST_CONFIGURATIONS`: configuraciones válidas para descargar pruebas NHTSA.
+- `YOLO_CONFIDENCE_THRESHOLD`: umbral global de confianza para inferencia visual.
 
-## Ejecución
+## Puntos de Entrada Actuales
 
-Con el ambiente activo y la API configurada:
+### Ejecución por defecto
+
+Con el ambiente activo:
 
 ```bash
 python main.py
 ```
 
-## Pipeline Actual de Preprocesamiento
+En el estado actual, este comando ejecuta:
 
-### 1. Carga y Recuperación de PDFs en OpenAI
+1. `beginExtraction(extraction_from="ciren", just_refresh_cache_and_parquet=False)`.
+2. Catalogación de candidatos CIREN.
+3. Descarga y validación de imágenes dañadas.
+4. Exportación de la caché a parquet.
 
-El módulo `utils/Preprocessing/filesManager.py` centraliza la administración de reportes PDF.
+### Comandos útiles del flujo público
 
-Responsabilidades actuales:
+Extraer un caso CIREN concreto:
 
-- Subir a OpenAI los PDFs ubicados en `Resources/Reports/NotUploaded`.
-- Registrar la relación `ID, Nombre` en `Resources/Reports/IDs.csv`.
-- Mover los PDFs cargados a `Resources/Reports/Uploaded`.
-- Recuperar metadatos de archivos ya registrados en el CSV aunque no hayan sido cargados en la ejecución actual.
-
-Flujo implementado:
-
-1. `performFilesProcessing()` inicializa el cliente de OpenAI.
-2. `uploadPDFFiles()` sube los PDFs nuevos con `purpose="user_data"`.
-3. Cada archivo subido se registra en `IDs.csv` y se mueve a la carpeta de subidos.
-4. `retrieveMissingGptFiles()` compara los IDs recuperados en la ejecución contra el inventario del CSV y recupera los faltantes.
-5. Se devuelve una lista unificada de archivos GPT que alimenta la etapa de extracción estructurada.
-
-### 2. Extracción y Clasificación de Imágenes desde PDFs
-
-La canalización de imágenes está en `utils/Preprocessing/ImagesExtractionClassification/` y se ejecuta desde `extractImagesFromUploadedPDFs()` en `orchestator.py`.
-
-### Etapas de la Canalización
-
-#### a. Extracción de Imágenes Embebidas en PDF
-
-`pdf_extractor.py` utiliza PyMuPDF (`fitz`) para extraer imágenes incrustadas por página.
-
-Cada imagen extraída se clasifica inmediatamente con YOLO para decidir si contiene autos:
-
-- Si detecta autos, se guarda en `CARS/`.
-- Si no detecta autos, se guarda en `NOCARS/`.
-
-#### b. Eliminación de Imágenes Duplicadas
-
-Antes de continuar con las clasificaciones secundarias, `photos_classifier.py` ejecuta una deduplicación exacta sobre las carpetas `CARS/` y `NOCARS/`.
-
-Características de esta etapa:
-
-- Usa `imagededup` con `PHash` para generar hashes perceptuales.
-- Busca duplicados con `max_distance_threshold=0`, es decir, coincidencia exacta a nivel de hash.
-- Elimina de disco las imágenes repetidas detectadas antes de pasar a las siguientes etapas.
-- Reporta por consola cuántos archivos fueron removidos en cada carpeta.
-
-Esta limpieza reduce ruido en la clasificación posterior y evita procesar múltiples veces la misma evidencia visual extraída del PDF.
-
-#### c. Clasificación de Piezas Automotrices
-
-`pieces_classifier.py` toma las imágenes de `NOCARS/` y aplica un segundo modelo YOLO afinado para separar:
-
-- `PIECES/`: imágenes sin auto completo pero con piezas relevantes.
-- `NOPIECES/`: imágenes que no contienen ni autos ni piezas relevantes.
-
-#### d. Clasificación Foto vs. No Foto
-
-`photos_classifier.py` procesa las carpetas `CARS/` y `PIECES/` para decidir si una imagen es una fotografía real o material no fotográfico.
-
-La decisión combina:
-
-- Un modelo CLIP `ViT-B-32` (`open_clip`).
-- Etiquetas de texto definidas en `configurations.py`.
-- Una heurística de ruido visual.
-- El umbral `IS_PHOTOGRAPH_PROBABILITY_THRESHOLD`.
-
-Las salidas se copian en:
-
-- `PHOTOS/`: imágenes clasificadas como fotografías.
-- `NOPHOTOS/`: imágenes clasificadas como render, dibujo o material no fotográfico.
-
-#### e. Limpieza Automática de Artefactos Intermedios
-
-Una vez que termina la clasificación foto/no-foto, el orquestador elimina automáticamente las carpetas intermedias que solo fueron necesarias durante el procesamiento:
-
-- `CARS/`
-- `NOCARS/`
-- `PIECES/`
-- `NOPIECES/`
-- `NOPHOTOS/`
-
-Con esto, la salida persistente se concentra únicamente en las imágenes finales útiles para etapas posteriores.
-
-#### f. Generación de PDF Consolidado de Evidencia Fotográfica
-
-Una vez que se obtiene la carpeta `PHOTOS/`, el orquestador de `ImagesExtractionClassification/orchestator.py` invoca `generate_images_pdf()` de `pdf_creator.py` para crear un único PDF final por reporte.
-
-Cómo funciona `generate_images_pdf(images_directory, output_pdf_path, pdf_name)`:
-
-1. Lee las imágenes de `PHOTOS/`.
-2. Convierte cada imagen a RGB y la serializa como PDF individual temporal en un directorio efímero (`tempfile.TemporaryDirectory`).
-3. Une los PDFs temporales usando PyMuPDF (`fitz`) con `insert_pdf`.
-4. Guarda el PDF consolidado en `YOLOCARS/` con nombre `<nombre_reporte>.pdf`.
-5. Elimina automáticamente los archivos temporales al salir del contexto.
-
-En consecuencia, `begin_extraction(source_pdf_path)` termina no solo con las fotos clasificadas, sino también con un entregable único que facilita revisión humana, trazabilidad y consumo por etapas posteriores.
-
-### Estructura de Salida de Imágenes
-
-Durante la ejecución se crea una estructura temporal con esta forma:
-
-```text
-Resources/Reports/Preprocessed/images/<nombre_pdf>/YOLOCARS/
-├── CARS/
-├── NOCARS/
-├── NOPHOTOS/
-├── NOPIECES/
-├── PHOTOS/
-└── PIECES/
+```bash
+python -c "from utils.Preprocessing.NHTSADatabaseExtraction.ciren_extractor import beginCirenExtraction; beginCirenExtraction(ciren_ids=[527])"
 ```
 
-Al finalizar el pipeline actual, solo se conserva la salida final:
+Refrescar solo metadatos CIREN y regenerar parquet sin reextraer imágenes:
 
-```text
-Resources/Reports/Preprocessed/images/<nombre_pdf>/YOLOCARS/
-├── PHOTOS/
-└── <nombre_pdf>.pdf
+```bash
+python -c "from utils.Preprocessing.NHTSADatabaseExtraction.orchestator import beginExtraction; beginExtraction('ciren', just_refresh_cache_and_parquet=True)"
 ```
 
-### 3. Ejecución Segura y Medición de Tiempo
+Ejecutar la extracción NHTSA desde el orquestador:
 
-`main.py` encapsula la ejecución dentro de `if __name__ == "__main__":`, lo que evita errores de `multiprocessing` al utilizar librerías que crean procesos hijos durante la deduplicación en macOS y otros entornos con estrategia `spawn`.
+```bash
+python -c "from utils.Preprocessing.NHTSADatabaseExtraction.orchestator import beginExtraction; beginExtraction('nhtsa')"
+```
 
-Además, el punto de entrada imprime:
+### Flujo PDF histórico
 
-- Marca temporal de inicio.
-- Marca temporal de fin.
-- Tiempo total de ejecución en segundos.
+El preprocesamiento de reportes PDF sigue existiendo, pero ya no es el entrypoint por defecto. Si necesitas ese flujo, debes invocar `beginPreprocessing()` manualmente desde `utils/Preprocessing/orchestator.py` o volver a habilitarlo en `main.py`.
 
-### 4. Extracción Estructurada con GPT-5
+## Flujo Público de Extracción
 
-El módulo `utils/Preprocessing/Preprocessor.py` toma la lista de archivos GPT y ejecuta una serie ordenada de prompts definidos en `utils/Preprocessing/promptsAI.py`.
+### CIREN
 
-Orden actual de extracción:
+El flujo CIREN vive en `utils/Preprocessing/NHTSADatabaseExtraction/` y opera en dos etapas desacopladas:
 
-1. `GPT_EXTRACTION_SINISTER_IMAGES`
-2. `GPT_EXTRACTION_ENVIRONMENT`
-3. `GPT_EXTRACTION_VEHICLES_IMAGES`
-4. `GPT_EXTRACTION_VEHICLES`
+1. Catalogación de casos y candidatos.
+2. Descarga y validación de imágenes candidatas.
 
-Detalles importantes:
+Resumen del comportamiento actual:
 
-- El primer prompt genera el `CatalogoImagenes`.
-- Las extracciones posteriores pueden reutilizar ese catálogo como referencia cruzada.
-- El modelo usado en esta etapa es `gpt-5`.
-- Cada respuesta se concatena en un archivo de texto por reporte.
+- Consulta el índice público de casos CIREN en Crash Viewer.
+- Obtiene metadatos detallados por caso y por vehículo.
+- Descubre subtipos válidos de galerías a partir del árbol de overview del caso.
+- Guarda candidatos de imagen en caché antes de descargar los bytes finales.
+- Reanuda corridas incompletas usando `candidateImages`, `revisedImages`, `validImages` y `validatedImageRecords`.
+- Filtra imágenes con el pipeline visual de daños.
+- Exporta casos, imágenes y training manifest a parquet.
 
-Las salidas se escriben en:
+Metadatos CIREN hoy priorizados en caché y parquet:
 
-`
-Resources/Reports/Preprocessed/JSONs/<nombre_pdf>.txt
-`
+- `vehicleClass`
+- `cdc`
+- `clockDirection`
+- `forceDirection`
+- `rolloverStatus`
+- `primaryVehicleNumber`
+- `damagePlaneDescription`
+- `severityDescription`
+- `curbWeight`
+- `cargoWeight`
+- `totalDeltaV`
+- `mais`
 
-En el estado actual, estos archivos son `.txt` con respuestas JSON concatenadas por etapa; no existe todavía una consolidación automática a un único `.json` final por reporte.
+### NHTSA
 
-## Esquemas de Referencia
+El flujo NHTSA consulta el catálogo público de pruebas, filtra pruebas compatibles y valida sus imágenes multimedia.
 
-La carpeta `utils/Preprocessing/JSONStructures/` contiene versiones de referencia de los esquemas objetivo:
+Resumen del comportamiento actual:
 
-- `extractionObjective.json`
-- `extractionObjective2.json`
+- Consulta páginas del endpoint público de resultados de prueba.
+- Filtra configuraciones válidas y exige `closingSpeed > 0`.
+- Descarga multimedia asociada a cada prueba aprobada.
+- Rechaza imágenes sin auto, no fotográficas o sin daño visible.
+- Conserva las imágenes finales válidas y actualiza `cacheAPI.json`.
 
-Estos archivos sirven como apoyo documental para el diseño de la extracción, mientras que la lógica efectiva usada en ejecución reside en `promptsAI.py`.
+## Artefactos Generados por la Extracción Pública
 
-## Estructura Operativa Relevante y Modo de Uso
+La extracción pública escribe sus salidas en esta estructura:
+
+```text
+utils/Preprocessing/NHTSADatabaseExtraction/Extraction/
+├── Images/
+│   ├── CIREN/
+│   └── <TestNo>/
+├── JSONs/
+│   ├── cacheCIREN.json
+│   └── cacheAPI.json
+└── Parquets/
+    └── CIREN/
+        ├── ciren_cases.parquet
+        ├── ciren_images.parquet
+        └── ciren_training_manifest.parquet
+```
+
+Contenido de los artefactos principales:
+
+- `cacheCIREN.json`: estado reanudable por caso, candidatos catalogados, revisión de objetos y metadatos de salida.
+- `ciren_cases.parquet`: tabla de casos con delta-v, severidad y metadata vehicular.
+- `ciren_images.parquet`: tabla de imágenes validadas con rutas, secuencia y referencias de origen.
+- `ciren_training_manifest.parquet`: unión analítica entre casos e imágenes para modelado posterior.
+
+## Documentación Disponible
+
+El PR más reciente añadió documentación específica para el flujo CIREN:
+
+- Tutorial de primera ejecución: `Documentation/Diátaxis/Tutorials/ImagesExtraction/CIREN_EXTRACTION_TUTORIAL.md`
+- Referencia de metadatos requeridos: `Documentation/Diátaxis/Reference/CIREN/CIREN_REQUIRED_METADATA_FIELDS_REFERENCE.md`
+
+Si vas a tocar el extractor CIREN o a consumir los parquet, estos dos documentos deberían leerse antes de modificar configuración o cache.
+
+## Flujo Histórico de Preprocesamiento PDF
+
+Además del extractor público, el repositorio conserva el pipeline de PDFs en `utils/Preprocessing/`. Ese flujo sigue cubriendo:
+
+- Gestión de PDFs y trazabilidad de archivos enviados a OpenAI.
+- Extracción de imágenes embebidas en reportes.
+- Clasificación de autos, piezas y fotografías.
+- Generación de salidas de texto estructuradas para ambiente, siniestro, vehículos y catálogo de imágenes.
+
+Salida relevante del flujo PDF:
+
+- `Resources/Reports/Uploaded/`
+- `Resources/Reports/Preprocessed/JSONs/`
+- `Resources/Reports/Preprocessed/images/`
+
+Ese pipeline sigue siendo útil, pero ya no describe el comportamiento por defecto de `main.py`.
+
+## Estructura Operativa Relevante
 
 ```text
 Resources/
@@ -249,14 +208,29 @@ Resources/
     └── Preprocessed/
         ├── JSONs/
         └── images/
+
+utils/
+└── Preprocessing/
+    ├── ImagesExtractionClassification/
+    └── NHTSADatabaseExtraction/
+        └── Extraction/
 ```
 
-Uso recomendado:
+## Uso Recomendado
 
-1. Colocar PDFs nuevos en `Resources/Reports/NotUploaded`.
-2. Verificar que `Resources/Reports/IDs.csv` exista y conserve las columnas `ID,Nombre`.
-3. Ejecutar `python main.py`.
-4. Revisar salidas en `Resources/Reports/Uploaded`, `Resources/Reports/Preprocessed/JSONs` y `Resources/Reports/Preprocessed/images`.
+Si tu objetivo es trabajar con extracción pública:
+
+1. Activa el ambiente `VelocityEstimationAI`.
+2. Verifica que los modelos afinados estén disponibles localmente.
+3. Ejecuta una corrida CIREN pequeña o `python main.py`.
+4. Revisa `cacheCIREN.json`, las imágenes finales y los parquet generados.
+
+Si tu objetivo es trabajar con PDFs internos del proyecto:
+
+1. Coloca PDFs nuevos en `Resources/Reports/NotUploaded`.
+2. Configura `OPENAI_API_KEY`.
+3. Invoca el flujo `beginPreprocessing()`.
+4. Revisa `Resources/Reports/Uploaded`, `Resources/Reports/Preprocessed/JSONs` y `Resources/Reports/Preprocessed/images`.
 
 
 ## Archivos Clave
