@@ -1,0 +1,814 @@
+{
+    "11": {
+        "cirenId": 11,
+        "errors": [],
+        "candidateImages": [
+            {
+                "vehicleNumber": 1,
+                "description": "Gauge",
+                "objectID": "CIREN/2017/d10dd3c2-4308-438b-94d7-9ba86855de06",
+                "photoId": 391054,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Gauge (view at bumper level)",
+                "objectID": "CIREN/2017/ab58dfc8-8d5e-4e77-ab73-fd3d673f4eed",
+                "photoId": 391055,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "C-measurements from driver\u2019s side",
+                "objectID": "CIREN/2017/3eeacfa4-0cf6-41d8-9e05-3dfbb8d6a291",
+                "photoId": 391264,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "C-measurements from passenger\u2019s side",
+                "objectID": "CIREN/2017/c049b2ca-21ae-4311-bc4d-8c1cadb30cd7",
+                "photoId": 391256,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Direct damage ends",
+                "objectID": "CIREN/2017/485b196d-72f1-4bc4-982c-f2b2f262133c",
+                "photoId": 391258,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Direct damage across bumper",
+                "objectID": "CIREN/2017/876b7654-6a15-4dee-9888-792ba4686c53",
+                "photoId": 391259,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Direct damage begins",
+                "objectID": "CIREN/2017/ef606902-7b98-4ec4-a405-2ce0f9a40b25",
+                "photoId": 391257,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Hood dmg",
+                "objectID": "CIREN/2017/1a50cadc-9b61-4040-b194-8aec8feefe60",
+                "photoId": 391255,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Windshield",
+                "objectID": "CIREN/2017/4c3ae166-3da4-41b5-bf98-197d32fcc6f5",
+                "photoId": 391254,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Down driver\u2019s side",
+                "objectID": "CIREN/2017/a8e7b7df-6e15-46fb-bdc3-c761b3ce498c",
+                "photoId": 391261,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Down passenger\u2019s side",
+                "objectID": "CIREN/2017/8b1b0776-e261-490f-9327-8d2b343f5d0c",
+                "photoId": 391260,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "No gauge",
+                "objectID": "CIREN/2017/aaf4bea0-61b4-408f-9964-c1ee29d447c1",
+                "photoId": 391263,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Direct damage begins",
+                "objectID": "CIREN/2017/065409b6-7ce2-48d2-b6d0-a341d4ea89bb",
+                "photoId": 391265,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Front/right oblique",
+                "objectID": "CIREN/2017/efec8191-49ae-4c0b-ae7c-eb2ef989fc97",
+                "photoId": 391424,
+                "subtype": "Front Right Oblique"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "RR Tire w/make & model",
+                "objectID": "CIREN/2017/dd978e9b-22f8-4319-ace1-f172864add27",
+                "photoId": 391421,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "RR Tire Size and TIN",
+                "objectID": "CIREN/2017/96ad82a0-326d-412c-a5af-464b5a017df0",
+                "photoId": 391413,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "RF Tire w/size",
+                "objectID": "CIREN/2017/4bf8009f-ce98-4bd9-a712-15fab5d79867",
+                "photoId": 391415,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "RR Tire Tread",
+                "objectID": "CIREN/2017/43356bfd-dbd4-4244-a596-ef8fa7ac9a83",
+                "photoId": 391414,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "RF Tire make",
+                "objectID": "CIREN/2017/846d3067-e73f-48fb-a539-79867c99806b",
+                "photoId": 391419,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "RF Tire Model",
+                "objectID": "CIREN/2017/a5e7f18b-0df4-4dc9-9dea-c9588ea374ab",
+                "photoId": 391420,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "RF Tire Make",
+                "objectID": "CIREN/2017/19cebf73-e010-4f90-9209-636de7ed3dd1",
+                "photoId": 391417,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "RF Tire TIN",
+                "objectID": "CIREN/2017/b91bd490-d65d-492c-99ba-e14bbe3f42b9",
+                "photoId": 391416,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Right side",
+                "objectID": "CIREN/2017/19c2230f-a48b-4027-bd9a-c6e0681ecff1",
+                "photoId": 391418,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Back/right oblique",
+                "objectID": "CIREN/2017/b1c4f2b2-284f-4571-8822-a39e31348590",
+                "photoId": 391423,
+                "subtype": "Back Right Oblique"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Back",
+                "objectID": "CIREN/2017/83f66ee5-d6f0-46d8-8e01-761a37ac87d5",
+                "photoId": 391410,
+                "subtype": "Back Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Down driver\u2019s side",
+                "objectID": "CIREN/2017/4435292e-56da-4f13-b5e2-fc4ea65ed28e",
+                "photoId": 391412,
+                "subtype": "Back Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Down passenger\u2019s side",
+                "objectID": "CIREN/2017/e570cdf2-226f-435f-8b13-9d58ffbe0684",
+                "photoId": 391411,
+                "subtype": "Back Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Back/left oblique",
+                "objectID": "CIREN/2017/2e1605fb-e2b1-44e1-9e76-c4dc062211e7",
+                "photoId": 391284,
+                "subtype": "Back Left Oblique"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "LF Tire",
+                "objectID": "CIREN/2017/90ab61a7-2fe2-422a-9de8-924d1f630594",
+                "photoId": 391271,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "LF Tire Make",
+                "objectID": "CIREN/2017/36b712d0-bb16-4f0f-94eb-354fd1bac236",
+                "photoId": 391267,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "LF Tire Model",
+                "objectID": "CIREN/2017/95b715dc-3b35-4283-87d7-b0d8c9680536",
+                "photoId": 391270,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "LF Tire Size",
+                "objectID": "CIREN/2017/e1215a2a-f591-4ca8-adbc-651ffabfe20e",
+                "photoId": 391268,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "LR Tire",
+                "objectID": "CIREN/2017/c0f24168-d5f1-45c5-bb93-20fa523c4a69",
+                "photoId": 391269,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "LF Tire Tread",
+                "objectID": "CIREN/2017/55c90094-20c3-484e-b32b-4e3be26ab447",
+                "photoId": 391272,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "LR Tire Make",
+                "objectID": "CIREN/2017/402597b8-7d9b-491e-86d4-3df12e31956d",
+                "photoId": 391275,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "LR Tire Model",
+                "objectID": "CIREN/2017/0432c62c-4122-48aa-a012-07b9bf14514a",
+                "photoId": 391276,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "LR Tire Size",
+                "objectID": "CIREN/2017/a22c5c86-339e-4c11-9297-0fa6cd74ae3b",
+                "photoId": 391274,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "LR Tire TIN",
+                "objectID": "CIREN/2017/0852899a-f14d-44c6-90ae-d4241afa8d07",
+                "photoId": 391273,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "LR Tire Tread",
+                "objectID": "CIREN/2017/86003105-23c8-44cd-b465-b859b5b7764b",
+                "photoId": 391277,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "LF Tire Make",
+                "objectID": "CIREN/2017/e3295aff-89d3-43a7-a809-a402633ffdc8",
+                "photoId": 391283,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Front/left oblique",
+                "objectID": "CIREN/2017/16bae70a-6369-4575-88f1-0a50dd2eacc8",
+                "photoId": 391266,
+                "subtype": "Front Left Oblique"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Filler Cap Door",
+                "objectID": "CIREN/2017/12b43034-a41e-4bf2-afbb-c1283a34d195",
+                "photoId": 372827,
+                "subtype": "Fuel System"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Filler cap",
+                "objectID": "CIREN/2017/0891e018-8f03-4ec1-9312-9e0ed2662cd4",
+                "photoId": 372828,
+                "subtype": "Fuel System"
+            },
+            {
+                "vehicleNumber": 1,
+                "description": "Tank Locationi",
+                "objectID": "CIREN/2017/53430b33-aa67-49da-89b4-c4075894a719",
+                "photoId": 372844,
+                "subtype": "Fuel System"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Gauge",
+                "objectID": "CIREN/2017/68cb465b-87b4-49b4-9a95-1c7280fd8a7e",
+                "photoId": 391795,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "C-measurements",
+                "objectID": "CIREN/2017/e7f7960c-8553-4783-baee-6ae409dae243",
+                "photoId": 391796,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "C-meas (left third)",
+                "objectID": "CIREN/2017/beacdb1b-949c-4257-94ba-4f8ef7e26573",
+                "photoId": 391797,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "C-mease (center third)",
+                "objectID": "CIREN/2017/039bc2d4-609d-4fb2-9595-426083e5a624",
+                "photoId": 391793,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "C-mease (right third)",
+                "objectID": "CIREN/2017/7b7ab713-ba4b-4181-85db-2799350c052b",
+                "photoId": 391794,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "C-measurements from driver\u2019s side",
+                "objectID": "CIREN/2017/37404a95-09ca-49d4-8c9f-7891e6e9f500",
+                "photoId": 391798,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "C-measurements from passenger\u2019s side",
+                "objectID": "CIREN/2017/66cbf1e5-30c7-4d75-920d-90f4e67e7a62",
+                "photoId": 391799,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Down driver\u2019s side",
+                "objectID": "CIREN/2017/3400ec61-942b-4877-a785-a7349c2be39f",
+                "photoId": 391800,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Down passenger\u2019s side",
+                "objectID": "CIREN/2017/c3317017-e56d-41ba-a118-34c59860cf8d",
+                "photoId": 391816,
+                "subtype": "Front Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Front/right oblique",
+                "objectID": "CIREN/2017/dc926c78-3691-4ff3-927e-92de8b57342c",
+                "photoId": 391815,
+                "subtype": "Front Right Oblique"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Full view",
+                "objectID": "CIREN/2017/d33fa283-0012-473b-b70c-11541d0d4cdd",
+                "photoId": 391811,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "RR Tire",
+                "objectID": "CIREN/2017/80b843ae-0381-42f5-a640-10d7f7dc918c",
+                "photoId": 391810,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Damage Front door",
+                "objectID": "CIREN/2017/12a81dc1-8137-4f1d-956c-86290ee47d24",
+                "photoId": 391812,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Damage to rear door",
+                "objectID": "CIREN/2017/d4be2358-9739-406b-93c9-8deb618982d1",
+                "photoId": 391813,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Fender damage",
+                "objectID": "CIREN/2017/ee5eaa14-756a-42db-972c-f65cd3ca4ee2",
+                "photoId": 391814,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Length of damage to fender",
+                "objectID": "CIREN/2017/c7b400f5-5f27-4544-8d27-d28a31b60b46",
+                "photoId": 391821,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "RF Tire",
+                "objectID": "CIREN/2017/56d04ce3-fda2-42c9-9552-bc3ca1990f89",
+                "photoId": 391819,
+                "subtype": "Right Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Back/right oblique",
+                "objectID": "CIREN/2017/f941f5fe-8c1e-4f2d-9de4-2364128d458c",
+                "photoId": 391809,
+                "subtype": "Back Right Oblique"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Down driver\u2019s side",
+                "objectID": "CIREN/2017/0da99b20-0407-4f11-919f-c56db9ceb5a5",
+                "photoId": 391806,
+                "subtype": "Back Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Back",
+                "objectID": "CIREN/2017/9353f901-4f3c-4c08-8064-166d6dd6fbb5",
+                "photoId": 391807,
+                "subtype": "Back Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Down passenger\u2019s side",
+                "objectID": "CIREN/2017/a223c4a8-dc17-4c55-92fa-26d3249e1f81",
+                "photoId": 391808,
+                "subtype": "Back Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Back/left oblique",
+                "objectID": "CIREN/2017/738e469e-4eec-433b-a89a-3367f9c8c284",
+                "photoId": 391805,
+                "subtype": "Back Left Oblique"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "LF Tire",
+                "objectID": "CIREN/2017/18d0d9c5-6164-4606-ae58-73207cf871fd",
+                "photoId": 391803,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "LR Tire",
+                "objectID": "CIREN/2017/a8612fba-ebc6-4842-b538-50e58761d1ac",
+                "photoId": 391802,
+                "subtype": "Left Plane"
+            },
+            {
+                "vehicleNumber": 2,
+                "description": "Front/left oblique",
+                "objectID": "CIREN/2017/d4ddfae6-e445-4fa7-a752-5d4e33aa4658",
+                "photoId": 391801,
+                "subtype": "Front Left Oblique"
+            }
+        ],
+        "revisedImages": [
+            "CIREN/2017/d10dd3c2-4308-438b-94d7-9ba86855de06",
+            "CIREN/2017/ab58dfc8-8d5e-4e77-ab73-fd3d673f4eed",
+            "CIREN/2017/3eeacfa4-0cf6-41d8-9e05-3dfbb8d6a291",
+            "CIREN/2017/c049b2ca-21ae-4311-bc4d-8c1cadb30cd7",
+            "CIREN/2017/485b196d-72f1-4bc4-982c-f2b2f262133c",
+            "CIREN/2017/876b7654-6a15-4dee-9888-792ba4686c53",
+            "CIREN/2017/ef606902-7b98-4ec4-a405-2ce0f9a40b25",
+            "CIREN/2017/1a50cadc-9b61-4040-b194-8aec8feefe60",
+            "CIREN/2017/4c3ae166-3da4-41b5-bf98-197d32fcc6f5",
+            "CIREN/2017/a8e7b7df-6e15-46fb-bdc3-c761b3ce498c",
+            "CIREN/2017/8b1b0776-e261-490f-9327-8d2b343f5d0c",
+            "CIREN/2017/aaf4bea0-61b4-408f-9964-c1ee29d447c1",
+            "CIREN/2017/065409b6-7ce2-48d2-b6d0-a341d4ea89bb",
+            "CIREN/2017/efec8191-49ae-4c0b-ae7c-eb2ef989fc97",
+            "CIREN/2017/dd978e9b-22f8-4319-ace1-f172864add27",
+            "CIREN/2017/96ad82a0-326d-412c-a5af-464b5a017df0",
+            "CIREN/2017/4bf8009f-ce98-4bd9-a712-15fab5d79867",
+            "CIREN/2017/43356bfd-dbd4-4244-a596-ef8fa7ac9a83",
+            "CIREN/2017/846d3067-e73f-48fb-a539-79867c99806b",
+            "CIREN/2017/a5e7f18b-0df4-4dc9-9dea-c9588ea374ab",
+            "CIREN/2017/19cebf73-e010-4f90-9209-636de7ed3dd1",
+            "CIREN/2017/b91bd490-d65d-492c-99ba-e14bbe3f42b9",
+            "CIREN/2017/19c2230f-a48b-4027-bd9a-c6e0681ecff1",
+            "CIREN/2017/b1c4f2b2-284f-4571-8822-a39e31348590",
+            "CIREN/2017/83f66ee5-d6f0-46d8-8e01-761a37ac87d5",
+            "CIREN/2017/4435292e-56da-4f13-b5e2-fc4ea65ed28e",
+            "CIREN/2017/e570cdf2-226f-435f-8b13-9d58ffbe0684",
+            "CIREN/2017/2e1605fb-e2b1-44e1-9e76-c4dc062211e7",
+            "CIREN/2017/90ab61a7-2fe2-422a-9de8-924d1f630594",
+            "CIREN/2017/36b712d0-bb16-4f0f-94eb-354fd1bac236",
+            "CIREN/2017/95b715dc-3b35-4283-87d7-b0d8c9680536",
+            "CIREN/2017/e1215a2a-f591-4ca8-adbc-651ffabfe20e",
+            "CIREN/2017/c0f24168-d5f1-45c5-bb93-20fa523c4a69",
+            "CIREN/2017/55c90094-20c3-484e-b32b-4e3be26ab447",
+            "CIREN/2017/402597b8-7d9b-491e-86d4-3df12e31956d",
+            "CIREN/2017/0432c62c-4122-48aa-a012-07b9bf14514a",
+            "CIREN/2017/a22c5c86-339e-4c11-9297-0fa6cd74ae3b",
+            "CIREN/2017/0852899a-f14d-44c6-90ae-d4241afa8d07",
+            "CIREN/2017/86003105-23c8-44cd-b465-b859b5b7764b",
+            "CIREN/2017/e3295aff-89d3-43a7-a809-a402633ffdc8",
+            "CIREN/2017/16bae70a-6369-4575-88f1-0a50dd2eacc8",
+            "CIREN/2017/12b43034-a41e-4bf2-afbb-c1283a34d195",
+            "CIREN/2017/0891e018-8f03-4ec1-9312-9e0ed2662cd4",
+            "CIREN/2017/53430b33-aa67-49da-89b4-c4075894a719",
+            "CIREN/2017/68cb465b-87b4-49b4-9a95-1c7280fd8a7e",
+            "CIREN/2017/e7f7960c-8553-4783-baee-6ae409dae243",
+            "CIREN/2017/beacdb1b-949c-4257-94ba-4f8ef7e26573",
+            "CIREN/2017/039bc2d4-609d-4fb2-9595-426083e5a624",
+            "CIREN/2017/7b7ab713-ba4b-4181-85db-2799350c052b",
+            "CIREN/2017/37404a95-09ca-49d4-8c9f-7891e6e9f500",
+            "CIREN/2017/66cbf1e5-30c7-4d75-920d-90f4e67e7a62",
+            "CIREN/2017/3400ec61-942b-4877-a785-a7349c2be39f",
+            "CIREN/2017/c3317017-e56d-41ba-a118-34c59860cf8d",
+            "CIREN/2017/dc926c78-3691-4ff3-927e-92de8b57342c",
+            "CIREN/2017/d33fa283-0012-473b-b70c-11541d0d4cdd",
+            "CIREN/2017/80b843ae-0381-42f5-a640-10d7f7dc918c",
+            "CIREN/2017/12a81dc1-8137-4f1d-956c-86290ee47d24",
+            "CIREN/2017/d4be2358-9739-406b-93c9-8deb618982d1",
+            "CIREN/2017/ee5eaa14-756a-42db-972c-f65cd3ca4ee2",
+            "CIREN/2017/c7b400f5-5f27-4544-8d27-d28a31b60b46",
+            "CIREN/2017/56d04ce3-fda2-42c9-9552-bc3ca1990f89",
+            "CIREN/2017/f941f5fe-8c1e-4f2d-9de4-2364128d458c",
+            "CIREN/2017/0da99b20-0407-4f11-919f-c56db9ceb5a5",
+            "CIREN/2017/9353f901-4f3c-4c08-8064-166d6dd6fbb5",
+            "CIREN/2017/a223c4a8-dc17-4c55-92fa-26d3249e1f81",
+            "CIREN/2017/738e469e-4eec-433b-a89a-3367f9c8c284",
+            "CIREN/2017/18d0d9c5-6164-4606-ae58-73207cf871fd",
+            "CIREN/2017/a8612fba-ebc6-4842-b538-50e58761d1ac",
+            "CIREN/2017/d4ddfae6-e445-4fa7-a752-5d4e33aa4658"
+        ],
+        "validatedImageRecords": [
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_001_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391054,
+                "objectID": "CIREN/2017/d10dd3c2-4308-438b-94d7-9ba86855de06",
+                "description": "Gauge",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_002_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391055,
+                "objectID": "CIREN/2017/ab58dfc8-8d5e-4e77-ab73-fd3d673f4eed",
+                "description": "Gauge (view at bumper level)",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_003_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391256,
+                "objectID": "CIREN/2017/c049b2ca-21ae-4311-bc4d-8c1cadb30cd7",
+                "description": "C-measurements from passenger\u2019s side",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_004_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391258,
+                "objectID": "CIREN/2017/485b196d-72f1-4bc4-982c-f2b2f262133c",
+                "description": "Direct damage ends",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_005_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391259,
+                "objectID": "CIREN/2017/876b7654-6a15-4dee-9888-792ba4686c53",
+                "description": "Direct damage across bumper",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_006_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391257,
+                "objectID": "CIREN/2017/ef606902-7b98-4ec4-a405-2ce0f9a40b25",
+                "description": "Direct damage begins",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_007_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391255,
+                "objectID": "CIREN/2017/1a50cadc-9b61-4040-b194-8aec8feefe60",
+                "description": "Hood dmg",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_008_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391261,
+                "objectID": "CIREN/2017/a8e7b7df-6e15-46fb-bdc3-c761b3ce498c",
+                "description": "Down driver\u2019s side",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_009_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391260,
+                "objectID": "CIREN/2017/8b1b0776-e261-490f-9327-8d2b343f5d0c",
+                "description": "Down passenger\u2019s side",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_010_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391263,
+                "objectID": "CIREN/2017/aaf4bea0-61b4-408f-9964-c1ee29d447c1",
+                "description": "No gauge",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_011_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391424,
+                "objectID": "CIREN/2017/efec8191-49ae-4c0b-ae7c-eb2ef989fc97",
+                "description": "Front/right oblique",
+                "subtype": "Front Right Oblique"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_012_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391412,
+                "objectID": "CIREN/2017/4435292e-56da-4f13-b5e2-fc4ea65ed28e",
+                "description": "Down driver\u2019s side",
+                "subtype": "Back Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_013_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 391266,
+                "objectID": "CIREN/2017/16bae70a-6369-4575-88f1-0a50dd2eacc8",
+                "description": "Front/left oblique",
+                "subtype": "Front Left Oblique"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_014_Vehicle1.jpg",
+                "vehicleNumber": 1,
+                "photoId": 372827,
+                "objectID": "CIREN/2017/12b43034-a41e-4bf2-afbb-c1283a34d195",
+                "description": "Filler Cap Door",
+                "subtype": "Fuel System"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_015_Vehicle2.jpg",
+                "vehicleNumber": 2,
+                "photoId": 391795,
+                "objectID": "CIREN/2017/68cb465b-87b4-49b4-9a95-1c7280fd8a7e",
+                "description": "Gauge",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_016_Vehicle2.jpg",
+                "vehicleNumber": 2,
+                "photoId": 391796,
+                "objectID": "CIREN/2017/e7f7960c-8553-4783-baee-6ae409dae243",
+                "description": "C-measurements",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_017_Vehicle2.jpg",
+                "vehicleNumber": 2,
+                "photoId": 391794,
+                "objectID": "CIREN/2017/7b7ab713-ba4b-4181-85db-2799350c052b",
+                "description": "C-mease (right third)",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_018_Vehicle2.jpg",
+                "vehicleNumber": 2,
+                "photoId": 391799,
+                "objectID": "CIREN/2017/66cbf1e5-30c7-4d75-920d-90f4e67e7a62",
+                "description": "C-measurements from passenger\u2019s side",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_019_Vehicle2.jpg",
+                "vehicleNumber": 2,
+                "photoId": 391800,
+                "objectID": "CIREN/2017/3400ec61-942b-4877-a785-a7349c2be39f",
+                "description": "Down driver\u2019s side",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_020_Vehicle2.jpg",
+                "vehicleNumber": 2,
+                "photoId": 391816,
+                "objectID": "CIREN/2017/c3317017-e56d-41ba-a118-34c59860cf8d",
+                "description": "Down passenger\u2019s side",
+                "subtype": "Front Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_021_Vehicle2.jpg",
+                "vehicleNumber": 2,
+                "photoId": 391815,
+                "objectID": "CIREN/2017/dc926c78-3691-4ff3-927e-92de8b57342c",
+                "description": "Front/right oblique",
+                "subtype": "Front Right Oblique"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_022_Vehicle2.jpg",
+                "vehicleNumber": 2,
+                "photoId": 391811,
+                "objectID": "CIREN/2017/d33fa283-0012-473b-b70c-11541d0d4cdd",
+                "description": "Full view",
+                "subtype": "Right Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_023_Vehicle2.jpg",
+                "vehicleNumber": 2,
+                "photoId": 391812,
+                "objectID": "CIREN/2017/12a81dc1-8137-4f1d-956c-86290ee47d24",
+                "description": "Damage Front door",
+                "subtype": "Right Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_024_Vehicle2.jpg",
+                "vehicleNumber": 2,
+                "photoId": 391814,
+                "objectID": "CIREN/2017/ee5eaa14-756a-42db-972c-f65cd3ca4ee2",
+                "description": "Fender damage",
+                "subtype": "Right Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_025_Vehicle2.jpg",
+                "vehicleNumber": 2,
+                "photoId": 391821,
+                "objectID": "CIREN/2017/c7b400f5-5f27-4544-8d27-d28a31b60b46",
+                "description": "Length of damage to fender",
+                "subtype": "Right Plane"
+            },
+            {
+                "imagePath": "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN/11/52-kmph-32-mph_4-Severe_026_Vehicle2.jpg",
+                "vehicleNumber": 2,
+                "photoId": 391801,
+                "objectID": "CIREN/2017/d4ddfae6-e445-4fa7-a752-5d4e33aa4658",
+                "description": "Front/left oblique",
+                "subtype": "Front Left Oblique"
+            }
+        ],
+        "validImages": [
+            "CIREN/2017/d10dd3c2-4308-438b-94d7-9ba86855de06",
+            "CIREN/2017/ab58dfc8-8d5e-4e77-ab73-fd3d673f4eed",
+            "CIREN/2017/c049b2ca-21ae-4311-bc4d-8c1cadb30cd7",
+            "CIREN/2017/485b196d-72f1-4bc4-982c-f2b2f262133c",
+            "CIREN/2017/876b7654-6a15-4dee-9888-792ba4686c53",
+            "CIREN/2017/ef606902-7b98-4ec4-a405-2ce0f9a40b25",
+            "CIREN/2017/1a50cadc-9b61-4040-b194-8aec8feefe60",
+            "CIREN/2017/a8e7b7df-6e15-46fb-bdc3-c761b3ce498c",
+            "CIREN/2017/8b1b0776-e261-490f-9327-8d2b343f5d0c",
+            "CIREN/2017/aaf4bea0-61b4-408f-9964-c1ee29d447c1",
+            "CIREN/2017/efec8191-49ae-4c0b-ae7c-eb2ef989fc97",
+            "CIREN/2017/4435292e-56da-4f13-b5e2-fc4ea65ed28e",
+            "CIREN/2017/16bae70a-6369-4575-88f1-0a50dd2eacc8",
+            "CIREN/2017/12b43034-a41e-4bf2-afbb-c1283a34d195",
+            "CIREN/2017/68cb465b-87b4-49b4-9a95-1c7280fd8a7e",
+            "CIREN/2017/e7f7960c-8553-4783-baee-6ae409dae243",
+            "CIREN/2017/7b7ab713-ba4b-4181-85db-2799350c052b",
+            "CIREN/2017/66cbf1e5-30c7-4d75-920d-90f4e67e7a62",
+            "CIREN/2017/3400ec61-942b-4877-a785-a7349c2be39f",
+            "CIREN/2017/c3317017-e56d-41ba-a118-34c59860cf8d",
+            "CIREN/2017/dc926c78-3691-4ff3-927e-92de8b57342c",
+            "CIREN/2017/d33fa283-0012-473b-b70c-11541d0d4cdd",
+            "CIREN/2017/12a81dc1-8137-4f1d-956c-86290ee47d24",
+            "CIREN/2017/ee5eaa14-756a-42db-972c-f65cd3ca4ee2",
+            "CIREN/2017/c7b400f5-5f27-4544-8d27-d28a31b60b46",
+            "CIREN/2017/d4ddfae6-e445-4fa7-a752-5d4e33aa4658"
+        ],
+        "caseId": 8392,
+        "caseNumber": 11,
+        "mais": "4 - Severe",
+        "totalDeltaV": "52 kmph (32 mph)",
+        "vehicleClass": "Intermediate (wheelbase >=265 but < 278 cm)",
+        "cdc": "12FDEW02",
+        "clockDirection": "12 o`clock",
+        "forceDirection": "350 degrees",
+        "rolloverStatus": "No rollover (no overturning)",
+        "primaryVehicleNumber": 1,
+        "damagePlaneDescription": "Front",
+        "severityDescription": "Severe",
+        "curbWeight": "1340 kgs",
+        "cargoWeight": "0 kgs"
+    }
+}
