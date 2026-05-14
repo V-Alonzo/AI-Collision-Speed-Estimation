@@ -106,11 +106,11 @@ Busca la entrada del caso `527`. Si todo salió bien, verás campos como estos:
 - `caseNumber`
 - `totalDeltaV`
 - `mais`
-- `validatedImages`
+- `revisedImages`
 - `candidateImages`
 - `errors`
 
-Lo importante en esta primera ejecución es que el caso quede registrado y que `validatedImages` contenga al menos una imagen o, si no la contiene, que `errors` deje trazabilidad de por qué el caso no generó salida final.
+Lo importante en esta primera ejecución es que el caso quede registrado y que `revisedImages` contenga al menos una imagen o, si no la contiene, que `errors` deje trazabilidad de por qué el caso no generó salida final.
 
 ## Paso 7. Ejecutar una extracción NHTSA pequeña
 
