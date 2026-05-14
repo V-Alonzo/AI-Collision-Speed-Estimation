@@ -107,10 +107,13 @@ Busca la entrada del caso `527`. Si todo salió bien, verás campos como estos:
 - `totalDeltaV`
 - `mais`
 - `revisedImages`
+- `validatedImageRecords`
 - `candidateImages`
 - `errors`
 
-Lo importante en esta primera ejecución es que el caso quede registrado y que `revisedImages` contenga al menos una imagen o, si no la contiene, que `errors` deje trazabilidad de por qué el caso no generó salida final.
+Lo importante en esta primera ejecución es que el caso quede registrado y que `validatedImageRecords` contenga al menos una imagen final válida o, si no la contiene, que `errors` deje trazabilidad de por qué el caso no generó salida final.
+
+Ten en cuenta que `revisedImages` no guarda archivos finales: guarda identificadores de candidatos ya revisados por el pipeline. Si necesitas interpretar los metadatos configurables que acompañan a cada caso, consulta también `Documentation/Diátaxis/Reference/CIREN/CIREN_REQUIRED_METADATA_FIELDS_REFERENCE.md`.
 
 ## Paso 7. Ejecutar una extracción NHTSA pequeña
 
