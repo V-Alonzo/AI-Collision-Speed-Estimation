@@ -47,10 +47,18 @@ CIREN_BASE_URL = "https://crashviewer.nhtsa.dot.gov"
 CIREN_REQUEST_TIMEOUT_SECONDS = 60
 CIREN_CASE_OVERVIEW_MODE = 3
 CIREN_REQUIRED_METADATA_KEYS = (
-    "bodyCategory",
-    "bodyType",
     "vehicleClass",
-    "vehicleHasTrailer",
+    "cdc",
+    "clockDirection",
+    "forceDirection",
+    "rolloverStatus",
+    "primaryVehicleNumber",
+    "damagePlaneDescription",
+    "severityDescription",
+    "curbWeight",
+    "cargoWeight",
+    "totalDeltaV",
+    "mais"
 )
 CIREN_IGNORED_SUBTYPE_KEYWORDS = (
     "INTERIOR",
@@ -61,4 +69,4 @@ CIREN_IGNORED_SUBTYPE_KEYWORDS = (
     "TOP",
 )
 CIREN_IGNORED_DESCRIPTION_KEYWORDS = ("TIRE",)
-CIREN_DEFAULT_CASE_ID_RANGE = range(1, 5000)
+CIREN_DEFAULT_CASE_ID_RANGE = range(12)

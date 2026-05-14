@@ -13,7 +13,9 @@ Resources/Reports/Preprocessed/images/*.pdf
 
 .github/skills
 
-utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/*
+utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/*/*
+
+utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Parquets/CIREN/*.parquet
 
 utils/Preprocessing/NHTSADatabaseExtraction/__pycache__/*.pyc
 
