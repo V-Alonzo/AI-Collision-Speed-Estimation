@@ -4,7 +4,10 @@ import json
 import os
 import re
 from typing import Any, Dict, List, Tuple
+
 import pandas as pd
+
+from configurations import CIREN_REQUIRED_METADATA_KEYS
 
 
 def delete_file_if_exists(file_path: str) -> None:
@@ -181,6 +184,39 @@ def convert_cache_to_parquet(cache_path: str, output_path: str, originDB: str = 
     cache_data = read_cached_results(cache_path)
     dataset_prefix = sanitize_metadata_for_filename(originDB.lower(), fallback="dataset")
     output_dir = _resolve_output_dir(output_path)
+    configured_metadata_keys = set(CIREN_REQUIRED_METADATA_KEYS)
+
+    case_metadata_columns = ["cirenId", "caseId"]
+    metadata_integer_columns = ["cirenId", "caseId"]
+
+    if "mais" in configured_metadata_keys:
+        case_metadata_columns.append("mais")
+    if "totalDeltaV" in configured_metadata_keys:
+        case_metadata_columns.extend(["totalDeltaVKph", "totalDeltaVMph"])
+        metadata_integer_columns.extend(["totalDeltaVKph", "totalDeltaVMph"])
+    if "cdc" in configured_metadata_keys:
+        case_metadata_columns.append("cdc")
+    if "clockDirection" in configured_metadata_keys:
+        case_metadata_columns.append("clockDirection")
+    if "forceDirection" in configured_metadata_keys:
+        case_metadata_columns.append("forceDirection")
+    if "rolloverStatus" in configured_metadata_keys:
+        case_metadata_columns.append("rolloverStatus")
+    if "primaryVehicleNumber" in configured_metadata_keys:
+        case_metadata_columns.append("primaryVehicleNumber")
+        metadata_integer_columns.append("primaryVehicleNumber")
+    if "damagePlaneDescription" in configured_metadata_keys:
+        case_metadata_columns.append("damagePlaneDescription")
+    if "severityDescription" in configured_metadata_keys:
+        case_metadata_columns.append("severityDescription")
+    if "vehicleClass" in configured_metadata_keys:
+        case_metadata_columns.append("vehicleClass")
+    if "curbWeight" in configured_metadata_keys:
+        case_metadata_columns.extend(["curbWeight", "curbWeightKg"])
+        metadata_integer_columns.append("curbWeightKg")
+    if "cargoWeight" in configured_metadata_keys:
+        case_metadata_columns.extend(["cargoWeight", "cargoWeightKg"])
+        metadata_integer_columns.append("cargoWeightKg")
 
     case_records: List[Dict[str, Any]] = []
     image_records: List[Dict[str, Any]] = []
@@ -199,29 +235,18 @@ def convert_cache_to_parquet(cache_path: str, output_path: str, originDB: str = 
                 "mais": case_data.get("mais"),
                 "totalDeltaVKph": kph_velocity,
                 "totalDeltaVMph": mph_velocity,
-                "objectContact": case_data.get("objectContact"),
-                "category": case_data.get("category"),
                 "cdc": case_data.get("cdc"),
                 "clockDirection": case_data.get("clockDirection"),
                 "forceDirection": case_data.get("forceDirection"),
-                "numberEvents": case_data.get("numberEvents"),
                 "rolloverStatus": case_data.get("rolloverStatus"),
-                "vehicleMake": case_data.get("vehicleMake"),
-                "vehicleModel": case_data.get("vehicleModel"),
                 "primaryVehicleNumber": case_data.get("primaryVehicleNumber"),
                 "damagePlaneDescription": case_data.get("damagePlaneDescription"),
                 "severityDescription": case_data.get("severityDescription"),
-                "bodyCategory": case_data.get("bodyCategory"),
-                "bodyType": case_data.get("bodyType"),
                 "vehicleClass": case_data.get("vehicleClass"),
-                "vehicleHasTrailer": case_data.get("vehicleHasTrailer"),
-                "crashYear": case_data.get("crashYear"),
                 "curbWeight": case_data.get("curbWeight"),
                 "cargoWeight": case_data.get("cargoWeight"),
                 "curbWeightKg": _extract_first_integer(case_data.get("curbWeight")),
                 "cargoWeightKg": _extract_first_integer(case_data.get("cargoWeight")),
-                "specialUseDescription": case_data.get("specialUseDescription"),
-                "vehicleTransport": case_data.get("vehicleTransport"),
             }
         )
 
@@ -274,36 +299,7 @@ def convert_cache_to_parquet(cache_path: str, output_path: str, originDB: str = 
 
     cases_df = pd.DataFrame(
         case_records,
-        columns=[
-            "cirenId",
-            "caseId",
-            "mais",
-            "totalDeltaVKph",
-            "totalDeltaVMph",
-            "objectContact",
-            "category",
-            "cdc",
-            "clockDirection",
-            "forceDirection",
-            "numberEvents",
-            "rolloverStatus",
-            "vehicleMake",
-            "vehicleModel",
-            "primaryVehicleNumber",
-            "damagePlaneDescription",
-            "severityDescription",
-            "bodyCategory",
-            "bodyType",
-            "vehicleClass",
-            "vehicleHasTrailer",
-            "crashYear",
-            "curbWeight",
-            "cargoWeight",
-            "curbWeightKg",
-            "cargoWeightKg",
-            "specialUseDescription",
-            "vehicleTransport",
-        ],
+        columns=case_metadata_columns,
     )
     images_df = pd.DataFrame(
         image_records,
@@ -328,38 +324,7 @@ def convert_cache_to_parquet(cache_path: str, output_path: str, originDB: str = 
     )
 
     training_manifest_df = images_df.merge(
-        cases_df[
-            [
-                "cirenId",
-                "caseId",
-                "mais",
-                "totalDeltaVKph",
-                "totalDeltaVMph",
-                "objectContact",
-                "category",
-                "cdc",
-                "clockDirection",
-                "forceDirection",
-                "numberEvents",
-                "rolloverStatus",
-                "vehicleMake",
-                "vehicleModel",
-                "primaryVehicleNumber",
-                "damagePlaneDescription",
-                "severityDescription",
-                "bodyCategory",
-                "bodyType",
-                "vehicleClass",
-                "vehicleHasTrailer",
-                "crashYear",
-                "curbWeight",
-                "cargoWeight",
-                "curbWeightKg",
-                "cargoWeightKg",
-                "specialUseDescription",
-                "vehicleTransport",
-            ]
-        ],
+        cases_df[case_metadata_columns],
         on=["cirenId", "caseId"],
         how="left",
     )
@@ -371,13 +336,8 @@ def convert_cache_to_parquet(cache_path: str, output_path: str, originDB: str = 
         _coerce_nullable_integer(frame, "image_sequence")
         _coerce_nullable_integer(frame, "photoId")
         _coerce_nullable_integer(frame, "errorIndex")
-        _coerce_nullable_integer(frame, "totalDeltaVKph")
-        _coerce_nullable_integer(frame, "totalDeltaVMph")
-        _coerce_nullable_integer(frame, "numberEvents")
-        _coerce_nullable_integer(frame, "primaryVehicleNumber")
-        _coerce_nullable_integer(frame, "crashYear")
-        _coerce_nullable_integer(frame, "curbWeightKg")
-        _coerce_nullable_integer(frame, "cargoWeightKg")
+        for column_name in metadata_integer_columns:
+            _coerce_nullable_integer(frame, column_name)
 
     os.makedirs(output_dir, exist_ok=True)
     

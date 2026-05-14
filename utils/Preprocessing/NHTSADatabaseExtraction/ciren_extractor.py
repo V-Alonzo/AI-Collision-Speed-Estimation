@@ -634,10 +634,6 @@ def download_valid_ciren_images(
                     _append_validated_ciren_object_id(case_payload, object_id)
                     continue
 
-                if any(keyword in image_candidate.description.upper() for keyword in CIREN_IGNORED_DESCRIPTION_KEYWORDS):
-                    _append_validated_ciren_object_id(case_payload, object_id)
-                    continue
-
                 output_stem = _build_ciren_output_stem(case_payload, validated_sequence, image_candidate.vehicle_number)
                 candidate_stem = (
                     f"__candidate__{_build_ciren_output_stem(case_payload, candidate_sequence, image_candidate.vehicle_number)}"
