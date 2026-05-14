@@ -22,7 +22,6 @@ class CirenImageCandidate:
     description: str
     object_id: str
     photo_id: int | None
-    image_bytes: bytes
     subtype: str
 
 
@@ -78,6 +77,23 @@ def _fetch_full_resolution_photo(session, photo_id: int) -> bytes:
         raise ValueError(f"Empty full-resolution CIREN payload for photo {photo_id}.")
 
     return response.content
+
+
+def _fetch_vehicle_thumbnail_entries(session, ciren_id: int, vehicle_number: int, subtype: str) -> List[JsonDict]:
+    """Return the gallery entries exposed for one vehicle/subtype pair."""
+
+    response = session.get(
+        f"{CIREN_BASE_URL}/api/ciren/GetVehThumbnailsByVehNo",
+        params={"caseID": ciren_id, "vehNo": vehicle_number, "subType": subtype},
+        timeout=CIREN_REQUEST_TIMEOUT_SECONDS,
+    )
+    response.raise_for_status()
+
+    payload = response.json()
+    if not isinstance(payload, list):
+        return []
+
+    return payload
 
 
 def _fetch_ciren_case_overview_tree(session, ciren_id: int) -> List[JsonDict]:
@@ -276,6 +292,42 @@ def extract_case_general_vehicle(detail_payload: JsonDict) -> JsonDict:
     return general_vehicle
 
 
+def extract_case_crash_summary_vehicle(detail_payload: JsonDict) -> JsonDict:
+    """Return the crash-summary vehicle that best matches the selected case vehicle."""
+
+    crash_summary_vehicles = detail_payload.get("cirenCrashSummaryVehicles", [])
+    if not isinstance(crash_summary_vehicles, list) or not crash_summary_vehicles:
+        return {}
+
+    general_vehicle = extract_case_general_vehicle(detail_payload)
+    selected_vehicle_number = general_vehicle.get("vehicleNumber")
+    if isinstance(selected_vehicle_number, int):
+        for vehicle in crash_summary_vehicles:
+            if isinstance(vehicle, dict) and vehicle.get("vehicleNumber") == selected_vehicle_number:
+                return vehicle
+
+    summary = extract_case_summary(detail_payload)
+    summary_make = _normalize_vehicle_identity_value(summary.get("make"))
+    summary_model = _normalize_vehicle_identity_value(summary.get("model"))
+    summary_model_year = _normalize_vehicle_identity_value(summary.get("modelYear"))
+
+    for vehicle in crash_summary_vehicles:
+        if not isinstance(vehicle, dict):
+            continue
+
+        make_matches = _normalize_vehicle_identity_value(vehicle.get("makeDescription")) == summary_make
+        model_matches = _normalize_vehicle_identity_value(vehicle.get("modelDescription")) == summary_model
+        year_matches = _normalize_vehicle_identity_value(vehicle.get("modelYearDescription")) == summary_model_year
+        if make_matches and model_matches and year_matches:
+            return vehicle
+
+    for vehicle in crash_summary_vehicles:
+        if isinstance(vehicle, dict):
+            return vehicle
+
+    return {}
+
+
 def _should_ignore_subtype(subtype: str) -> bool:
     """Return whether a Crash Viewer subtype should be skipped for damage review."""
 
@@ -284,7 +336,7 @@ def _should_ignore_subtype(subtype: str) -> bool:
 
 
 def iter_vehicle_image_candidates(ciren_id: int, detail_payload: JsonDict) -> Iterable[CirenImageCandidate]:
-    """Yield deduplicated candidate images from the public CIREN vehicle galleries."""
+    """Yield deduplicated candidate image metadata from the public CIREN vehicle galleries."""
 
     session = _build_session()
     seen_object_ids = set()
@@ -298,18 +350,7 @@ def iter_vehicle_image_candidates(ciren_id: int, detail_payload: JsonDict) -> It
                 print(f"Ignoring subtype {subtype} for vehicle {vehicle_number} in case {ciren_id} due to matching ignore keywords.")
                 continue
 
-            response = session.get(
-                f"{CIREN_BASE_URL}/api/ciren/GetVehThumbnailsByVehNo",
-                params={"caseID": ciren_id, "vehNo": vehicle_number, "subType": subtype},
-                timeout=CIREN_REQUEST_TIMEOUT_SECONDS,
-            )
-            response.raise_for_status()
-
-            payload = response.json()
-            if not isinstance(payload, list):
-                continue
-
-            for image_entry in payload:
+            for image_entry in _fetch_vehicle_thumbnail_entries(session, ciren_id, vehicle_number, subtype):
                 if not isinstance(image_entry, dict):
                     continue
 
@@ -326,21 +367,52 @@ def iter_vehicle_image_candidates(ciren_id: int, detail_payload: JsonDict) -> It
 
                 seen_object_ids.add(object_id)
 
-                image_bytes = _decode_data_url_image(thumbnail)
-                if photo_id is not None:
-                    try:
-                        image_bytes = _fetch_full_resolution_photo(session, photo_id)
-                    except Exception:
-                        # Crash Viewer occasionally exposes a thumbnail entry that cannot be fetched at full resolution.
-                        # Keep the candidate instead of dropping the case entirely.
-                        image_bytes = _decode_data_url_image(thumbnail)
-
                 yield CirenImageCandidate(
                     ciren_id=ciren_id,
                     vehicle_number=vehicle_number,
                     description=description,
                     object_id=object_id,
                     photo_id=photo_id,
-                    image_bytes=image_bytes,
                     subtype=subtype,
                 )
+
+
+def fetch_ciren_candidate_image_bytes(image_candidate: CirenImageCandidate) -> bytes:
+    """Download the image bytes for a previously cataloged CIREN candidate."""
+
+    session = _build_session()
+    gallery_entries = _fetch_vehicle_thumbnail_entries(
+        session,
+        image_candidate.ciren_id,
+        image_candidate.vehicle_number,
+        image_candidate.subtype,
+    )
+
+    matching_entry = None
+    for image_entry in gallery_entries:
+        if not isinstance(image_entry, dict):
+            continue
+        if image_entry.get("objectID") == image_candidate.object_id:
+            matching_entry = image_entry
+            break
+
+    if matching_entry is None:
+        raise ValueError(
+            f"CIREN candidate {image_candidate.object_id} is no longer available for case {image_candidate.ciren_id}."
+        )
+
+    thumbnail = matching_entry.get("thumbnail")
+    if not isinstance(thumbnail, str) or not thumbnail:
+        raise ValueError(
+            f"Missing thumbnail payload for CIREN candidate {image_candidate.object_id} in case {image_candidate.ciren_id}."
+        )
+
+    if image_candidate.photo_id is not None:
+        try:
+            return _fetch_full_resolution_photo(session, image_candidate.photo_id)
+        except Exception:
+            # Crash Viewer occasionally exposes a thumbnail entry that cannot be fetched at full resolution.
+            # Keep the candidate instead of dropping the case entirely.
+            pass
+
+    return _decode_data_url_image(thumbnail)

@@ -8,10 +8,12 @@ from ultralytics import YOLO
 from PATHS import (
     CARS_YOLO_MODEL_PATH as carsYoloModelPath,
     PIECES_YOLO_MODEL_PATH as piecesYoloModelPath,
+    DAMAGES_YOLO_MODEL_PATH as damagesYoloModelPath,
 )
 from configurations import (
     CARS_CLASSES as carsClasses,
     PIECES_CLASSES as piecesClasses,
+    DAMAGES_CLASSES as damagesClasses,
 )
 
 from configurations import MINIMUM_BOX_AREA_THRESHOLD
@@ -20,9 +22,10 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 carsModel = YOLO(carsYoloModelPath)
 piecesModel = YOLO(piecesYoloModelPath)
+damagesModel = YOLO(damagesYoloModelPath)
 
 
-def classify_with_model(image, model, classes=None, draw_outputs=False):
+def classify_with_model(image, model, classes=None, draw_outputs=False, applyMinimumBoxAreaThreshold=True):
     class_list = model.names
     class_counts = defaultdict(int)
 
@@ -30,6 +33,7 @@ def classify_with_model(image, model, classes=None, draw_outputs=False):
 
     areaImagePixels = image.shape[0] * image.shape[1]
     reallySmallBoxes = 0
+    boxes = None
 
     if results[0].boxes is not None and len(results[0].boxes) > 0:
         boxes = results[0].boxes.xyxy.cpu()
@@ -38,9 +42,9 @@ def classify_with_model(image, model, classes=None, draw_outputs=False):
         for box, class_index in zip(boxes, class_indices):
             boxArea = (box[2] - box[0]) * (box[3] - box[1])
 
-            if boxArea / areaImagePixels < MINIMUM_BOX_AREA_THRESHOLD:
+            if boxArea / areaImagePixels < MINIMUM_BOX_AREA_THRESHOLD and applyMinimumBoxAreaThreshold:
                 reallySmallBoxes += 1
-                #continue
+                continue
 
             x1, y1, x2, y2 = map(int, box)
             class_name = class_list[class_index]
@@ -64,12 +68,15 @@ def classify_with_model(image, model, classes=None, draw_outputs=False):
 
     has_detections = reallySmallBoxes < len(results[0].boxes) if results[0].boxes is not None else False
 
-    return image, has_detections
+    return image, has_detections, boxes
 
 
 def classify_cars_image(image, draw_outputs=False):
     return classify_with_model(image, carsModel, carsClasses, draw_outputs=draw_outputs)
 
-
 def classify_pieces_image(image, draw_outputs=False):
     return classify_with_model(image, piecesModel, piecesClasses, draw_outputs=draw_outputs)
+
+def classify_damages_image(image, draw_outputs=False, applyMinimumBoxAreaThreshold=False):
+    return classify_with_model(image, damagesModel, damagesClasses, draw_outputs=draw_outputs, applyMinimumBoxAreaThreshold=False)
+

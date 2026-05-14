@@ -1,25 +1,25 @@
 """Backward-compatible facade for the NHTSA/CIREN extraction workflows."""
 
-from configurations import CIREN_DEFAULT_CASE_ID_RANGE
-from utils.Preprocessing.NHTSADatabaseExtraction.ciren_extractor import beginCirenExtraction
-from utils.Preprocessing.NHTSADatabaseExtraction.ciren_extractor import download_valid_ciren_images
-from utils.Preprocessing.NHTSADatabaseExtraction.image_validation import isValidImage
-from utils.Preprocessing.NHTSADatabaseExtraction.nhtsa_extractor import downloadImage
-from utils.Preprocessing.NHTSADatabaseExtraction.nhtsa_extractor import download_valid_images
-from utils.Preprocessing.NHTSADatabaseExtraction.nhtsa_extractor import get_json
-from utils.Preprocessing.NHTSADatabaseExtraction.nhtsa_extractor import get_valid_test
 from utils.Preprocessing.NHTSADatabaseExtraction.nhtsa_extractor import beginNHTSAExtraction
-
-
-
+from PATHS import CIREN_CACHE_OUTPUT_PATH, CIREN_PARQUET_OUTPUT_DIR
+from configurations import CIREN_DEFAULT_CASE_ID_RANGE
+from utils.Preprocessing.NHTSADatabaseExtraction.ciren_extractor import refresh_ciren_case_metadata
+from utils.Preprocessing.NHTSADatabaseExtraction.ciren_extractor import beginCirenExtraction
+from utils.Preprocessing.NHTSADatabaseExtraction.storage_utils import convert_cache_to_parquet
 
     
 
-def beginExtraction(extraction_from: str = "ciren") -> None:
+def beginExtraction(extraction_from: str = "ciren", just_refresh_cache_and_parquet: bool = False) -> None:
     """Entry point for the public-dataset extraction workflow. extraction_from can be either 'ciren' or 'nhtsa', and will trigger the corresponding extraction flow."""
 
     if extraction_from.lower() == "ciren":
-        beginCirenExtraction(ciren_ids=list(CIREN_DEFAULT_CASE_ID_RANGE))
+        if just_refresh_cache_and_parquet:
+            refresh_ciren_case_metadata(CIREN_CACHE_OUTPUT_PATH)
+        else:
+            beginCirenExtraction(ciren_ids=CIREN_DEFAULT_CASE_ID_RANGE)
+
+        convert_cache_to_parquet(CIREN_CACHE_OUTPUT_PATH, CIREN_PARQUET_OUTPUT_DIR)
+            
     elif extraction_from.lower() == "nhtsa":
         beginNHTSAExtraction()
     else:
