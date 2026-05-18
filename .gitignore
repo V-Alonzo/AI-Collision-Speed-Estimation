@@ -22,6 +22,24 @@ utils/Preprocessing/NHTSADatabaseExtraction/__pycache__/*.pyc
 utils/__pycache__/*.pyc
 utils/Preprocessing/ImagesExtractionClassification/__pycache__/*.pyc
 
+# ==== Model
+# Data Manifest and csv
+model/data/CSV/*.csv
+
+# Training Logs
+model/src/TrainingLogs/*/
+
+# Serialized Objs
+*.pkl
+*.pt
+*.pth
+
+# Model Checkpoint
+*.ckpt
+
+# ====
+
+
 # dependencies
 /node_modules
 /.pnp
@@ -60,3 +78,4 @@ next-env.d.ts
 
 __pycache__/
 *.pyc
+*.vscode

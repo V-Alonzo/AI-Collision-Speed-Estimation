@@ -16,10 +16,16 @@ dependencies:
       - numpy
       - matplotlib
       - opencv-python
+      
       # Vision y modelos
-      - torch
-      - torchvision
       - open-clip-torch
       - ultralytics
       - imagededup
       - curl_cffi
+
+      # Torch
+      - torch
+      - torchvision
+      - torchmetrics
+      - lightning
+      
