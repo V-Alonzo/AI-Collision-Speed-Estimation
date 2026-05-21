@@ -11,3 +11,7 @@ DAMAGES_YOLO_MODEL_PATH = 'utils/Preprocessing/ImagesExtractionClassification/mo
 CIREN_IMAGES_OUTPUT_DIR = "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images/CIREN"
 CIREN_CACHE_OUTPUT_PATH = "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/JSONs/cacheCIREN.json"
 CIREN_PARQUET_OUTPUT_DIR = "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Parquets/CIREN"
+PROCESSED_DATA_DIR = "utils/Preprocessing/HuggingFaceExtraction/ProcessedData"
+SCALER_PATH = f"{PROCESSED_DATA_DIR}/scaler.pkl"
+FEATURE_COLUMNS_PATH = f"{PROCESSED_DATA_DIR}/feature_columns.pkl"
+PROCESSED_METADATA_PATH = f"{PROCESSED_DATA_DIR}/processed_metadata.parquet"
