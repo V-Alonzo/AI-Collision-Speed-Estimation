@@ -9,8 +9,8 @@
 \shorttitle{Reconstrucción de Velocidad Vehicular}
        
 % Authors
+\author[1]{Alberto Isaac Sánchez Tarango}
 \author[1]{Alyson Melissa Sánchez Serratos}
-\author[1]{José de Jesús Becerra González}
 \author[1]{Máximo Moises Zamudio Chávez}
 \author[1]{Miguel Ángel Pérez Ávila}
 \author[1]{Santiago Albarrán Organista}
@@ -20,11 +20,11 @@
 \affil[1]{Tecnológico de Monterrey, Escuela de Ingeniería y Ciencias, Campus Toluca, Estado de México, México}
 
 % Surname of the first author of the manuscript
-\firstauthor{Sánchez, Becerra, Zamudio}
+\firstauthor{Sánchez, Sánchez, Zamudio}
 
 %Contact Author Information
-\contactauthor{Alyson Sánchez}           % Name and surname of the contact author
-\email{A01771843@tec.mx}                                  % Contact Author Email
+\contactauthor{Alberto Sánchez}           % Name and surname of the contact author
+\email{A01771321@tec.mx}                                  % Contact Author Email
 
 % Publication data (will be defined in the edition)
 \thisvolume{XX}
@@ -52,7 +52,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 % Insert here the keywords of your work in Spanish language
 \palabrasclave{
-Lorem ipsum, dolor sit amet, consectetur adipiscing, eiusmod tempor, labore et dolore}
+reconstrucción forense, estimación de velocidad de impacto, visión por computadora, redes neuronales convolucionales, aprendizaje por transferencia, deformación estructural}
 
 % Roman numerals for section numbering
 \renewcommand{\thesection}{\Roman{section}}
@@ -65,32 +65,35 @@ Lorem ipsum, dolor sit amet, consectetur adipiscing, eiusmod tempor, labore et d
 \thispagestyle{fancy}
 \printcontactdata
 
-% Secciones principales
 \section{INTRODUCCIÓN}
-\firstword{T}{he} lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.
+\firstword{L}{os} siniestros viales representan una de las principales problemáticas contemporáneas en materia de salud pública, seguridad vial y pérdidas económicas. La Organización Mundial de la Salud estima que aproximadamente 1.19 millones de personas fallecen anualmente como consecuencia de accidentes de tránsito, mientras que decenas de millones sufren lesiones permanentes o discapacidades asociadas \cite{WHO_RoadTrafficInjuries}. Más allá de su impacto humano, estos eventos generan costos sustanciales para los sistemas de salud, los marcos regulatorios y el sector asegurador, particularmente en los procesos de reconstrucción técnica y determinación de responsabilidades.
 
-Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor.
+En el ámbito de la ingeniería forense automotriz, la estimación de la velocidad de impacto constituye uno de los parámetros más relevantes para la reconstrucción de colisiones. Dicho parámetro permite inferir la severidad energética del evento, validar trayectorias de movimiento y respaldar técnicamente dictámenes periciales y procedimientos judiciales. Tradicionalmente, estas estimaciones se fundamentan en modelos físico--mecánicos basados en conservación del momento, disipación de energía y análisis de deformación estructural, consolidados históricamente en metodologías como CRASH3, el Método McHenry y diversos modelos de \textit{crush energy analysis} \cite{FrickeTrafficCrashReconstruction,BrachBrach2011,DailyShigemura2020}. Tales enfoques han demostrado alta utilidad en contextos especializados; sin embargo, su aplicación depende de inspecciones presenciales exhaustivas, mediciones geométricas precisas y acceso directo a las zonas deformadas del vehículo.
 
-\subsection{Contexto y motivación}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+A pesar de su robustez teórica, los métodos convencionales presentan limitaciones importantes en escenarios reales de reconstrucción. La evidencia física suele encontrarse incompleta, alterada por maniobras de rescate o degradada por condiciones ambientales posteriores al impacto. Asimismo, la obtención de parámetros de rigidez vehicular y deformación residual requiere instrumentación especializada y personal altamente capacitado, lo que incrementa significativamente los costos operativos y la variabilidad interperito \cite{DailyShigemura2020}. En consecuencia, la reproducibilidad de los análisis puede verse comprometida cuando únicamente se dispone de evidencia parcial o documentación fotográfica del siniestro. Estas limitaciones han motivado el interés por metodologías alternativas capaces de aprovechar evidencia visual disponible incluso en ausencia de inspecciones físicas completas.
 
-\subsection{Alcance del estudio}
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+Paralelamente, la digitalización progresiva de expedientes periciales y la expansión de repositorios de accidentes reales han incrementado de manera sustancial la disponibilidad de imágenes postcolisión. Iniciativas como el \textit{Crash Injury Research and Engineering Network} (CIREN), desarrollado por la National Highway Traffic Safety Administration (NHTSA), integran investigaciones multidisciplinarias que incluyen fotografías vehiculares, reconstrucción técnica del accidente, variables biomecánicas y estimaciones de velocidad \cite{NHTSA_CIREN,Digges2005CIREN}. Este tipo de bases de datos constituye una oportunidad relevante para el desarrollo de metodologías automatizadas capaces de inferir variables dinámicas de preimpacto a partir de evidencia visual estructurada.
+
+En consonancia con esta creciente disponibilidad de evidencia visual, la literatura reciente en visión por computadora aplicada al sector automotriz se ha concentrado principalmente en detección de daños, clasificación de severidad y automatización de reclamaciones aseguradoras. No obstante, la estimación cuantitativa de velocidad de impacto a partir de imágenes posteriores a la colisión continúa siendo un problema relativamente poco explorado en comparación con otras tareas de análisis vehicular. Aunque actualmente existen datasets y enfoques orientados a análisis de daños, numerosos métodos continúan dependiendo de variables físicas adicionales, mediciones manuales o parámetros estructurales difíciles de obtener fuera de entornos controlados \cite{FrickeTrafficCrashReconstruction,BrachBrach2011}. Asimismo, la heterogeneidad visual de los escenarios reales de accidente y la variabilidad en la calidad de la evidencia fotográfica representan desafíos importantes para la generalización de modelos automatizados.
+
+En este contexto, el presente trabajo propone una metodología de reconstrucción de velocidad vehicular preimpacto basada exclusivamente en imágenes de siniestros y técnicas de aprendizaje profundo. Inicialmente, se desarrolla un pipeline reproducible de adquisición, validación y curación de datos utilizando casos provenientes de CIREN, incorporando procesos automatizados de filtrado visual, validación semántica y estructuración de metadatos. A partir de ello, se construye un conjunto de datos estandarizado con imágenes vehiculares y etiquetas de velocidad apto para entrenamiento supervisado de modelos de regresión.
+
+Posteriormente, se plantea un esquema de aprendizaje basado en transferencia de conocimiento mediante arquitecturas convolucionales profundas. Se evalúan estrategias de \textit{Transfer Learning} y \textit{Knowledge Distillation} con el objetivo de mejorar la capacidad de generalización del modelo y reducir simultáneamente los requerimientos computacionales para escenarios de implementación práctica.
+
+En síntesis, las contribuciones de este estudio son: (i) la sistematización de un proceso reproducible de preparación de datos forenses vehiculares con velocidades verificadas, (ii) la construcción de un dataset curado de siniestros reales orientado a estimación continua de velocidad y (iii) la propuesta de un modelo de aprendizaje profundo para reconstrucción automatizada de velocidad de impacto a partir de evidencia fotográfica. Estas aportaciones buscan avanzar hacia metodologías periciales más objetivas, escalables y consistentes, fortaleciendo el uso de inteligencia artificial en reconstrucción forense y análisis de colisiones viales.
 
 \section{TRABAJO RELACIONADO}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam. Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.
+La estimación automática de velocidad vehicular mediante visión por computadora ha recibido creciente atención en los últimos años debido a su relevancia en sistemas inteligentes de transporte, conducción autónoma y reconstrucción forense de accidentes. Los enfoques recientes se han apoyado principalmente en aprendizaje profundo, análisis geométrico y procesamiento de video monocular para inferir velocidad a partir de imágenes o secuencias visuales.
 
-Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit. Sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.
+En el contexto de sistemas ADAS y monitoreo vehicular, García-Aguilar et al. \cite{Garcia2024Speed} propusieron un framework de estimación de velocidad en tiempo real basado en redes neuronales convolucionales y cámaras monoculares. Su metodología combina detección de vehículos, estimación de profundidad y seguimiento visual para calcular la velocidad relativa de vehículos circundantes en entornos urbanos simulados mediante CARLA. Los autores reportaron errores promedio inferiores a 3 km/h en múltiples escenarios de tráfico, demostrando que arquitecturas profundas pueden inferir variables dinámicas relevantes únicamente a partir de información visual.
 
-\subsection{Modelos previos}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.
+De forma complementaria, Macko et al. \cite{Macko2025Speed} desarrollaron un enfoque eficiente de estimación de velocidad basado en video monocular y geometría de perspectiva. Su propuesta integra detección profunda de vehículos con calibración automática de cámara y análisis tridimensional de trayectorias, alcanzando errores relativos menores al 5\% en escenarios reales de tráfico urbano. El trabajo resulta relevante debido a que demuestra la viabilidad de inferir velocidad utilizando únicamente información visual sin necesidad de sensores especializados adicionales.
 
-\subsection{Comparativas recientes}
-Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor.
+En el ámbito específico de reconstrucción forense, Silver et al. \cite{Silver2022CrashCharacteristics} presentaron uno de los primeros trabajos orientados a estimar características de colisión a partir de imágenes de vehículos accidentados utilizando aprendizaje profundo. Su estudio empleó redes neuronales convolucionales para predecir variables asociadas al impacto, incluyendo Delta-V y severidad de colisión, utilizando fotografías postcolisión provenientes de accidentes reales. Los resultados mostraron correlaciones significativas entre patrones visuales de deformación y parámetros dinámicos del accidente, sugiriendo que la evidencia fotográfica contiene información suficiente para inferir características físicas relevantes del impacto.
+
+A pesar de estos avances, persisten desafíos importantes asociados a la heterogeneidad visual de los escenarios reales de accidente, variaciones de iluminación, ángulos de captura y calidad de evidencia fotográfica. Además, una parte importante de los trabajos recientes depende de secuencias de video, calibración geométrica o información contextual adicional, mientras que la estimación de velocidad exclusivamente a partir de imágenes postcolisión continúa siendo un área relativamente poco explorada.
 
 \section{METODOLOGÍA}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.
@@ -143,8 +146,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor i
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 % Referencias o fuentes bibliograficas
-\section{REFERENCIAS}
-\nocite{*}
 \insertbibliography{References}
 
 \end{document}
