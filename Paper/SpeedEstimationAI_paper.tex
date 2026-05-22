@@ -1,4 +1,4 @@
-\documentclass[esp]{cesvi-class}
+\documentclass[esp]{SpeedEstimationAI_paper}
 \usepackage{authblk}
 
 %
@@ -103,7 +103,71 @@ Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu a
 Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa.
 
 \subsection{Datos y preprocesamiento}
-Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra.
+\subsubsection{Fuente de datos y criterios de construcción de la base de datos utilizada para el entrenamiento de los modelos predictivos de regresión}
+
+La serie de componentes que han sido elaborados sobre la base de datos denominada \texttt{Crash Injury Research Engineering Network} (CIREN) y perteneciente al \texttt{NHTSA Crash Viewer}, se orientan a transformar información pública de siniestros vehiculares en una estructura analítica de importante utilidad para tareas de estimación de velocidad preimpacto a partir de evidencia postcolisión. Para ello, se parte de casos documentados con dos tipos de insumo complementario: metadatos del evento y del vehículo involucrado, junto con galerías fotográficas asociadas al daño observado tras la colisión. La lógica metodológica seguida no consiste únicamente en recolectar imágenes, sino en vincular cada fotografía válida con un contexto de siniestro suficientemente caracterizado en términos de severidad, dinámica de impacto y atributos generales del vehículo de tal manera que cada uno de estos elementos multimedia maximicen su valor cualitativo para la explicación del fenómeno físico de impacto y su relación directa con la velocidad a la que ocurrió.
+
+El proceso se diseñó bajo tres principios: trazabilidad, reanudación y utilidad analítica. Primeramente, la trazabilidad garantiza que cada imagen final conserve su vínculo con el caso de origen y con el vehículo al que pertenece. Por otro lado, la reanudación permite continuar ejecuciones incompletas sin repetir el procesamiento ya realizado y, finalmente, la utilidad analítica asegura que el resultado no sea solo una galería visual, sino un conjunto estructurado de ejemplos listos para ser explorados y posteriormente consumidos por los modelos predictivos seleccionados.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Diagrams/Diagrama1.pdf}
+    \caption{Diagrama de flujo general del pipeline para el tratamiento y persistencia de la base de datos de CIREN}
+    \label{fig:diagrama1}
+\end{figure}
+
+
+\subsubsection{Caracterización del caso y selección del vehículo de interés}
+
+Una vez identificado un caso particular desde la base de datos de \texttt{CIREN}, el flujo adquiere la responsabilidad de integrar la información descriptiva disponible para construir una representación compacta del evento. En esta etapa, se priorizan variables con valor directo para interpretación biomecánica y estructural del impacto tal y como lo son la severidad máxima de lesión humana tras el incidente, el cambio total de velocidad, la dirección del impacto, el patrón general de deformación, el plano principal de daño y características generales del vehículo, entre las cuales pueden ser encontradas: clase, masa base y carga reportada. Cada una de estas variables permiten contextualizar visualmente el daño y, al mismo tiempo, aportan atributos cuantitativos y categóricos relevantes para el diseño, preparación y entrenamiento de los modelos de inferencia.
+
+Dado que un mismo caso puede contener múltiples vehículos o varias vistas de interés involucradas, se implementó una etapa de conciliación para identificar al vehículo principal que será estudiado. Esta decisión adquiere especial relevancia al permitir evitar la inadecuada mezcla de  imágenes pertenecientes a actores distintos dentro de un mismo siniestro, al igual que mejorar la coherencia entre la evidencia visual y los metadatos asociados. De esta forma, la unidad efectiva de análisis queda definida como el par compuesto por caso y vehículo principal, sobre el cual se organiza el resto del preprocesamiento.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Diagrams/Diagrama2.pdf}
+    \caption{Diagrama de flujo que muestra la lógica de consolidación de un caso reportado en CIREN}
+    \label{fig:diagrama1}
+\end{figure}
+
+\subsubsection{Catalogación de imágenes candidatas}
+
+La colección fotográfica asociada a cada caso no se incorpora de manera directa a la base de datos final, sino que se lleva a cabo una fase de catalogación cuyo objetivo es reunir todas las vistas potencialmente útiles del vehículo seleccionado y registrar su procedencia. En esta etapa, cada imagen candidata conserva información descriptiva suficiente para identificarla posteriormente, incluyendo su relación con el vehículo, la vista o categoría visual de la que proviene y un identificador estable y estrictamente incremental para evitar la sobrescritura de archivos en tiempo de ejecución.
+
+Metodológicamente, esta fase cumple dos funciones, la primera es separar el descubrimiento de contenido de la validación visual, lo cual reduce reprocesamiento en ejecuciones sucesivas y la segunda es imponer una preselección semántica: se descartan categorías de imágenes que típicamente aportan poco a la reconstrucción del daño estructural como lo pueden ser: tomas irrelevantes que no pertenezcan directamente a los vehículos involucrados, vistas no exteriores del automóvil o material complementario de baja utilidad para análisis forense del vehículo. Consecuentemente, el conjunto candidato se concentra en fotografías con mayor probabilidad de contener evidencia visual de interés.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Diagrams/Diagrama3.pdf}
+    \caption{Diagrama de estados que muestra la transición de una imagen candidata a persistida o descartada}
+    \label{fig:diagrama1}
+\end{figure}
+
+\subsubsection{Filtrado visual y validación de evidencia dañada}
+
+Después de la catalogación, cada candidato se somete a una etapa de validación visual artificial orientada a confirmar que la fotografía contiene evidencia utilizable de daño vehicular. La lógica de esta etapa se centra en evitar que la base de datos final contenga imágenes sin daño apreciable o con contenido visual poco representativo del fenómeno de interés. Dicho de otro modo, no toda imagen asociada a un caso CIREN es útil para modelar severidad de colisión o estimar velocidad preimpacto. Por ello, fue necesario incorporar un filtro automatizado que priorice señales visibles de deformación estructural para reducir la probabilidad de ocurrencia de esta serie de casos innecesarios.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Diagrams/Diagrama4.pdf}
+    \caption{Diagrama de flujo donde se muestra el proceso de validación visual de una imagen extraída de un caso en CIREN}
+    \label{fig:diagrama1}
+\end{figure}
+
+
+\subsubsection{Normalización de salidas para análisis posterior}
+
+El resultado del preprocesamiento de imágenes y características extraídas desde CIREN es organizado en dos niveles complementarios: caso e imagen. El primero se concentra en la caracterización del siniestro y del vehículo, mientras que el segundo tiene el objetivo de conservar la evidencia visual validada con su referencia al caso correspondiente. Esta separación permite analizar la información desde una perspectiva estadística o computacional sin perder la granularidad particular de cada fotografía.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{Diagrams/Diagrama7.pdf}
+    \caption{Diagrama de entidad relación del conjunto resultante del preprocesamiento y extracción de datos de CIREN}
+    \label{fig:diagrama1}
+\end{figure}
+
+\subsection{Preprocesamiento de la base de datos alojada en HuggingFace para el entrenamiento de los modelos}
+El preprocesamiento del dataset se realizó mediante un flujo estructurado basado en scikit-learn, diseñado para limpiar las observaciones, separar la variable objetivo (totalDeltaVKph) y transformar cada tipo de atributo de acuerdo con su naturaleza. En una primera etapa, se eliminaron los registros con valores nulos en la variable objetivo y se excluyeron columnas no informativas para el modelado. Posteriormente, se aplicó un ColumnTransformer con transformaciones específicas: las variables numéricas relacionadas con peso fueron imputadas con la mediana y estandarizadas; las variables categóricas nominales se imputaron con una categoría genérica y se codificaron mediante one-hot encoding; la severidad se trató como variable ordinal respetando un orden predefinido; el valor mais se procesó extrayendo su componente numérico antes de imputar y escalar; y las direcciones angulares (forceDirection y clockDirection) se convirtieron a representaciones cíclicas mediante seno y coseno para preservar su periodicidad. Finalmente, el estado de volcadura se binarizó en una variable indicadora. Este procedimiento permitió obtener una matriz de características numérica, consistente y apta para el entrenamiento de modelos de regresión orientados a estimar la velocidad de impacto.
 
 \subsection{Arquitectura propuesta}
 Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet.
