@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import dotenv
+import os
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
@@ -16,10 +17,11 @@ dotenv.load_dotenv()
 def load_hf_dataset():
     """Descarga y convierte el dataset de Hugging Face a Pandas DataFrame."""
     print(f"Loading HuggingFace dataset: {HF_DATASET_NAME} ({HF_SPLIT})...")
+    HF_TOKEN = os.getenv("HF_TOKEN")
     dataset = load_dataset(
         HF_DATASET_NAME,
         split=HF_SPLIT,
-        #token=HF_TOKEN
+        token=HF_TOKEN
     )
     df = dataset.to_pandas()
     print(f"Dataset loaded: {df.shape}")
