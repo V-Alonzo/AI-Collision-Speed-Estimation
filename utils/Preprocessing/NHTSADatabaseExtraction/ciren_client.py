@@ -6,7 +6,7 @@ import json
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List
 
-from configurations import CIREN_BASE_URL
+from configurations import CIREN_BASE_URL, CIREN_IGNORED_DESCRIPTION_KEYWORDS
 from configurations import CIREN_CASE_OVERVIEW_MODE
 from configurations import CIREN_IGNORED_SUBTYPE_KEYWORDS
 from configurations import CIREN_REQUEST_TIMEOUT_SECONDS
@@ -358,6 +358,9 @@ def iter_vehicle_image_candidates(ciren_id: int, detail_payload: JsonDict) -> It
                 thumbnail = image_entry.get("thumbnail")
                 photo_id = image_entry.get("photoid") if isinstance(image_entry.get("photoid"), int) else None
                 description = str(image_entry.get("description", ""))
+
+                if any(keyword in description.upper() for keyword in CIREN_IGNORED_DESCRIPTION_KEYWORDS):
+                    continue
                 if not isinstance(object_id, str) or not object_id:
                     continue
                 if not isinstance(thumbnail, str) or not thumbnail:
