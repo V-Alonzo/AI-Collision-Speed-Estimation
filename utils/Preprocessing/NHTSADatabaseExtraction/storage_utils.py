@@ -181,6 +181,41 @@ def convert_cache_to_parquet(cache_path: str, output_path: str, originDB: str = 
     cache_data = read_cached_results(cache_path)
     dataset_prefix = sanitize_metadata_for_filename(originDB.lower(), fallback="dataset")
     output_dir = _resolve_output_dir(output_path)
+    configured_metadata_keys = set(CIREN_REQUIRED_METADATA_KEYS)
+
+    case_metadata_columns = ["cirenId", "caseId"]
+    metadata_integer_columns = ["cirenId", "caseId"]
+
+    if "mais" in configured_metadata_keys:
+        case_metadata_columns.append("mais")
+    if "totalDeltaV" in configured_metadata_keys:
+        case_metadata_columns.extend(["totalDeltaVKph", "totalDeltaVMph"])
+        metadata_integer_columns.extend(["totalDeltaVKph", "totalDeltaVMph"])
+    if "dvBarrierEquivalentSpeedDescription" in configured_metadata_keys:
+        case_metadata_columns.append("dvBarrierEquivalentSpeedDescription")
+    if "cdc" in configured_metadata_keys:
+        case_metadata_columns.append("cdc")
+    if "clockDirection" in configured_metadata_keys:
+        case_metadata_columns.append("clockDirection")
+    if "forceDirection" in configured_metadata_keys:
+        case_metadata_columns.append("forceDirection")
+    if "rolloverStatus" in configured_metadata_keys:
+        case_metadata_columns.append("rolloverStatus")
+    if "primaryVehicleNumber" in configured_metadata_keys:
+        case_metadata_columns.append("primaryVehicleNumber")
+        metadata_integer_columns.append("primaryVehicleNumber")
+    if "damagePlaneDescription" in configured_metadata_keys:
+        case_metadata_columns.append("damagePlaneDescription")
+    if "severityDescription" in configured_metadata_keys:
+        case_metadata_columns.append("severityDescription")
+    if "vehicleClass" in configured_metadata_keys:
+        case_metadata_columns.append("vehicleClass")
+    if "curbWeight" in configured_metadata_keys:
+        case_metadata_columns.extend(["curbWeight", "curbWeightKg"])
+        metadata_integer_columns.append("curbWeightKg")
+    if "cargoWeight" in configured_metadata_keys:
+        case_metadata_columns.extend(["cargoWeight", "cargoWeightKg"])
+        metadata_integer_columns.append("cargoWeightKg")
 
     case_records: List[Dict[str, Any]] = []
     image_records: List[Dict[str, Any]] = []
@@ -199,8 +234,7 @@ def convert_cache_to_parquet(cache_path: str, output_path: str, originDB: str = 
                 "mais": case_data.get("mais"),
                 "totalDeltaVKph": kph_velocity,
                 "totalDeltaVMph": mph_velocity,
-                "objectContact": case_data.get("objectContact"),
-                "category": case_data.get("category"),
+                "dvBarrierEquivalentSpeedDescription": case_data.get("dvBarrierEquivalentSpeedDescription"),
                 "cdc": case_data.get("cdc"),
                 "clockDirection": case_data.get("clockDirection"),
                 "forceDirection": case_data.get("forceDirection"),
