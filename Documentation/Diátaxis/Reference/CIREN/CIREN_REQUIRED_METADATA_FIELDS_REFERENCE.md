@@ -27,6 +27,16 @@ Esta referencia cubre únicamente los campos listados en `CIREN_REQUIRED_METADAT
 
 No intenta reemplazar una taxonomía oficial de NHTSA o CIREN. Cuando un campo usa un vocabulario externo o un código especializado, este documento explica cómo tratarlo dentro del repositorio y qué se observa en los datos actuales.
 
+## Mapa rápido de artefactos
+
+| Artefacto | Variables principales | Uso |
+| --- | --- | --- |
+| `cacheCIREN.json` | `cirenId`, `caseId`, `caseNumber`, metadatos CIREN, `candidateImages`, `revisedImages`, `validImages`, `validatedImageRecords`, `errors` | estado reanudable del extractor |
+| `ciren_cases.parquet` | `cirenId`, `caseId`, `mais`, `totalDeltaVKph`, `totalDeltaVMph`, `dvBarrierEquivalentSpeedDescription`, `cdc`, `clockDirection`, `forceDirection`, `rolloverStatus`, `primaryVehicleNumber`, `damagePlaneDescription`, `severityDescription`, `vehicleClass`, `curbWeight`, `curbWeightKg`, `cargoWeight`, `cargoWeightKg` | tabla de casos para análisis |
+| `ciren_images.parquet` | `image_id`, `cirenId`, `caseId`, `image_relpath`, `image_filename`, `vehicleNumber`, `image_sequence`, `photoId`, `objectID`, `description`, `subtype` | tabla de imágenes validadas |
+| `ciren_training_manifest.parquet` | columnas de `ciren_images.parquet` más los metadatos de caso incluidos en `CIREN_REQUIRED_METADATA_KEYS` | unión analítica para modelado |
+| tabla interna de errores | `cirenId`, `caseId`, `errorIndex`, `errorMessage` | normalización interna de errores. |
+
 ## Cómo leer esta referencia
 
 Cada campo se documenta con la misma estructura:
@@ -52,8 +62,139 @@ Cada campo se documenta con la misma estructura:
 | `severityDescription` | categórico ordinal | severidad resumida del daño | proxy fuerte de severidad del choque |
 | `curbWeight` | texto con unidad | peso base del vehículo | masa cruda reportada |
 | `cargoWeight` | texto con unidad | carga reportada | ajuste de masa adicional |
+| `totalDeltaV` | texto semiestructurado | delta-v total reportado por CIREN | variable objetivo y fuente de columnas numéricas derivadas |
+| `dvBarrierEquivalentSpeedDescription` | texto semiestructurado | velocidad equivalente contra barrera reportada en General Vehicle > DeltaV | severidad cinemática complementaria |
+| `mais` | entero o texto numérico corto | severidad máxima de lesión reportada | target alterno y estratificación de gravedad |
 
-## Referencia detallada
+## Esquema actual por tabla
+
+### `ciren_cases.parquet`
+
+Esta tabla contiene:
+
+- `cirenId`
+- `caseId`
+- `mais`
+- `totalDeltaVKph`
+- `totalDeltaVMph`
+- `dvBarrierEquivalentSpeedDescription`
+- `cdc`
+- `clockDirection`
+- `forceDirection`
+- `rolloverStatus`
+- `primaryVehicleNumber`
+- `damagePlaneDescription`
+- `severityDescription`
+- `vehicleClass`
+- `curbWeight`
+- `curbWeightKg`
+- `cargoWeight`
+- `cargoWeightKg`
+
+### `ciren_images.parquet`
+
+Esta tabla contiene:
+
+- `image_id`
+- `cirenId`
+- `caseId`
+- `image_relpath`
+- `image_filename`
+- `vehicleNumber`
+- `image_sequence`
+- `photoId`
+- `objectID`
+- `description`
+- `subtype`
+
+### `ciren_training_manifest.parquet`
+
+Esta tabla se genera con un `merge` entre `ciren_images.parquet` y `ciren_cases.parquet` por `cirenId` y `caseId`. Debido a esto, contiene:
+
+- Todas las columnas de `ciren_images.parquet`.
+- Todas las columnas de caso habilitadas por `CIREN_REQUIRED_METADATA_KEYS` después de sus derivaciones numéricas.
+
+Esto incluye: `mais`, `totalDeltaVKph`, `totalDeltaVMph`, `dvBarrierEquivalentSpeedDescription`, `cdc`, `clockDirection`, `forceDirection`, `rolloverStatus`, `primaryVehicleNumber`, `damagePlaneDescription`, `severityDescription`, `vehicleClass`, `curbWeight`, `curbWeightKg`, `cargoWeight` y `cargoWeightKg`.
+
+## Referencia detallada de metadatos
+
+### `totalDeltaV`
+
+**Propósito**
+
+Conservar el delta-v total reportado por CIREN en su forma original.
+
+**Significado**
+
+Representa el cambio total de velocidad asociado al evento, normalmente expresado simultáneamente en `kmph` y `mph` dentro del texto fuente.
+
+**Tipo**
+
+Texto semiestructurado.
+
+**Valores observados**
+
+- `52 kmph 32 mph`
+- `34 kmph 21 mph`
+
+**Utilidad**
+
+Es una de las variables objetivo más valiosas del flujo. En parquet no se conserva como texto crudo; se descompone en `totalDeltaVKph` y `totalDeltaVMph` para análisis y modelado.
+
+**Notas**
+
+Si el valor crudo viene incompleto o con formato distinto, alguna de las derivaciones numéricas puede quedar nula.
+
+### `dvBarrierEquivalentSpeedDescription`
+
+**Propósito**
+
+Conservar la velocidad equivalente contra barrera reportada para el vehículo principal.
+
+**Significado**
+
+Corresponde al valor mostrado en `Case Overview -> Vehicle N -> General Vehicle -> DeltaV -> Barrier Equivalent Speed` dentro de Crash Viewer.
+
+**Tipo**
+
+Texto semiestructurado.
+
+**Utilidad**
+
+Aporta una señal cinemática complementaria a `totalDeltaV` y puede servir como covariable de severidad o de energía equivalente cuando está disponible.
+
+**Notas**
+
+El extractor la toma del payload de `General Vehicle`. Si CIREN no la informa para un caso, el cache la dejará ausente o nula según el estado de la corrida.
+
+### `mais`
+
+**Propósito**
+
+Preservar la severidad máxima de lesión asociada al caso.
+
+**Significado**
+
+Corresponde al nivel máximo AIS observado en el caso, tratado en el repositorio como una señal compacta de gravedad humana.
+
+**Tipo**
+
+Entero o texto numérico corto.
+
+**Valores observados**
+
+- `1`
+- `2`
+- `3`
+- `4`
+
+**Utilidad**
+
+Sirve para estratificar casos, construir cortes de severidad y contrastar daño vehicular contra lesión humana.
+
+**Notas**
+
+En parquet se intenta coercer a entero nullable de pandas. Si la fuente no es numérica, puede terminar como nulo.
 
 ### `vehicleClass`
 

@@ -58,7 +58,8 @@ CIREN_REQUIRED_METADATA_KEYS = (
     "curbWeight",
     "cargoWeight",
     "totalDeltaV",
-    "mais"
+    "mais",
+    "dvBarrierEquivalentSpeedDescription"
 )
 CIREN_IGNORED_SUBTYPE_KEYWORDS = (
     "INTERIOR",
