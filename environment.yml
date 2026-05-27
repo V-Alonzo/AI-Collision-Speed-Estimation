@@ -9,7 +9,6 @@ dependencies:
       # Datos y serializacion
       - pandas
       - pyarrow
-      - huggingface_hub
       - python-dotenv
       - openai
       - pillow
@@ -17,6 +16,8 @@ dependencies:
       - numpy
       - matplotlib
       - opencv-python
+      - huggingface_hub
+      - datasets
       # Vision y modelos
       - torch
       - torchvision
