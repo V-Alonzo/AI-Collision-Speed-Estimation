@@ -160,6 +160,10 @@ def prepareDataset(df):
     df_clean = df.copy()
     
     # Eliminar filas donde el target es nulo
+    
+    print(f"Total filas antes de limpiar nulos en target: {len(df_clean)}")
+    print(f"Filas con nulos en target: {df_clean['totalDeltaVKph'].isnull().sum()}")
+    
     df_clean = df_clean.dropna(subset=['totalDeltaVKph'])
     
     # Separar features (X) y target (y)
