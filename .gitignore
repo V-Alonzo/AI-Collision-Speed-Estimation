@@ -23,9 +23,8 @@ utils/__pycache__/*.pyc
 utils/Preprocessing/ImagesExtractionClassification/__pycache__/*.pyc
 
 utils/Preprocessing/HuggingFaceAugmentation/__pycache__/*.pyc
-utils/Preprocessing/HuggingFaceAugmentation/imagenes_originales_temp/*/*
-utils/Preprocessing/HuggingFaceAugmentation/dataset_aumentado/*/*
-
+utils/Preprocessing/HuggingFaceAugmentation/originalImages/*/*
+utils/Preprocessing/HuggingFaceAugmentation/trasformedImages/*/*
 # dependencies
 /node_modules
 /.pnp
