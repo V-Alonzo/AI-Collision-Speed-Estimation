@@ -16,6 +16,7 @@ dependencies:
       - numpy
       - matplotlib
       - opencv-python
+      - huggingface_hub
       
       # Vision y modelos
       - open-clip-torch
