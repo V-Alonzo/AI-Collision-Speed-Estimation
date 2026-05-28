@@ -1,63 +1,175 @@
-# == Function for ploting metrics
+# == Function for plotting metrics
 
 # Import libraries and required modules
 from model.config.libraries import *
-from model.config.config import MODEL_NAME, METRICS_PLOTS_OUTPUT_DIR_PATH, METRICS_MODEL_VERSION_TO_PLOT
-
+from model.config.config import (
+    MODEL_NAME,
+    METRICS_PLOTS_OUTPUT_DIR_PATH,
+    METRICS_MODEL_VERSION_TO_PLOT
+)
 
 # --- CONFIG ---
-CSV_PATH = "model/src/TrainingLogs/"+MODEL_NAME+"/version_"+str(METRICS_MODEL_VERSION_TO_PLOT)+"/metrics.csv"  
+CSV_PATH = (
+    "model/src/TrainingLogs/"
+    + MODEL_NAME
+    + "/version_"
+    + str(METRICS_MODEL_VERSION_TO_PLOT)
+    + "/metrics.csv"
+)
 
-# Function for metrics plot generation
 def plot_metrics():
 
-    # Load metrics form Training Logs dirs with latest model version 
+    # LOAD CSV
     print(f"Loading metrics from {CSV_PATH} ...")
+
     df = pd.read_csv(CSV_PATH)
 
-    # Delete empty columns
+    # Remove empty rows/cols
     df = df.dropna(axis=1, how='all')
-
-    # Delete empty rows
     df = df.dropna(how='all')
 
-    # Set columns to plot
-    train_cols = ["train_loss_epoch"]
-    val_cols = ["val_loss"]
+    # PREPARE DATA
 
-    # Filter existent columns
-    train_cols = [c for c in train_cols if c in df.columns]
-    val_cols = [c for c in val_cols if c in df.columns]
-    if not train_cols and not val_cols:
-        print("No train/val loss columns found.")
-        return
+    # Epoch metrics
+    epoch_df = df[
+        [
+            "epoch",
+            "train_loss_epoch",
+            "val_loss",
+            "train_mae",
+            "val_mae"
+        ]
+    ].dropna(how="all")
 
-    # Create plot
-    plt.figure(figsize=(8, 5))
+    # Group by epoch and keep latest value
+    epoch_df = epoch_df.groupby("epoch").last().reset_index()
 
-    # Graph training loss
-    for col in train_cols:
-        plt.plot(df[col].dropna().values, label=col)
+    # Step metrics
+    step_df = df[
+        [
+            "step",
+            "train_loss_step"
+        ]
+    ].dropna()
 
-    # Graph validation loss
-    for col in val_cols:
-        plt.plot(df[col].dropna().values, label=col)
+    # Final test MAE
+    test_mae_row = df[df["test_mae"].notna()]
+    test_mae = None
 
-    # Plot settings
-    plt.title(MODEL_NAME + " | Train vs Val Loss")
-    plt.xlabel("Epochs")
+    if not test_mae_row.empty:
+        test_mae = test_mae_row["test_mae"].values[-1]
+
+    # PLOT TRAIN VS VAL LOSS
+
+    plt.figure(figsize=(10, 6))
+
+    plt.plot(
+        epoch_df["epoch"],
+        epoch_df["train_loss_epoch"],
+        marker='o',
+        label="Train Loss"
+    )
+
+    plt.plot(
+        epoch_df["epoch"],
+        epoch_df["val_loss"],
+        marker='o',
+        label="Validation Loss"
+    )
+
+    plt.title(f"{MODEL_NAME} | Train vs Validation Loss")
+    plt.xlabel("Epoch")
     plt.ylabel("Loss")
     plt.grid(True)
     plt.legend()
 
-    # Store plot
-    out_path = os.path.join(METRICS_PLOTS_OUTPUT_DIR_PATH, MODEL_NAME+"_train_val_loss.png")
-    plt.savefig(out_path, dpi=150)
+    loss_path = os.path.join(
+        METRICS_PLOTS_OUTPUT_DIR_PATH,
+        MODEL_NAME + "_loss.png"
+    )
+
+    plt.savefig(loss_path, dpi=150, bbox_inches="tight")
     plt.close()
 
-    print(f"Generated combined plot: {out_path}")
-    print("Plot phase finished...")   
+    print(f"Generated: {loss_path}")
+
+    # PLOT TRAIN VS VAL MAE
+    plt.figure(figsize=(10, 6))
+
+    plt.plot(
+        epoch_df["epoch"],
+        epoch_df["train_mae"],
+        marker='o',
+        label="Train MAE"
+    )
+
+    plt.plot(
+        epoch_df["epoch"],
+        epoch_df["val_mae"],
+        marker='o',
+        label="Validation MAE"
+    )
+
+    # Plot final test MAE
+    if test_mae is not None:
+
+        plt.axhline(
+            y=test_mae,
+            linestyle='--',
+            label=f"Test MAE = {test_mae:.3f}"
+        )
+
+    plt.title(f"{MODEL_NAME} | Train vs Validation MAE")
+    plt.xlabel("Epoch")
+    plt.ylabel("MAE")
+    plt.grid(True)
+    plt.legend()
+
+    mae_path = os.path.join(
+        METRICS_PLOTS_OUTPUT_DIR_PATH,
+        MODEL_NAME + "_mae.png"
+    )
+
+    plt.savefig(mae_path, dpi=150, bbox_inches="tight")
+    plt.close()
+
+    print(f"Generated: {mae_path}")
+
+    # PLOT STEP LOSS
+    plt.figure(figsize=(12, 6))
+
+    plt.plot(
+        step_df["step"],
+        step_df["train_loss_step"],
+        linewidth=1
+    )
+
+    plt.title(f"{MODEL_NAME} | Train Loss per Step")
+    plt.xlabel("Step")
+    plt.ylabel("Train Loss Step")
+    plt.grid(True)
+
+    step_path = os.path.join(
+        METRICS_PLOTS_OUTPUT_DIR_PATH,
+        MODEL_NAME + "_step_loss.png"
+    )
+
+    plt.savefig(step_path, dpi=150, bbox_inches="tight")
+    plt.close()
+
+    print(f"Generated: {step_path}")
+
+    # SUMMARY
+    print("\n===== TRAINING SUMMARY =====")
+
+    if test_mae is not None:
+        print(f"Final Test MAE: {test_mae:.4f}")
+
+    print(f"Best Validation Loss: {epoch_df['val_loss'].min():.4f}")
+    print(f"Best Validation MAE: {epoch_df['val_mae'].min():.4f}")
+
+    print("\nPlot phase finished...")
+
 
 if __name__ == "__main__":
-    #Plot metrics
     plot_metrics()
