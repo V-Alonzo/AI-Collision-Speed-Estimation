@@ -37,13 +37,47 @@ class VelocityEstimator:
                 batch_size=batch_size, 
                 num_workers=num_workers, 
                 train_transform= Transformations.train_transform, 
-                test_transform= Transformations.test_transform, 
+                test_transform=  Transformations.test_transform, 
                 train_proportion=train_proportion, 
                 val_proportion=val_proportion,
                 seed=seed
             )
         else:
             self.dm = None
+
+    # Build model
+    def build_model(self, learning_rate):
+        # ==== Inital model (Existant arq or custom one) 
+        resnet50_model = torch.hub.load("pytorch/vision", "resnet50", weights="IMAGENET1K_V2")
+
+        # freeze layers as default
+        for param in resnet50_model.parameters():
+            param.requires_grad = False
+
+        # Unfreeze last resnet layer
+        for param in resnet50_model.layer4.parameters():
+            param.requires_grad = True
+
+        # Unfreeze resnet fc
+        for param in resnet50_model.fc.parameters():
+            param.requires_grad = True
+
+        # Get number of features
+        in_features = resnet50_model.fc.in_features
+
+        # Replace final layer
+        resnet50_model.fc = nn.Linear(
+            in_features,
+            1
+        )
+
+        # Instance VelocityEstimator lightning model and use resnet as backbone model
+        velocityEstimatorModel = VelocityEstimatorModel(
+            model = resnet50_model,
+            learning_rate = learning_rate
+        )
+
+        return velocityEstimatorModel
 
     # Execute model training
     def train(
@@ -57,40 +91,10 @@ class VelocityEstimator:
         
         # Create new Model instance if this doesnt exist
         if self.model is None:
-            
-            # ==== Inital model (Existant arq or custom one) 
-            resnet50_model = torch.hub.load("pytorch/vision", "resnet50", weights="IMAGENET1K_V2")
+            # Create backbone model arq
+            self.model = self.build_model(self.learning_rate)
 
-            # freeze layers
-            for param in resnet50_model.parameters():
-                param.requires_grad = False
-
-            # Unfreeze last resnet layer
-            for param in resnet50_model.layer4.parameters():
-                param.requires_grad = True
-
-            # Unfreeze resnet fc
-            for param in resnet50_model.fc.parameters():
-                param.requires_grad = True
-
-            # Get number of features
-            in_features = resnet50_model.fc.in_features
-
-            # Replace final layer
-            resnet50_model.fc = nn.Linear(
-                in_features,
-                1
-            )
-
-            # Instance VelocityEstimator lightning model
-            velocityEstimatorModel = VelocityEstimatorModel(
-                model = resnet50_model,
-                learning_rate = learning_rate
-            )
-
-            self.model = velocityEstimatorModel
-
-        # Create picobanana's trainer
+        # Create VelocityEstimator's trainer
         self.trainer = L.Trainer(
             max_epochs = epochs,
             logger = CSVLogger(TRAININGLOGS_DIR_PATH, name = MODEL_NAME),
@@ -110,6 +114,7 @@ class VelocityEstimator:
             val_dataloaders = self.dm.val_dataloader()
         )
 
+    # Test trained model with datamodule's test dataset
     def test(self):
         self.trainer.test(datamodule=self.dm)
 
@@ -119,7 +124,7 @@ class VelocityEstimator:
         assert self.model is not None, "Training Phase is missing for model's inference mode" 
 
         # Results
-        self.trainer.test(datamodule=self.dm)
+        
         
     # Method for loading pretrained VelocityEstimator model
     def load_model(self, serialized_object_path = MODEL_SERIALIZED_PATH):
