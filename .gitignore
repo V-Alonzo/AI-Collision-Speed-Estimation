@@ -40,6 +40,9 @@ model/src/TrainingLogs/*/
 # ====
 
 
+utils/Preprocessing/HuggingFaceAugmentation/__pycache__/*.pyc
+utils/Preprocessing/HuggingFaceAugmentation/originalImages/*/*
+utils/Preprocessing/HuggingFaceAugmentation/transformedImages/*/*
 # dependencies
 /node_modules
 /.pnp

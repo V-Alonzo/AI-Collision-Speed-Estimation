@@ -1,44 +1,45 @@
 # Reference
 
-Esta referencia describe los campos incluidos en `CIREN_REQUIRED_METADATA_KEYS` y su utilidad dentro del flujo de extracción CIREN del proyecto. Está pensada para desarrolladores y data scientists que necesitan interpretar estos atributos rápido, entender qué representan y reconocer sus valores más comunes antes de usarlos en cache, parquet o entrenamiento.
+Esta referencia documenta los campos que aparecen en el flujo CIREN del repositorio, no solo los metadatos configurados en `CIREN_REQUIRED_METADATA_KEYS`. El objetivo es que cualquier persona que lea el cache JSON, las tablas parquet o el código Python del extractor pueda ubicar rápidamente qué significa cada variable y cómo debe interpretarla.
 
 ## Audiencia
 
 Este documento está dirigido a:
 
 - Personas que mantienen el extractor CIREN.
-- Personas que consumen `ciren_cases.parquet` o `ciren_training_manifest.parquet`.
-- Personas que preparan variables para modelos que usan `totalDeltaV` como objetivo.
+- Personas que consumen `ciren_cases.parquet`, `ciren_images.parquet` o `ciren_training_manifest.parquet`.
+- Personas que revisan `cacheCIREN.json` para reanudar corridas o depurar casos.
+- Personas que preparan variables para modelos que usan `totalDeltaV` o severidad como objetivo.
 
 ## Alcance
 
-Esta referencia cubre únicamente los campos listados en `CIREN_REQUIRED_METADATA_KEYS`:
+Esta referencia cubre cuatro grupos de variables que existen en los artefactos que genera el flujo:
 
-- `vehicleClass`
-- `cdc`
-- `clockDirection`
-- `forceDirection`
-- `rolloverStatus`
-- `primaryVehicleNumber`
-- `damagePlaneDescription`
-- `severityDescription`
-- `curbWeight`
-- `cargoWeight`
+- Metadatos requeridos configurados en `CIREN_REQUIRED_METADATA_KEYS`.
+- Columnas derivadas que `storage_utils.py` escribe en parquet.
+- Campos de imagen y trazabilidad usados por `ciren_extractor.py` y `ciren_client.py`.
+- Campos operativos de cache y de error que aparecen durante la extracción.
 
 No intenta reemplazar una taxonomía oficial de NHTSA o CIREN. Cuando un campo usa un vocabulario externo o un código especializado, este documento explica cómo tratarlo dentro del repositorio y qué se observa en los datos actuales.
 
+## Mapa rápido de artefactos
+
+| Artefacto | Variables principales | Uso |
+| --- | --- | --- |
+| `cacheCIREN.json` | `cirenId`, `caseId`, `caseNumber`, metadatos CIREN, `candidateImages`, `revisedImages`, `validImages`, `validatedImageRecords`, `errors` | estado reanudable del extractor |
+| `ciren_cases.parquet` | `cirenId`, `caseId`, `mais`, `totalDeltaVKph`, `totalDeltaVMph`, `dvBarrierEquivalentSpeedDescription`, `cdc`, `clockDirection`, `forceDirection`, `rolloverStatus`, `primaryVehicleNumber`, `damagePlaneDescription`, `severityDescription`, `vehicleClass`, `curbWeight`, `curbWeightKg`, `cargoWeight`, `cargoWeightKg` | tabla de casos para análisis |
+| `ciren_images.parquet` | `image_id`, `cirenId`, `caseId`, `image_relpath`, `image_filename`, `vehicleNumber`, `image_sequence`, `photoId`, `objectID`, `description`, `subtype` | tabla de imágenes validadas |
+| `ciren_training_manifest.parquet` | columnas de `ciren_images.parquet` más los metadatos de caso incluidos en `CIREN_REQUIRED_METADATA_KEYS` | unión analítica para modelado |
+| tabla interna de errores | `cirenId`, `caseId`, `errorIndex`, `errorMessage` | normalización interna de errores. |
+
 ## Cómo leer esta referencia
 
-Cada campo se documenta con la misma estructura:
+Cada campo se documenta con una de estas dos profundidades:
 
-- `Propósito`: para qué sirve dentro del dataset.
-- `Significado`: qué representa semánticamente.
-- `Tipo`: cómo debe interpretarse el valor.
-- `Valores observados`: ejemplos reales o patrones observados en el parquet actual.
-- `Utilidad`: por qué puede ser útil para análisis o modelado.
-- `Notas`: advertencias, ambigüedades o consideraciones de limpieza.
+- Sección detallada para variables de negocio o modelado con semántica propia.
+- Tabla operativa para identificadores, rutas, campos de cache o columnas derivadas cuyo significado es directo, pero conviene fijar explícitamente.
 
-## Resumen rápido
+## Resumen de metadatos requeridos
 
 | Campo | Tipo práctico | Qué describe | Utilidad principal |
 | --- | --- | --- | --- |
@@ -52,8 +53,139 @@ Cada campo se documenta con la misma estructura:
 | `severityDescription` | categórico ordinal | severidad resumida del daño | proxy fuerte de severidad del choque |
 | `curbWeight` | texto con unidad | peso base del vehículo | masa cruda reportada |
 | `cargoWeight` | texto con unidad | carga reportada | ajuste de masa adicional |
+| `totalDeltaV` | texto semiestructurado | delta-v total reportado por CIREN | variable objetivo y fuente de columnas numéricas derivadas |
+| `dvBarrierEquivalentSpeedDescription` | texto semiestructurado | velocidad equivalente contra barrera reportada en General Vehicle > DeltaV | severidad cinemática complementaria |
+| `mais` | entero o texto numérico corto | severidad máxima de lesión reportada | target alterno y estratificación de gravedad |
 
-## Referencia detallada
+## Esquema actual por tabla
+
+### `ciren_cases.parquet`
+
+Esta tabla contiene:
+
+- `cirenId`
+- `caseId`
+- `mais`
+- `totalDeltaVKph`
+- `totalDeltaVMph`
+- `dvBarrierEquivalentSpeedDescription`
+- `cdc`
+- `clockDirection`
+- `forceDirection`
+- `rolloverStatus`
+- `primaryVehicleNumber`
+- `damagePlaneDescription`
+- `severityDescription`
+- `vehicleClass`
+- `curbWeight`
+- `curbWeightKg`
+- `cargoWeight`
+- `cargoWeightKg`
+
+### `ciren_images.parquet`
+
+Esta tabla contiene:
+
+- `image_id`
+- `cirenId`
+- `caseId`
+- `image_relpath`
+- `image_filename`
+- `vehicleNumber`
+- `image_sequence`
+- `photoId`
+- `objectID`
+- `description`
+- `subtype`
+
+### `ciren_training_manifest.parquet`
+
+Esta tabla se genera con un `merge` entre `ciren_images.parquet` y `ciren_cases.parquet` por `cirenId` y `caseId`. Debido a esto, contiene:
+
+- Todas las columnas de `ciren_images.parquet`.
+- Todas las columnas de caso habilitadas por `CIREN_REQUIRED_METADATA_KEYS` después de sus derivaciones numéricas.
+
+Esto incluye: `mais`, `totalDeltaVKph`, `totalDeltaVMph`, `dvBarrierEquivalentSpeedDescription`, `cdc`, `clockDirection`, `forceDirection`, `rolloverStatus`, `primaryVehicleNumber`, `damagePlaneDescription`, `severityDescription`, `vehicleClass`, `curbWeight`, `curbWeightKg`, `cargoWeight` y `cargoWeightKg`.
+
+## Referencia detallada de metadatos
+
+### `totalDeltaV`
+
+**Propósito**
+
+Conservar el delta-v total reportado por CIREN en su forma original.
+
+**Significado**
+
+Representa el cambio total de velocidad asociado al evento, normalmente expresado simultáneamente en `kmph` y `mph` dentro del texto fuente.
+
+**Tipo**
+
+Texto semiestructurado.
+
+**Valores observados**
+
+- `52 kmph 32 mph`
+- `34 kmph 21 mph`
+
+**Utilidad**
+
+Es una de las variables objetivo más valiosas del flujo. En parquet no se conserva como texto crudo; se descompone en `totalDeltaVKph` y `totalDeltaVMph` para análisis y modelado.
+
+**Notas**
+
+Si el valor crudo viene incompleto o con formato distinto, alguna de las derivaciones numéricas puede quedar nula.
+
+### `dvBarrierEquivalentSpeedDescription`
+
+**Propósito**
+
+Conservar la velocidad equivalente contra barrera reportada para el vehículo principal.
+
+**Significado**
+
+Corresponde al valor mostrado en `Case Overview -> Vehicle N -> General Vehicle -> DeltaV -> Barrier Equivalent Speed` dentro de Crash Viewer.
+
+**Tipo**
+
+Texto semiestructurado.
+
+**Utilidad**
+
+Aporta una señal cinemática complementaria a `totalDeltaV` y puede servir como covariable de severidad o de energía equivalente cuando está disponible.
+
+**Notas**
+
+El extractor la toma del payload de `General Vehicle`. Si CIREN no la informa para un caso, el cache la dejará ausente o nula según el estado de la corrida.
+
+### `mais`
+
+**Propósito**
+
+Preservar la severidad máxima de lesión asociada al caso.
+
+**Significado**
+
+Corresponde al nivel máximo AIS observado en el caso, tratado en el repositorio como una señal compacta de gravedad humana.
+
+**Tipo**
+
+Entero o texto numérico corto.
+
+**Valores observados**
+
+- `1`
+- `2`
+- `3`
+- `4`
+
+**Utilidad**
+
+Sirve para estratificar casos, construir cortes de severidad y contrastar daño vehicular contra lesión humana.
+
+**Notas**
+
+En parquet se intenta coercer a entero nullable de pandas. Si la fuente no es numérica, puede terminar como nulo.
 
 ### `vehicleClass`
 
@@ -196,7 +328,7 @@ Es una señal fuerte de dinámica severa y de mecanismos de daño distintos a un
 
 **Notas**
 
-Su distribución suele ser desbalanceada. Aun así, los casos positivos pueden aportar mucha información cualitativa.
+Su distribución suele ser desbalanceada. Aún así, los casos positivos pueden aportar información cualitativa.
 
 ### `primaryVehicleNumber`
 
@@ -223,7 +355,7 @@ Ayuda a alinear metadata de caso con metadata de imagen, especialmente cuando ex
 
 **Notas**
 
-Es importante para evitar mezclar el daño o la clase de un vehículo secundario con el vehículo objetivo del caso.
+No debe confundirse con `vehicleNumber`. `primaryVehicleNumber` describe el vehículo principal del caso; `vehicleNumber` identifica el vehículo concreto al que pertenece una imagen validada.
 
 ### `damagePlaneDescription`
 
@@ -312,7 +444,7 @@ La masa del vehículo es una variable muy relevante para interpretar energía, d
 
 **Notas**
 
-En este repositorio conviene conservar el valor crudo y derivar una versión numérica. El parquet actual ya expone `curbWeightKg` para uso analítico.
+En este repositorio conviene conservar el valor crudo y derivar una versión numérica. El parquet actual expone `curbWeightKg` para uso analítico.
 
 ### `cargoWeight`
 
@@ -340,18 +472,69 @@ Permite ajustar la masa efectiva del vehículo cuando el dato existe y es distin
 
 En la muestra actual su variabilidad es muy baja, pero conviene preservarlo. El parquet actual expone también `cargoWeightKg` como derivación numérica.
 
+## Columnas derivadas e identificadores
+
+### Identificadores y joins
+
+| Campo | Dónde aparece | Tipo práctico | Explicación |
+| --- | --- | --- | --- |
+| `cirenId` | cache, casos, imágenes, manifest, errores | entero o string numérico | identificador principal del caso CIREN; es la llave de unión dominante del flujo |
+| `caseId` | cache, casos, imágenes, manifest, errores | entero nullable | identificador interno adicional del caso reportado por el summary del Crash Viewer |
+| `caseNumber` | cache y nombres de carpeta | entero o string | identificador usado para construir directorios de salida; normalmente coincide con el caso CIREN visible |
+| `image_id` | imágenes y manifest | string | identificador determinista construido como `ciren_<cirenId>_<image_stem>` para mantener estabilidad entre corridas |
+| `image_relpath` | imágenes y manifest | string | ruta relativa normalizada de la imagen validada, con separadores `/` |
+| `image_filename` | imágenes y manifest | string | nombre de archivo final de la imagen validada |
+
+### Variables derivadas para análisis
+
+| Campo | Fuente | Tipo práctico | Explicación |
+| --- | --- | --- | --- |
+| `totalDeltaVKph` | parseo de `totalDeltaV` | entero nullable | componente en kilómetros por hora extraída del texto crudo |
+| `totalDeltaVMph` | parseo de `totalDeltaV` | entero nullable | componente en millas por hora extraída del texto crudo |
+| `curbWeightKg` | extracción numérica de `curbWeight` | entero nullable | parte numérica del peso base, lista para análisis cuantitativo |
+| `cargoWeightKg` | extracción numérica de `cargoWeight` | entero nullable | parte numérica de la carga reportada |
+| `image_sequence` | parseo del nombre de archivo | entero nullable | secuencia ordinal de la imagen validada dentro del caso |
+
+## Campos de imagen usados por Python y parquet
+
+| Campo | Dónde aparece | Tipo práctico | Explicación |
+| --- | --- | --- | --- |
+| `vehicleNumber` | candidatos, imágenes validadas, parquet | entero nullable | número del vehículo al que pertenece una imagen concreta; puede venir del candidato o inferirse del nombre del archivo |
+| `photoId` | candidatos, imágenes validadas, parquet | entero nullable | identificador de foto de Crash Viewer usado para descargar la versión full-resolution cuando existe |
+| `objectID` | candidatos, imágenes validadas, parquet | string | identificador estable del elemento de galería de CIREN; se usa para deduplicar y seguir el estado del candidato |
+| `description` | candidatos, imágenes validadas, parquet | string | descripción textual de la imagen según la galería CIREN |
+| `subtype` | candidatos, imágenes validadas, parquet | string | subtipo de galería del Crash Viewer del que proviene la imagen, por ejemplo vistas exteriores o categorías afines |
+| `imagePath` | `validatedImageRecords` en cache | string | ruta del archivo validado guardado localmente antes de normalizarse a `image_relpath` e `image_filename` |
+
+## Campos operativos del cache
+
+| Campo | Tipo práctico | Explicación |
+| --- | --- | --- |
+| `candidateImages` | lista de objetos | candidatos descubiertos en la galería antes de pasar por validación visual; cada elemento incluye `vehicleNumber`, `description`, `objectID`, `photoId` y `subtype` |
+| `revisedImages` | lista de strings | conjunto de `objectID` ya revisados por el pipeline, independientemente de si fueron aceptados o rechazados |
+| `validImages` | lista de strings | conjunto de `objectID` que sí produjo al menos una imagen validada |
+| `validatedImageRecords` | lista de objetos | registros persistidos de imágenes aceptadas; cada elemento incluye `imagePath`, `vehicleNumber`, `photoId`, `objectID`, `description` y `subtype` |
+| `errors` | lista de strings | mensajes de error y también marcadores de metadata faltante; no contiene solo excepciones de ejecución |
+
+## Variables de error normalizadas internamente
+
+| Campo | Tipo práctico | Explicación |
+| --- | --- | --- |
+| `errorIndex` | entero nullable | posición ordinal del mensaje de error dentro del caso cuando el error proviene de la lista `errors` |
+| `errorMessage` | string | mensaje normalizado del error, por ejemplo faltantes de metadata o imágenes validadas ausentes en disco |
+
 ## Tablas de referencia rápida
 
 ### Convención de `Collision Deformation Classification (cdc)`
 
 | Posición | Segmento CDC | Ejemplos | Interpretación | Descripción técnica |
-|---|---|---|---|---|
-| 1-2 | Dirección horaria del impacto | `12`, `01`, `03`, `06`, `09`, `11` | Dirección principal del impacto | Representa la zona del vehículo impactada usando el sistema de reloj. `12` = frontal, `03` = lado derecho, `06` = trasero, `09` = lado izquierdo. |
-| 3 | Área general dañada | `F`, `B`, `L`, `R`, `T`, `U` | Región principal dañada | `F` = Front, `B` = Back/Rear, `L` = Left, `R` = Right, `T` = Top, `U` = Undercarriage. |
-| 4 | Tipo o distribución del daño | `D`, `P`, `Y`, `Z`, `C` | Patrón de deformación | Describe cómo se distribuye el daño: distribuido, concentrado, angular, corner impact, etc. |
-| 5 | Zona vertical del daño | `A`, `B`, `C`, `D`, `E`, `F`, `G` | Altura relativa del daño | Define la ubicación vertical estructural afectada: baja, media, alta, roofline, bumper, etc. |
-| 6 | Tipo de deformación estructural | `W`, `E`, `M`, `S`, `T` | Modo de deformación | Caracteriza cómo se deformó la estructura: wrapping, crush, buckle, shear, torsion, entre otros. |
-| 7-8 | Severidad / extensión del daño | `00`–`99` | Magnitud de deformación | Escala relativa de severidad estructural. Valores mayores indican deformaciones más extensas o severas. |
+| --- | --- | --- | --- | --- |
+| 1-2 | Dirección horaria del impacto | `12`, `01`, `03`, `06`, `09`, `11` | Dirección principal del impacto | representa la zona del vehículo impactada usando el sistema de reloj |
+| 3 | Área general dañada | `F`, `B`, `L`, `R`, `T`, `U` | Región principal dañada | `F` = Front, `B` = Back/Rear, `L` = Left, `R` = Right, `T` = Top, `U` = Undercarriage |
+| 4 | Tipo o distribución del daño | `D`, `P`, `Y`, `Z`, `C` | Patrón de deformación | describe cómo se distribuye el daño |
+| 5 | Zona vertical del daño | `A`, `B`, `C`, `D`, `E`, `F`, `G` | Altura relativa del daño | ubica la deformación en la estructura vertical del vehículo |
+| 6 | Tipo de deformación estructural | `W`, `E`, `M`, `S`, `T` | Modo de deformación | caracteriza cómo se deformó la estructura |
+| 7-8 | Severidad o extensión del daño | `00`-`99` | Magnitud de deformación | valores mayores suelen indicar deformaciones más extensas o severas |
 
 ### Convención de `clockDirection`
 
@@ -408,22 +591,21 @@ Ambos llegan como texto con unidades, por ejemplo `1340 kgs` o `0 kgs`. Esto imp
 - Para análisis cuantitativo conviene derivar una columna numérica.
 - El parquet actual ya genera `curbWeightKg` y `cargoWeightKg` como enteros derivados.
 
+### `totalDeltaV`
+
+Hoy se almacena en cache como texto y luego se parsea con dos expresiones regulares separadas para construir `totalDeltaVKph` y `totalDeltaVMph`.
+
+Esto implica lo siguiente:
+
+- El formato fuente importa.
+- Una sola parte mal formada puede dejar solo una de las dos columnas derivadas poblada.
+- Para entrenamiento suele ser mejor consumir las columnas numéricas, no el texto original.
+
 ## Notas de calidad de datos
 
 - Algunos campos son esencialmente categóricos pero llegan como texto libre o semilibre.
 - `clockDirection` presenta pequeñas inconsistencias de formato y puntuación.
 - `forceDirection` es texto, aunque conceptualmente representa un ángulo.
 - `curbWeight` y `cargoWeight` no deben convertirse directamente a entero sin extraer primero la parte numérica.
-
-## Qué mirar primero
-
-Si necesitas una lectura rápida del caso, estos campos suelen dar más contexto en menos tiempo:
-
-1. `severityDescription`
-2. `damagePlaneDescription`
-3. `clockDirection`
-4. `forceDirection`
-5. `vehicleClass`
-6. `curbWeight`
-
-Ese orden no reemplaza un análisis formal, pero suele ser suficiente para entender de forma inmediata cómo fue el choque y qué tan útil puede ser el caso para análisis posterior.
+- `errors` mezcla faltantes de metadata y errores operativos, por lo que no debe interpretarse como un log homogéneo.
+- `vehicleNumber` y `primaryVehicleNumber` no son sinónimos y pueden divergir en casos con múltiples vehículos.
