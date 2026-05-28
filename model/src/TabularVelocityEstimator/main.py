@@ -1,15 +1,21 @@
-# == Main for resuming a model's training phase from lightning's checkpoint
+# == Main for model's training phase
 
 # Import libraries and required modules
-from model.src.VelocityEstimator import VelocityEstimator
+from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator 
 from model.config.config import MODEL_SERIALIZED_PATH, BATCH_SIZE, NUM_WORKERS, TRAIN_PROPORTION, VAL_PROPORTION
 from model.config.config import N_EPOCHS, LEARNING_RATE
 from model.config.libraries import *
 
 
-# Resume Training from loaded pretrained model
-def resume_training():
-     # Create model
+# Main file for VelocityEstimator model training execution
+def main():
+    # Force Python's garbage collector to run
+    gc.collect()
+
+    # Clear the PyTorch CUDA cache
+    torch.cuda.empty_cache()
+
+    # Create model
     model = VelocityEstimator(
         batch_size = BATCH_SIZE,
         num_workers = NUM_WORKERS,
@@ -17,11 +23,7 @@ def resume_training():
         val_proportion = VAL_PROPORTION
     )
 
-    # Load Model from checkpoint
-    model.load_from_checkpoint("src/model/ModelCheckpoints/best_model.ckpt")
-    print("Model was succesfully loaded...")
-
-    # Start training phase
+    # Train model
     model.train(
         epochs = N_EPOCHS,
         learning_rate = LEARNING_RATE
@@ -29,12 +31,15 @@ def resume_training():
 
     # Save model
     model.save_model(serialized_object_path_destination = MODEL_SERIALIZED_PATH)
-    print("Model was saved in : ", MODEL_SERIALIZED_PATH)    
+    print("Model was saved in : ", MODEL_SERIALIZED_PATH)
+
+    # Model Test
+    model.test()
 
 if __name__ == "__main__":
     start = datetime.datetime.now()
     print("\n" + "\033[0;34m" + "[start] " + str(start) + "\033[0m" + "\n");
-    resume_training()
+    main();
     end = datetime.datetime.now()
     print("\n" + "\033[0;34m" + "[end] "+ str(end) + "\033[0m" + "\n");
 

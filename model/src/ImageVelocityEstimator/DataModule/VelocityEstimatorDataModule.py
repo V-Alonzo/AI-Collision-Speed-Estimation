@@ -1,6 +1,6 @@
 # Import libraries and required modules
 from torch.utils.data import DataLoader
-from model.src.DataModule.VelocityEstimatorDataset import VelocityEstimatorDataset
+from model.src.ImageVelocityEstimator.DataModule.VelocityEstimatorDataset import VelocityEstimatorDataset
 from model.config.libraries import *
 from model.config.config import N_SAMPLES
 

@@ -1,7 +1,7 @@
 # == Main for model's training phase
 
 # Import libraries and required modules
-from model.src.VelocityEstimator import VelocityEstimator 
+from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator 
 from model.config.config import MODEL_SERIALIZED_PATH, BATCH_SIZE, NUM_WORKERS, TRAIN_PROPORTION, VAL_PROPORTION
 from model.config.config import N_EPOCHS, LEARNING_RATE
 from model.config.libraries import *

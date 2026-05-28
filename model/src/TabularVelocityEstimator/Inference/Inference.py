@@ -1,11 +1,11 @@
-# Load Model From checpoint
+# Inference
 
 # == Main for model's inference phase
 
 # Import libraries and required modules
-from model.src.VelocityEstimator import VelocityEstimator
+from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator 
 from model.config.config import MODEL_SERIALIZED_PATH, MODEL_NAME, N_INFERENCES_2_EXEC, OUTPUT_INFERENCES_DIR
-from model.config.config import BATCH_SIZE, NUM_WORKERS, TRAIN_PROPORTION, VAL_PROPORTION, CHECKPOINTS_DIR_PATH
+from model.config.config import BATCH_SIZE, NUM_WORKERS, TRAIN_PROPORTION, VAL_PROPORTION
 from model.config.libraries import *
 
 
@@ -19,8 +19,9 @@ def execute_inference():
         val_proportion = VAL_PROPORTION
     )
 
-    # Load Model from Checkpointi
-    model.load_from_checkpoint(CHECKPOINTS_DIR_PATH + "best_model_" + MODEL_NAME + ".ckpt")
+    # Save model
+    model.load_model( MODEL_SERIALIZED_PATH)
+    print("Model was correctly loaded from " +MODEL_SERIALIZED_PATH+ " ...")
 
     # Get n number of Inferences
     generated_imgs = []
@@ -36,9 +37,9 @@ def execute_inference():
         if i >= len(generated_imgs):
             ax.axis("off")
             continue
-
+        
         # Generated image as (C, H, W)
-        img = generated_imgs[i]
+        img = generated_imgs[i] 
 
         # Detect image channels
         if img.shape[0] == 1:
@@ -51,7 +52,7 @@ def execute_inference():
         ax.axis('off')
 
     plt.tight_layout()
-
+    
     # Store figure
     output_path = os.path.join(OUTPUT_INFERENCES_DIR, MODEL_NAME + "_inference_"+str(N_INFERENCES_2_EXEC)+"_grid.png")
     plt.savefig(output_path, dpi=300)
