@@ -1,12 +1,12 @@
 # Import libraries and required modules
 from model.config.libraries import *
-from model.src.ImageVelocityEstimator.DataModule.VelocityEstimatorDataModule import VelocityEstimatorDataModule
-from model.src.ImageVelocityEstimator.DataModule import Transformations
-from model.config.config import IO_DATASET_MAP_LOCAL_PATH, DEVICE
-from model.config.config import CHECKPOINTS_DIR_PATH, TRAININGLOGS_DIR_PATH, MODEL_NAME, MODEL_SERIALIZED_PATH
-from model.config.config import IMAGE_CHANNELS
-from model.config.config import EARLY_STOPPING_PATIENCE, TRAINER_ACCELERATOR, TRAINER_PRECISION, METRICS_PLOTS_OUTPUT_DIR_PATH
-from model.src.ImageVelocityEstimator.LightningModule.VelocityEstimatorModel import VelocityEstimatorModel
+from model.src.TabularVelocityEstimator.DataModule.VelocityEstimatorDataModule import VelocityEstimatorDataModule
+from model.src.TabularVelocityEstimator.DataModule import Transformations
+from model.config.TabularVelocityEstimator.config import IO_DATASET_MAP_LOCAL_PATH, DEVICE
+from model.config.TabularVelocityEstimator.config import CHECKPOINTS_DIR_PATH, TRAININGLOGS_DIR_PATH, MODEL_NAME, MODEL_SERIALIZED_PATH
+from model.config.TabularVelocityEstimator.config import IMAGE_CHANNELS
+from model.config.TabularVelocityEstimator.config import EARLY_STOPPING_PATIENCE, TRAINER_ACCELERATOR, TRAINER_PRECISION, METRICS_PLOTS_OUTPUT_DIR_PATH
+from model.src.TabularVelocityEstimator.LightningModule.VelocityEstimatorModel import VelocityEstimatorModel
 
 # Import lightning tools
 from lightning.pytorch.loggers import CSVLogger

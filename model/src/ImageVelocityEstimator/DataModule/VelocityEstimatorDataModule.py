@@ -2,7 +2,7 @@
 from torch.utils.data import DataLoader
 from model.src.ImageVelocityEstimator.DataModule.VelocityEstimatorDataset import VelocityEstimatorDataset
 from model.config.libraries import *
-from model.config.config import N_SAMPLES
+from model.config.ImageVelocityEstimator.config import N_SAMPLES
 
 
 # Data Module for dataloader creation

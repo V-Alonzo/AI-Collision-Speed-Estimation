@@ -2,7 +2,7 @@
 
 # Import libraries and required modules
 from model.config.libraries import *
-from model.config.config import (
+from model.config.ImageVelocityEstimator.config import (
     MODEL_NAME,
     METRICS_PLOTS_OUTPUT_DIR_PATH,
     METRICS_MODEL_VERSION_TO_PLOT

@@ -1,6 +1,6 @@
 # Import libraries and required modules
 from torch.utils.data import Dataset
-from model.config.config import IO_DATASET_MAP_LOCAL_PATH, INPUT_IMAGES_CSV_INDEX, OUTPUT_LABEL_CSV_INDEX
+from model.config.ImageVelocityEstimator.config import IO_DATASET_MAP_LOCAL_PATH, INPUT_IMAGES_CSV_INDEX, OUTPUT_LABEL_CSV_INDEX
 from model.config.libraries import *
 
 

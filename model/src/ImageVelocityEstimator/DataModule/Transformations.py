@@ -1,7 +1,7 @@
 # Import libraries and required modules
 from torchvision import transforms
 from model.config.libraries import *
-from model.config.config import IMAGE_HEIGHTS_MEDIAN, IMAGE_WIDTHS_MEDIAN, IMAGE_MEAN, IMAGE_STD
+from model.config.ImageVelocityEstimator.config import IMAGE_HEIGHTS_MEDIAN, IMAGE_WIDTHS_MEDIAN, IMAGE_MEAN, IMAGE_STD
 
 
 # Apply transformations to improve generalization

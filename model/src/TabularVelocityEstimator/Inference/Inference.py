@@ -3,9 +3,9 @@
 # == Main for model's inference phase
 
 # Import libraries and required modules
-from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator 
-from model.config.config import MODEL_SERIALIZED_PATH, MODEL_NAME, N_INFERENCES_2_EXEC, OUTPUT_INFERENCES_DIR
-from model.config.config import BATCH_SIZE, NUM_WORKERS, TRAIN_PROPORTION, VAL_PROPORTION
+from model.src.TabularVelocityEstimator.VelocityEstimator import VelocityEstimator 
+from model.config.TabularVelocityEstimator.config import MODEL_SERIALIZED_PATH, MODEL_NAME, N_INFERENCES_2_EXEC, OUTPUT_INFERENCES_DIR
+from model.config.TabularVelocityEstimator.config import BATCH_SIZE, NUM_WORKERS, TRAIN_PROPORTION, VAL_PROPORTION
 from model.config.libraries import *
 
 
