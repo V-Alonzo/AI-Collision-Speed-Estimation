@@ -1,6 +1,6 @@
 # Import libraries and required modules
 from torch.utils.data import Dataset
-from model.config.TabularVelocityEstimator.config import CONFIG
+from model.config.ImageVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
 

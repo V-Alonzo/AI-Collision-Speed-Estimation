@@ -4,7 +4,7 @@
 
 # Import libraries and required modules
 from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator
-from model.config.TabularVelocityEstimator.config import CONFIG
+from model.config.ImageVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
 

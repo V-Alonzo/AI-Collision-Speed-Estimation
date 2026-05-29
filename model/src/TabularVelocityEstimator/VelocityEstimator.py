@@ -2,7 +2,7 @@
 from model.config.libraries import *
 from model.src.ImageVelocityEstimator.DataModule.VelocityEstimatorDataModule import VelocityEstimatorDataModule
 from model.src.ImageVelocityEstimator.DataModule import Transformations
-from model.config.TabularVelocityEstimator.config import CONFIG
+from model.config.ImageVelocityEstimator.config import CONFIG
 from model.src.ImageVelocityEstimator.LightningModule.VelocityEstimatorModel import VelocityEstimatorModel
 
 # Import lightning tools
@@ -42,10 +42,22 @@ class VelocityEstimator:
         else:
             self.dm = None
 
+    # Build backbone model (with pretrained params or not)
+    def build_backbone_model(self, weights=None):
+        # Create base resnet
+        model = torch.hub.load(
+            "pytorch/vision",
+            "resnet50",
+            weights=weights
+        )
+
+        return model
+        
     # Build model
     def build_model(self, learning_rate):
-        # ==== Inital model (Existant arq or custom one) 
-        resnet50_model = torch.hub.load("pytorch/vision", "resnet50", weights="IMAGENET1K_V2")
+
+        # ==== Backbone model (Existant arq or custom one) 
+        resnet50_model = self.build_backbone_model(weights="IMAGENET1K_V2")
 
         # freeze layers as default
         for param in resnet50_model.parameters():
@@ -101,7 +113,8 @@ class VelocityEstimator:
                 ],
             accelerator = CONFIG.TRAINER_ACCELERATOR,
             devices=1,
-            precision= CONFIG.TRAINER_PRECISION
+            precision= CONFIG.TRAINER_PRECISION,
+            log_every_n_steps=5
         )
 
         # Execute model's training step
@@ -111,37 +124,82 @@ class VelocityEstimator:
             val_dataloaders = self.dm.val_dataloader()
         )
 
-    # Test trained model with datamodule's test dataset
+    # Test last epoch model's checkpoint with datamodule's test dataset
     def test(self):
-        self.trainer.test(datamodule=self.dm)
-
-    # Method for generating new images with trained model
-    def inference(self):
-        # Verify if there is a model loaded
-        assert self.model is not None, "Training Phase is missing for model's inference mode" 
-
-        # Results
-        
-        
-    # Method for loading pretrained VelocityEstimator model
-    def load_model(self, serialized_object_path = CONFIG.MODEL_SERIALIZED_PATH):
-        # ==== Inital model (Existant arq or custom one) 
-        resnet50_model_transfer_learning = torch.hub.load("pytorch/vision", "resnet50", weights=None)
-
-        # Instance VelocityEstimator lightning model
-        velocityEstimatorModel = VelocityEstimatorModel(
-            model = resnet50_model_transfer_learning,
-            learning_rate = self.learning_rate
+        self.trainer.test(
+            datamodule=self.dm,
+            ckpt_path="last" # {last, best}
         )
 
-        # Load weights from serialized object
-        velocityEstimatorModel.load_state_dict(torch.load(serialized_object_path))
+    # Method for executing inference with the trained model
+    def inference(self, image_path):
+        # Verify model
+        assert self.model is not None, "Model is not loaded or Training Phase is missing"
 
-        # Assign Loaded model
+        # Eval mode
+        self.model.eval()
+
+        # Load image
+        image = Image.open(image_path).convert("RGB")
+
+        # Apply transforms
+        transformed_image = Transformations.test_transform(image)
+
+        # Add batch dimension
+        transformed_image = transformed_image.unsqueeze(0)
+
+        # Move to device
+        transformed_image = transformed_image.to(CONFIG.DEVICE)
+
+        # Disable gradients
+        with torch.no_grad():
+
+            # Execute inference
+            prediction = self.model(transformed_image)
+
+            # Remove dimensions
+            prediction = prediction.squeeze()
+
+            # Tensor to python float
+            prediction = prediction.item()
+
+        return prediction
+    
+    
+    # Method for loading pretrained VelocityEstimator model from serialized file
+    def load_model(self, serialized_object_path=CONFIG.MODEL_SERIALIZED_DIR_PATH):
+
+        # Create base resnet
+        resnet50_model = self.build_backbone_model(weights=None)
+
+        # Replace FC exactly as in training
+        in_features = resnet50_model.fc.in_features
+        resnet50_model.fc = nn.Linear(
+            in_features,
+            1
+        )
+
+        # Create lightning module
+        velocityEstimatorModel = VelocityEstimatorModel(
+            model=resnet50_model,
+            learning_rate=self.learning_rate
+        )
+
+        # Load weights
+        velocityEstimatorModel.load_state_dict(
+            torch.load(
+                serialized_object_path,
+                map_location=CONFIG.DEVICE
+            )
+        )
+
+        # Save model
         self.model = velocityEstimatorModel
 
-        # Send model to proper device
+        # Move to device
         self.model.to(CONFIG.DEVICE)
+
+        print(f"Model loaded from: {serialized_object_path}")
 
         return True
     
@@ -164,7 +222,7 @@ class VelocityEstimator:
         self.model = velocityEstimatorModel
 
         # Save serialized Model as object 
-        torch.save(self.model.state_dict(), CONFIG.MODEL_SERIALIZED_PATH)
+        torch.save(self.model.state_dict(), CONFIG.MODEL_SERIALIZED_DIR_PATH)
 
         # Send Model to proper device
         self.model.to(CONFIG.DEVICE)
@@ -174,11 +232,11 @@ class VelocityEstimator:
         return True
 
     # Method for saving model as serialized object
-    def save_model(self, serialized_object_path_destination = CONFIG.MODEL_SERIALIZED_PATH):
+    def save_model(self, serialized_object_path_destination = CONFIG.MODEL_SERIALIZED_DIR_PATH):
         torch.save(self.model.state_dict(), serialized_object_path_destination)
         return True
 
-    # Method for showing a train dataloader's batch
+    # Method for showing a train dataloader's batch  -- Missing correction
     def show_batch(self, n):
         # Get traiing batch for visualization
         images = next(iter(self.dm.train_dataloader()))

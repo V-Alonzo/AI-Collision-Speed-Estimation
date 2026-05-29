@@ -2,13 +2,32 @@
 
 # Import libraries and required modules
 from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator 
-from model.config.TabularVelocityEstimator.config import CONFIG
+from model.config.ImageVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
+def test_inference():
+
+    velocityEstimator = VelocityEstimator(load_dm=False)
+
+    velocityEstimator.load_model(
+        "model/src/ImageVelocityEstimator/SerializedObjects/model.pth"
+    )
+
+    prediction = velocityEstimator.inference(
+        "test_image.jpg"
+    )
+
+    print(f"Predicted speed: {prediction:.2f} km/h")
 
 # Main file for VelocityEstimator model training execution
 def main():
+    # Save training parameters
     CONFIG.save()
+
+    # Load Training Params
+    # config = TrainingConfig.load(
+    #     "model/src/ExperimentConfigs/xxx.json"
+    # )
     
     # Force Python's garbage collector to run
     gc.collect()
@@ -24,6 +43,7 @@ def main():
         val_proportion = CONFIG.VAL_PROPORTION
     )
 
+    print("\033[0;34m" + "[Starting training phase...] \033[0m" + "\n")
     # Train model
     model.train(
         epochs = CONFIG.N_EPOCHS,
@@ -32,9 +52,10 @@ def main():
 
     # Save model
     model.save_model(serialized_object_path_destination = CONFIG.MODEL_SERIALIZED_PATH)
-    print("Model was saved in : ", CONFIG.MODEL_SERIALIZED_PATH)
+    print("\033[0;34m" + f"[Serialized model was saved in: {CONFIG.MODEL_SERIALIZED_PATH}] \033[0m" + "\n")
 
     # Model Test
+    print("\033[0;34m" + "[Starting testing phase...] \033[0m" + "\n")
     model.test()
 
 if __name__ == "__main__":
