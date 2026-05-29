@@ -1,7 +1,7 @@
 # Import libraries and required modules
 from torchvision import transforms
 from model.config.libraries import *
-from model.config.ImageVelocityEstimator.config import CONFIG
+from model.config.TabularVelocityEstimator.config import CONFIG
 
 # Apply transformations to improve generalization
 

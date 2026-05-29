@@ -1,8 +1,8 @@
 # == Main for resuming a model's training phase from lightning's checkpoint
 
 # Import libraries and required modules
-from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator
-from model.config.ImageVelocityEstimator.config import CONFIG
+from model.src.TabularVelocityEstimator.VelocityEstimator import VelocityEstimator
+from model.config.TabularVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
 

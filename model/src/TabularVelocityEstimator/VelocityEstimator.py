@@ -1,9 +1,9 @@
 # Import libraries and required modules
 from model.config.libraries import *
-from model.src.ImageVelocityEstimator.DataModule.VelocityEstimatorDataModule import VelocityEstimatorDataModule
-from model.src.ImageVelocityEstimator.DataModule import Transformations
-from model.config.ImageVelocityEstimator.config import CONFIG
-from model.src.ImageVelocityEstimator.LightningModule.VelocityEstimatorModel import VelocityEstimatorModel
+from model.src.TabularVelocityEstimator.DataModule.VelocityEstimatorDataModule import VelocityEstimatorDataModule
+from model.src.TabularVelocityEstimator.DataModule import Transformations
+from model.config.TabularVelocityEstimator.config import CONFIG
+from model.src.TabularVelocityEstimator.LightningModule.VelocityEstimatorModel import VelocityEstimatorModel
 
 # Import lightning tools
 from lightning.pytorch.loggers import CSVLogger
