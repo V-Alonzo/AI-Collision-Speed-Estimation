@@ -82,3 +82,6 @@ next-env.d.ts
 __pycache__/
 *.pyc
 *.vscode
+
+# ML experiments
+model/experiments/*
