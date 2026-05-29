@@ -52,9 +52,31 @@ class VelocityEstimator:
         )
 
         return model
+    
+    def build_fc(self, in_features):
+        # return nn.Linear(
+        #     in_features,
+        #     1
+        # )
+
+        return nn.Sequential(
+            nn.Linear(in_features, 512),
+            nn.BatchNorm1d(512),
+            nn.GELU(),
+            nn.Dropout(0.3),
+
+            nn.Linear(512, 128),
+            nn.BatchNorm1d(128),
+            nn.GELU(),
+            nn.Dropout(0.2),
+
+            nn.Linear(128, 1)
+        )
         
     # Build model
     def build_model(self, learning_rate):
+        
+        # ============ Model Arq ============
 
         # ==== Backbone model (Existant arq or custom one) 
         resnet50_model = self.build_backbone_model(weights="IMAGENET1K_V2")
@@ -64,8 +86,8 @@ class VelocityEstimator:
             param.requires_grad = False
 
         # Unfreeze last resnet layer
-        for param in resnet50_model.layer4.parameters():
-            param.requires_grad = True
+        # for param in resnet50_model.layer4.parameters():
+        #     param.requires_grad = True
 
         # Unfreeze resnet fc
         for param in resnet50_model.fc.parameters():
@@ -75,10 +97,9 @@ class VelocityEstimator:
         in_features = resnet50_model.fc.in_features
 
         # Replace final layer
-        resnet50_model.fc = nn.Linear(
-            in_features,
-            1
-        )
+        resnet50_model.fc = self.build_fc(in_features)
+
+        # ============ END Model Arq ============
 
         # Instance VelocityEstimator lightning model and use resnet as backbone model
         velocityEstimatorModel = VelocityEstimatorModel(
@@ -106,7 +127,7 @@ class VelocityEstimator:
         # Create VelocityEstimator's trainer
         self.trainer = L.Trainer(
             max_epochs = epochs,
-            logger = CSVLogger(CONFIG.TRAININGLOGS_DIR_PATH, name = CONFIG.MODEL_NAME),
+            logger = CSVLogger(CONFIG.TRAININGLOGS_DIR_PATH),
             callbacks=[
                 EarlyStopping(monitor="val_loss", mode="min", patience=CONFIG.EARLY_STOPPING_PATIENCE),
                 ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1, dirpath=CONFIG.CHECKPOINTS_DIR_PATH, filename="best_model_"+CONFIG.MODEL_NAME)
@@ -165,19 +186,16 @@ class VelocityEstimator:
 
         return prediction
     
-    
     # Method for loading pretrained VelocityEstimator model from serialized file
     def load_model(self, serialized_object_path=CONFIG.MODEL_SERIALIZED_DIR_PATH):
 
         # Create base resnet
         resnet50_model = self.build_backbone_model(weights=None)
 
-        # Replace FC exactly as in training
+        # -Replace FC exactly as in training
         in_features = resnet50_model.fc.in_features
-        resnet50_model.fc = nn.Linear(
-            in_features,
-            1
-        )
+
+        resnet50_model.fc = self.build_fc(in_features)
 
         # Create lightning module
         velocityEstimatorModel = VelocityEstimatorModel(

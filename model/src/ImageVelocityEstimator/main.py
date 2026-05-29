@@ -6,18 +6,31 @@ from model.config.ImageVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
 def test_inference():
+    
+    print("\033[0;34m" + "[Starting Inference Execution...] \033[0m" + "\n")
 
     velocityEstimator = VelocityEstimator(load_dm=False)
 
     velocityEstimator.load_model(
-        "model/src/ImageVelocityEstimator/SerializedObjects/model.pth"
+        "model/experiments/ImagVelEst_augmented_Modifiedfc/serialized/ImagVelEst_augmented_Modifiedfc_weights.pth"
     )
 
-    prediction = velocityEstimator.inference(
-        "test_image.jpg"
-    )
+    BASE_VALIDATION_IMAGE_PATH = "model/data/ExtraValidationData/Images/"
 
-    print(f"Predicted speed: {prediction:.2f} km/h")
+    validation_images_path = [
+        "43-kmph-27-mph_4-Severe_019_Vehicle4.jpg",
+        "test_conf_1.jpeg",
+        "test_conf_2.jpeg"  
+    ] 
+
+    for path in validation_images_path:
+        path = BASE_VALIDATION_IMAGE_PATH + path
+
+        prediction = velocityEstimator.inference(
+            path
+        )
+
+        print(f"\n    [Inference] Predicted speed: {prediction:.2f} km/h  for image: {path}")
 
 # Main file for VelocityEstimator model training execution
 def main():
@@ -26,7 +39,7 @@ def main():
 
     # Load Training Params
     # config = TrainingConfig.load(
-    #     "model/src/ExperimentConfigs/xxx.json"
+    #     "model/experiments/VelocityEstimator_640_691_4559samples/config.json"
     # )
     
     # Force Python's garbage collector to run
@@ -44,11 +57,15 @@ def main():
     )
 
     print("\033[0;34m" + "[Starting training phase...] \033[0m" + "\n")
-    # Train model
-    model.train(
-        epochs = CONFIG.N_EPOCHS,
-        learning_rate = CONFIG.LEARNING_RATE
-    )
+    if not CONFIG.INFERENCE_MODE:
+        # Train model
+        model.train(
+            epochs = CONFIG.N_EPOCHS,
+            learning_rate = CONFIG.LEARNING_RATE
+        )
+    else:
+        print(" Warning: Active Inference Mode, Training phase can't start...")
+        return
 
     # Save model
     model.save_model(serialized_object_path_destination = CONFIG.MODEL_SERIALIZED_PATH)
@@ -61,7 +78,8 @@ def main():
 if __name__ == "__main__":
     start = datetime.datetime.now()
     print("\n" + "\033[0;34m" + "[start] " + str(start) + "\033[0m" + "\n");
-    main();
+    #main();
+    test_inference()
     end = datetime.datetime.now()
     print("\n" + "\033[0;34m" + "[end] "+ str(end) + "\033[0m" + "\n");
 

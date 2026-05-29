@@ -27,7 +27,7 @@ class TrainingConfig:
     TRAIN_PROPORTION: float = 0.8 
     VAL_PROPORTION: float = 0.8
 
-    N_EPOCHS: int = 1
+    N_EPOCHS: int = 60
 
     LEARNING_RATE: float = 1e-4
 
@@ -36,7 +36,7 @@ class TrainingConfig:
     EARLY_STOPPING_PATIENCE: int = 20
 
     TRAINER_ACCELERATOR: str = 'gpu'
-    TRAINER_PRECISION: str = "16-mixed"
+    TRAINER_PRECISION: str = "bf16-mixed"
 
     # Dataset CSV Parameters
     IO_DATASET_MAP_LOCAL_PATH: str = (
@@ -47,12 +47,15 @@ class TrainingConfig:
     OUTPUT_LABEL_CSV_INDEX: str = "final_speed_kph"
 
     # Experiment / Model Naming
-    MODEL_PREFIX: str = "ImageVelocityEstimator_augmented_1"
+    MODEL_PREFIX: str = "ImagVelEst_augmented_Modifiedfc"
 
     EXPERIMENTS_ROOT_DIR: str = "model/experiments"
 
-    # Inference Parameters
-    N_INFERENCES_2_EXEC: int = 9
+    # INFERENCE_MODE
+    INFERENCE_MODE: bool = False
+
+    # METRICS MODE
+    METRICS_MODE: bool = False
     
 
     # Post Init
@@ -74,15 +77,13 @@ class TrainingConfig:
                 0.24780511
             ]
 
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        #timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
         # ---------- Dynamic model name ----------
         self.MODEL_NAME = (
-            f"{self.MODEL_PREFIX}_"
-            f"{self.IMAGE_HEIGHTS_MEDIAN}_"
-            f"{self.IMAGE_WIDTHS_MEDIAN}_"
-            f"{self.N_SAMPLES}samples_"
-            f"{timestamp}"
+            f"{self.MODEL_PREFIX}"
+            #f"{self.N_SAMPLES}samples"
+            #f"{timestamp}"
         )
 
         # ---------- Experiment root ----------
@@ -124,18 +125,19 @@ class TrainingConfig:
             f"{self.EXPERIMENT_DIR}/config.json"
         )
 
-        # ---------- Create dirs ----------
-        os.makedirs(self.EXPERIMENT_DIR, exist_ok=True)
+        if not self.INFERENCE_MODE and not self.METRICS_MODE:
+            # ---------- Create dirs ----------
+            os.makedirs(self.EXPERIMENT_DIR, exist_ok=True)
 
-        os.makedirs(self.CHECKPOINTS_DIR_PATH, exist_ok=True)
+            os.makedirs(self.CHECKPOINTS_DIR_PATH, exist_ok=True)
 
-        os.makedirs(self.TRAININGLOGS_DIR_PATH, exist_ok=True)
+            os.makedirs(self.TRAININGLOGS_DIR_PATH, exist_ok=True)
 
-        os.makedirs(self.METRICS_PLOTS_OUTPUT_DIR_PATH, exist_ok=True)
+            os.makedirs(self.METRICS_PLOTS_OUTPUT_DIR_PATH, exist_ok=True)
 
-        os.makedirs(self.MODEL_SERIALIZED_DIR_PATH, exist_ok=True)
+            os.makedirs(self.MODEL_SERIALIZED_DIR_PATH, exist_ok=True)
 
-        os.makedirs(self.OUTPUT_INFERENCES_DIR, exist_ok=True)
+            os.makedirs(self.OUTPUT_INFERENCES_DIR, exist_ok=True)
 
     # Save config
     def save(self, output_path=None):
@@ -160,6 +162,6 @@ class TrainingConfig:
             config_dict = json.load(f)
 
         return cls(**config_dict)
-    
+ 
 # Configuration
 CONFIG = TrainingConfig()
