@@ -403,7 +403,7 @@ class MetricsPlotter:
 # Main
 if __name__ == "__main__":
 
-    from model.config.ImageVelocityEstimator.config import (
+    from model.config.TabularVelocityEstimator.config import (
         CONFIG
     )
 
