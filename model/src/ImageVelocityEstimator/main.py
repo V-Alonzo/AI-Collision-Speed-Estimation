@@ -2,13 +2,33 @@
 
 # Import libraries and required modules
 from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator 
-from model.config.config import MODEL_SERIALIZED_PATH, BATCH_SIZE, NUM_WORKERS, TRAIN_PROPORTION, VAL_PROPORTION
-from model.config.config import N_EPOCHS, LEARNING_RATE
+from model.config.ImageVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
+def test_inference():
+
+    velocityEstimator = VelocityEstimator(load_dm=False)
+
+    velocityEstimator.load_model(
+        "model/src/ImageVelocityEstimator/SerializedObjects/model.pth"
+    )
+
+    prediction = velocityEstimator.inference(
+        "test_image.jpg"
+    )
+
+    print(f"Predicted speed: {prediction:.2f} km/h")
 
 # Main file for VelocityEstimator model training execution
 def main():
+    # Save training parameters
+    CONFIG.save()
+
+    # Load Training Params
+    # config = TrainingConfig.load(
+    #     "model/src/ExperimentConfigs/xxx.json"
+    # )
+    
     # Force Python's garbage collector to run
     gc.collect()
 
@@ -17,23 +37,25 @@ def main():
 
     # Create model
     model = VelocityEstimator(
-        batch_size = BATCH_SIZE,
-        num_workers = NUM_WORKERS,
-        train_proportion = TRAIN_PROPORTION,
-        val_proportion = VAL_PROPORTION
+        batch_size = CONFIG.BATCH_SIZE,
+        num_workers = CONFIG.NUM_WORKERS,
+        train_proportion = CONFIG.TRAIN_PROPORTION,
+        val_proportion = CONFIG.VAL_PROPORTION
     )
 
+    print("\033[0;34m" + "[Starting training phase...] \033[0m" + "\n")
     # Train model
     model.train(
-        epochs = N_EPOCHS,
-        learning_rate = LEARNING_RATE
+        epochs = CONFIG.N_EPOCHS,
+        learning_rate = CONFIG.LEARNING_RATE
     )
 
     # Save model
-    model.save_model(serialized_object_path_destination = MODEL_SERIALIZED_PATH)
-    print("Model was saved in : ", MODEL_SERIALIZED_PATH)
+    model.save_model(serialized_object_path_destination = CONFIG.MODEL_SERIALIZED_PATH)
+    print("\033[0;34m" + f"[Serialized model was saved in: {CONFIG.MODEL_SERIALIZED_PATH}] \033[0m" + "\n")
 
     # Model Test
+    print("\033[0;34m" + "[Starting testing phase...] \033[0m" + "\n")
     model.test()
 
 if __name__ == "__main__":

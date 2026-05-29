@@ -16,3 +16,5 @@ import os
 from tqdm import tqdm
 import cv2
 import gc
+from dataclasses import dataclass,asdict
+import json
