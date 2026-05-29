@@ -1,21 +1,20 @@
 # == Main for model's training phase
 
 # Import libraries and required modules
-from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator 
-from model.config.ImageVelocityEstimator.config import CONFIG
+from model.src.TabularVelocityEstimator.VelocityEstimator import VelocityEstimator 
+from model.config.TabularVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
 def test_inference():
 
-    velocityEstimator = VelocityEstimator(load_dm=False)
+    velocityEstimator = VelocityEstimator(load_dm=True)
 
     velocityEstimator.load_model(
-        "model/src/ImageVelocityEstimator/SerializedObjects/model.pth"
+        CONFIG.MODEL_SERIALIZED_PATH
     )
 
-    prediction = velocityEstimator.inference(
-        "test_image.jpg"
-    )
+    sample_features = pd.read_csv(CONFIG.TABULAR_FEATURES_PATH).iloc[0]
+    prediction = velocityEstimator.inference(sample_features)[0]
 
     print(f"Predicted speed: {prediction:.2f} km/h")
 

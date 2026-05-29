@@ -8,29 +8,19 @@ class TrainingConfig:
     DEVICE: str = 'cuda' if torch.cuda.is_available() else 'cpu'
     FLOAT32_MATMUL_PRECISION: str = 'high'
 
-    # -- General dataset and data (images) params obtained from "model/data/scripts/dataset_eda.ipynb"
-    DIM_SIZE_FACTOR: int = 1
-
-    IMAGE_HEIGHTS_MEDIAN: int = 224
-    IMAGE_WIDTHS_MEDIAN: int = 224
-    IMAGE_CHANNELS: int = 3
-
-    IMAGE_MEAN: list = None
-    IMAGE_STD: list = None
-
-    N_SAMPLES: int = 15513
+    # Tabular dataset paths
+    TABULAR_FEATURES_PATH: str = "model/data/CSV/HF_tabular_processed.csv"
+    TABULAR_TARGET_PATH: str = "model/data/CSV/HF_target_processed.csv"
 
     # Training Parameters
     BATCH_SIZE: int = 128
-    NUM_WORKERS: int = 20
+    NUM_WORKERS: int = 4
 
-    TRAIN_PROPORTION: float = 0.8 
+    TRAIN_PROPORTION: float = 0.8
     VAL_PROPORTION: float = 0.8
 
-    N_EPOCHS: int = 1
-
-    LEARNING_RATE: float = 1e-4
-
+    N_EPOCHS: int = 10
+    LEARNING_RATE: float = 1e-3
     SEED: int = 42
 
     EARLY_STOPPING_PATIENCE: int = 20
@@ -38,51 +28,34 @@ class TrainingConfig:
     TRAINER_ACCELERATOR: str = 'gpu'
     TRAINER_PRECISION: str = "16-mixed"
 
-    # Dataset CSV Parameters
-    IO_DATASET_MAP_LOCAL_PATH: str = (
-        "model/data/CSV/ciren_training_augmented_manifest.csv"
-    )
-
-    INPUT_IMAGES_CSV_INDEX: str = "image_relpath"
-    OUTPUT_LABEL_CSV_INDEX: str = "final_speed_kph"
+    # Tabular model parameters
+    TABULAR_HIDDEN_DIMS: tuple = (128, 64, 32)
+    TABULAR_DROPOUT: float = 0.2
 
     # Experiment / Model Naming
-    MODEL_PREFIX: str = "TabularVelocityEstimator_augmented_1"
-
+    MODEL_PREFIX: str = "TabularVelocityEstimator_v1"
     EXPERIMENTS_ROOT_DIR: str = "model/experiments"
 
     # Inference Parameters
     N_INFERENCES_2_EXEC: int = 9
-    
 
     # Post Init
     def __post_init__(self):
 
         torch.set_float32_matmul_precision('high')
 
-        if self.IMAGE_MEAN is None:
-            self.IMAGE_MEAN = [
-                0.45484897,
-                0.47033188,
-                0.47973604
-            ]
-
-        if self.IMAGE_STD is None:
-            self.IMAGE_STD = [
-                0.24885239,
-                0.24789241,
-                0.24780511
-            ]
-
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        # Resolve input dimension for model naming
+        try:
+            features_df = pd.read_csv(self.TABULAR_FEATURES_PATH)
+            n_features = features_df.shape[1]
+        except Exception:
+            n_features = "unknown"
 
         # ---------- Dynamic model name ----------
         self.MODEL_NAME = (
-            f"{self.MODEL_PREFIX}_"
-            f"{self.IMAGE_HEIGHTS_MEDIAN}_"
-            f"{self.IMAGE_WIDTHS_MEDIAN}_"
-            f"{self.N_SAMPLES}samples_"
-            f"{timestamp}"
+            f"{self.MODEL_PREFIX}"
         )
 
         # ---------- Experiment root ----------
