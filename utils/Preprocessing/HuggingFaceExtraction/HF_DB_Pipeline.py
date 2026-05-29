@@ -48,6 +48,7 @@ class TextNumberExtractor(BaseEstimator, TransformerMixin):
             X_copy[col] = pd.to_numeric(extracted, errors='coerce')
         return X_copy
 
+    # Retorna los nombres originales de las columnas transformadas
     def get_feature_names_out(self, input_features=None):
         return np.array(input_features)
 
@@ -67,6 +68,8 @@ class CyclicalTransformer(BaseEstimator, TransformerMixin):
             transformed[f'{col}_cos'] = np.cos(2 * np.pi * X_copy[col] / self.max_value)
         return transformed
 
+    # Genera los nombres de las columnas creadas
+    # después de aplicar la transformación cíclica
     def get_feature_names_out(self, input_features=None):
         output_features = []
 
@@ -90,7 +93,8 @@ class BinaryRolloverEncoder(BaseEstimator, TransformerMixin):
                 lambda x: 0 if 'No rollover' in x else 1
             )
         return X_copy
-    
+
+    # Retorna los nombres originales de las columnas transformadas
     def get_feature_names_out(self, input_features=None):
         return np.array(input_features)
 
@@ -210,25 +214,9 @@ def PreprocessingHuggingFaceDB():
     # Obtener nombres de columnas transformadas
     feature_names = preprocessor.get_feature_names_out()
 
-    # Eliminar prefijos automáticos agregados por ColumnTransformer
-    feature_names = [
-        col.split("__")[-1]
-        for col in feature_names
-    ]
-
-    # Crear DataFrame conservando nombres
-    X_processed_df = pd.DataFrame(
-        X_processed,
-        columns=feature_names
-    )
-
-    y_df = pd.DataFrame(y, columns=['totalDeltaVKph'])
-
-    # Guardar CSV
-    X_processed_df.to_csv(HF_PROCESSED_TABULAR_DATA_CSV_PATH, index=False)
-    y_df.to_csv(HF_PROCESSED_TABULAR_TARGET_CSV_PATH, index=False)
-
     print(f"Preprocesamiento completado.")
     print(f"Dimensiones originales de X: {X.shape}")
     print(f"Dimensiones de X preprocesado: {X_processed.shape}")
     print(f"Dimensiones de y: {y.shape}")
+
+    return X_processed, y, feature_names
