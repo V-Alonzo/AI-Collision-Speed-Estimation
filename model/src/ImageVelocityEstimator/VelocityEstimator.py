@@ -106,7 +106,7 @@ class VelocityEstimator:
         # Create VelocityEstimator's trainer
         self.trainer = L.Trainer(
             max_epochs = epochs,
-            logger = CSVLogger(CONFIG.TRAININGLOGS_DIR_PATH, name = CONFIG.MODEL_NAME),
+            logger = CSVLogger(CONFIG.TRAININGLOGS_DIR_PATH),
             callbacks=[
                 EarlyStopping(monitor="val_loss", mode="min", patience=CONFIG.EARLY_STOPPING_PATIENCE),
                 ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1, dirpath=CONFIG.CHECKPOINTS_DIR_PATH, filename="best_model_"+CONFIG.MODEL_NAME)
