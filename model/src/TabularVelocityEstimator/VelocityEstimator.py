@@ -1,12 +1,9 @@
 # Import libraries and required modules
 from model.config.libraries import *
-from model.src.TabularVelocityEstimator.DataModule.VelocityEstimatorDataModule import VelocityEstimatorDataModule
-from model.src.TabularVelocityEstimator.DataModule import Transformations
-from model.config.TabularVelocityEstimator.config import IO_DATASET_MAP_LOCAL_PATH, DEVICE
-from model.config.TabularVelocityEstimator.config import CHECKPOINTS_DIR_PATH, TRAININGLOGS_DIR_PATH, MODEL_NAME, MODEL_SERIALIZED_PATH
-from model.config.TabularVelocityEstimator.config import IMAGE_CHANNELS
-from model.config.TabularVelocityEstimator.config import EARLY_STOPPING_PATIENCE, TRAINER_ACCELERATOR, TRAINER_PRECISION, METRICS_PLOTS_OUTPUT_DIR_PATH
-from model.src.TabularVelocityEstimator.LightningModule.VelocityEstimatorModel import VelocityEstimatorModel
+from model.src.ImageVelocityEstimator.DataModule.VelocityEstimatorDataModule import VelocityEstimatorDataModule
+from model.src.ImageVelocityEstimator.DataModule import Transformations
+from model.config.TabularVelocityEstimator.config import CONFIG
+from model.src.ImageVelocityEstimator.LightningModule.VelocityEstimatorModel import VelocityEstimatorModel
 
 # Import lightning tools
 from lightning.pytorch.loggers import CSVLogger
@@ -33,7 +30,7 @@ class VelocityEstimator:
         if load_dm:
             # Create DataModule
             self.dm  = VelocityEstimatorDataModule(
-                annotations_file=IO_DATASET_MAP_LOCAL_PATH, 
+                annotations_file=CONFIG.IO_DATASET_MAP_LOCAL_PATH, 
                 batch_size=batch_size, 
                 num_workers=num_workers, 
                 train_transform= Transformations.train_transform, 
@@ -82,7 +79,7 @@ class VelocityEstimator:
     # Execute model training
     def train(
             self,
-            image_channels = IMAGE_CHANNELS,
+            image_channels = CONFIG.IMAGE_CHANNELS,
             epochs = 5,
             learning_rate = 1e-4
         ):
@@ -97,14 +94,14 @@ class VelocityEstimator:
         # Create VelocityEstimator's trainer
         self.trainer = L.Trainer(
             max_epochs = epochs,
-            logger = CSVLogger(TRAININGLOGS_DIR_PATH, name = MODEL_NAME),
+            logger = CSVLogger(CONFIG.TRAININGLOGS_DIR_PATH, name = CONFIG.MODEL_NAME),
             callbacks=[
-                EarlyStopping(monitor="val_loss", mode="min", patience=EARLY_STOPPING_PATIENCE),
-                ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1, dirpath=CHECKPOINTS_DIR_PATH, filename="best_model_"+MODEL_NAME)
+                EarlyStopping(monitor="val_loss", mode="min", patience=CONFIG.EARLY_STOPPING_PATIENCE),
+                ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1, dirpath=CONFIG.CHECKPOINTS_DIR_PATH, filename="best_model_"+CONFIG.MODEL_NAME)
                 ],
-            accelerator = TRAINER_ACCELERATOR,
+            accelerator = CONFIG.TRAINER_ACCELERATOR,
             devices=1,
-            precision= TRAINER_PRECISION
+            precision= CONFIG.TRAINER_PRECISION
         )
 
         # Execute model's training step
@@ -127,7 +124,7 @@ class VelocityEstimator:
         
         
     # Method for loading pretrained VelocityEstimator model
-    def load_model(self, serialized_object_path = MODEL_SERIALIZED_PATH):
+    def load_model(self, serialized_object_path = CONFIG.MODEL_SERIALIZED_PATH):
         # ==== Inital model (Existant arq or custom one) 
         resnet50_model_transfer_learning = torch.hub.load("pytorch/vision", "resnet50", weights=None)
 
@@ -144,7 +141,7 @@ class VelocityEstimator:
         self.model = velocityEstimatorModel
 
         # Send model to proper device
-        self.model.to(DEVICE)
+        self.model.to(CONFIG.DEVICE)
 
         return True
     
@@ -167,17 +164,17 @@ class VelocityEstimator:
         self.model = velocityEstimatorModel
 
         # Save serialized Model as object 
-        torch.save(self.model.state_dict(), MODEL_SERIALIZED_PATH)
+        torch.save(self.model.state_dict(), CONFIG.MODEL_SERIALIZED_PATH)
 
         # Send Model to proper device
-        self.model.to(DEVICE)
+        self.model.to(CONFIG.DEVICE)
 
         print(f"Model loaded from checkpoint path : {checkpoint_path}")
 
         return True
 
     # Method for saving model as serialized object
-    def save_model(self, serialized_object_path_destination = MODEL_SERIALIZED_PATH):
+    def save_model(self, serialized_object_path_destination = CONFIG.MODEL_SERIALIZED_PATH):
         torch.save(self.model.state_dict(), serialized_object_path_destination)
         return True
 
@@ -205,6 +202,6 @@ class VelocityEstimator:
         plt.show()
 
         # Save images
-        out_path = os.path.join(METRICS_PLOTS_OUTPUT_DIR_PATH, MODEL_NAME+"training_batch_grid.png")
+        out_path = os.path.join(CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH, CONFIG.MODEL_NAME+"training_batch_grid.png")
         plt.savefig(out_path, dpi=150)
         plt.close()

@@ -2,18 +2,14 @@
 
 # Import libraries and required modules
 from model.config.libraries import *
-from model.config.TabularVelocityEstimator.config import (
-    MODEL_NAME,
-    METRICS_PLOTS_OUTPUT_DIR_PATH,
-    METRICS_MODEL_VERSION_TO_PLOT
-)
+from model.config.TabularVelocityEstimator.config import CONFIG
 
 # --- CONFIG ---
 CSV_PATH = (
     "model/src/TrainingLogs/"
-    + MODEL_NAME
+    + CONFIG.MODEL_NAME
     + "/version_"
-    + str(METRICS_MODEL_VERSION_TO_PLOT)
+    + str(CONFIG.METRICS_MODEL_VERSION_TO_PLOT)
     + "/metrics.csv"
 )
 
@@ -77,15 +73,15 @@ def plot_metrics():
         label="Validation Loss"
     )
 
-    plt.title(f"{MODEL_NAME} | Train vs Validation Loss")
+    plt.title(f"{CONFIG.MODEL_NAME} | Train vs Validation Loss")
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
     plt.grid(True)
     plt.legend()
 
     loss_path = os.path.join(
-        METRICS_PLOTS_OUTPUT_DIR_PATH,
-        MODEL_NAME + "_loss.png"
+        CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH,
+        CONFIG.MODEL_NAME + "_loss.png"
     )
 
     plt.savefig(loss_path, dpi=150, bbox_inches="tight")
@@ -119,15 +115,15 @@ def plot_metrics():
             label=f"Test MAE = {test_mae:.3f}"
         )
 
-    plt.title(f"{MODEL_NAME} | Train vs Validation MAE")
+    plt.title(f"{CONFIG.MODEL_NAME} | Train vs Validation MAE")
     plt.xlabel("Epoch")
     plt.ylabel("MAE")
     plt.grid(True)
     plt.legend()
 
     mae_path = os.path.join(
-        METRICS_PLOTS_OUTPUT_DIR_PATH,
-        MODEL_NAME + "_mae.png"
+        CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH,
+        CONFIG.MODEL_NAME + "_mae.png"
     )
 
     plt.savefig(mae_path, dpi=150, bbox_inches="tight")
@@ -144,14 +140,14 @@ def plot_metrics():
         linewidth=1
     )
 
-    plt.title(f"{MODEL_NAME} | Train Loss per Step")
+    plt.title(f"{CONFIG.MODEL_NAME} | Train Loss per Step")
     plt.xlabel("Step")
     plt.ylabel("Train Loss Step")
     plt.grid(True)
 
     step_path = os.path.join(
-        METRICS_PLOTS_OUTPUT_DIR_PATH,
-        MODEL_NAME + "_step_loss.png"
+        CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH,
+        CONFIG.MODEL_NAME + "_step_loss.png"
     )
 
     plt.savefig(step_path, dpi=150, bbox_inches="tight")

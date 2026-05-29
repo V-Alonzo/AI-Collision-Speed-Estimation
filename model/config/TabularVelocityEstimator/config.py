@@ -2,88 +2,145 @@
 from model.config.libraries import *
 
 
-# ====== Configuration file ====== 
+class TrainingConfig:
 
-# ------ Configuration for model training: model/src/* ------
-# Device configuration
-DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-torch.set_float32_matmul_precision('high')
+    # Device configuration
+    DEVICE: str = 'cuda' if torch.cuda.is_available() else 'cpu'
+    FLOAT32_MATMUL_PRECISION: str = 'high'
 
-# -- General dataset and data (images) params obtained from "model/data/scripts/dataset_eda.ipynb"
-# Image crop transform measures
-DIM_SIZE_FACTOR = 1
+    # -- General dataset and data (images) params obtained from "model/data/scripts/*.ipynb"
+    DIM_SIZE_FACTOR: int = 1
 
-IMAGE_HEIGHTS_MEDIAN = int(224 * DIM_SIZE_FACTOR)
-IMAGE_WIDTHS_MEDIAN = int(224 * DIM_SIZE_FACTOR)
-IMAGE_CHANNELS = 3
+    IMAGE_HEIGHTS_MEDIAN: int = 224
+    IMAGE_WIDTHS_MEDIAN: int = 224
+    IMAGE_CHANNELS: int = 3
 
-# Images Distribution Parameters
-IMAGE_MEAN = [0.45484897, 0.47033188, 0.47973604] # [0.51322499, 0.49685384, 0.49083403] # -- NOT USED
-IMAGE_STD = [0.24885239, 0.24789241,  0.24780511] # [0.26715419, 0.26588872, 0.26546267] # -- NOT USED
+    IMAGE_MEAN: list = None
+    IMAGE_STD: list = None
 
-# Numbers of samples used for dataset split
-N_SAMPLES = 15513
+    N_SAMPLES: int = 15513
 
-# Number of classes (lables)
-# N_CLASSES = 43
+    # Training Parameters
+    BATCH_SIZE: int = 128
+    NUM_WORKERS: int = 20
 
+    TRAIN_PROPORTION: float = 0.80
+    VAL_PROPORTION: float = 0.20
 
-# -- Model's Training Phase Parameters
-BATCH_SIZE = 128
-NUM_WORKERS = 20
-TRAIN_PROPORTION = 0.80
-VAL_PROPORTION = 0.80
-N_EPOCHS = 25
-LEARNING_RATE = 1e-4
-SEED = 42
-EARLY_STOPPING_PATIENCE = 20
-TRAINER_ACCELERATOR = 'gpu'
-TRAINER_PRECISION = "16-mixed"
+    N_EPOCHS: int = 25
 
+    LEARNING_RATE: float = 1e-4
 
-# -- Model's NAME
+    SEED: int = 42
 
-# Model name
-MODEL_NAME = "VelocityEstimator_augmented_"+str(IMAGE_HEIGHTS_MEDIAN)+"_"+str(IMAGE_WIDTHS_MEDIAN)+"_"+str(N_SAMPLES)+"samples"
+    EARLY_STOPPING_PATIENCE: int = 20
 
+    TRAINER_ACCELERATOR: str = 'gpu'
+    TRAINER_PRECISION: str = "16-mixed"
 
-# -- Input Data CSV Params
-# File from where data input paths will be extracted for model's train phase
-IO_DATASET_MAP_LOCAL_PATH = "model/data/CSV/ciren_training_augmented_manifest.csv"
+    # Dataset CSV Parameters
+    IO_DATASET_MAP_LOCAL_PATH: str = (
+        "model/data/CSV/ciren_training_augmented_manifest.csv"
+    )
 
-# Csv column from where image input paths and labels will be extracted
-INPUT_IMAGES_CSV_INDEX = "image_relpath"
-OUTPUT_LABEL_CSV_INDEX = "final_speed_kph"
+    INPUT_IMAGES_CSV_INDEX: str = "image_relpath"
+    OUTPUT_LABEL_CSV_INDEX: str = "final_speed_kph"
 
+    # Experiment / Model Naming
+    MODEL_PREFIX: str = "TabularVelocityEstimator_augmented"
 
-# -- Lightning paths and params
-# Lightning model's checkpoints path
-CHECKPOINTS_DIR_PATH = "model/src/ModelCheckpoints/"
+    # Paths
+    CHECKPOINTS_DIR_PATH: str = "model/src/TabularVelocityEstimator/TabularVelocityEstimator/ModelCheckpoints"
 
-# Lightning model's training logs path 
-TRAININGLOGS_DIR_PATH = "model/src/TrainingLogs"
-os.makedirs(TRAININGLOGS_DIR_PATH, exist_ok = True)
+    TRAININGLOGS_DIR_PATH: str = "model/src/TabularVelocityEstimator/TrainingLogs"
 
-# Ploted metrics dir path
-METRICS_PLOTS_OUTPUT_DIR_PATH = "model/src/Metrics_Plots"
-os.makedirs(METRICS_PLOTS_OUTPUT_DIR_PATH, exist_ok = True)
+    METRICS_PLOTS_OUTPUT_DIR_PATH: str = "model/src/TabularVelocityEstimator/Metrics_Plots"
 
-# Lightning logger: model's version to plot metrics.csv
-METRICS_MODEL_VERSION_TO_PLOT = 0
+    MODEL_SERIALIZED_DIR_PATH: str = "model/src/TabularVelocityEstimator/SerializedObjects"
 
+    CONFIG_OUTPUT_DIR: str = "model/src/TabularVelocityEstimator/ExperimentConfigs"
 
-# -- Model serialization paths
-# Dir path for model serialized objects storage and dir existance verification
-MODEL_SERIALIZED_DIR_PATH = "model/src/SerializedObjects"
-os.makedirs(MODEL_SERIALIZED_DIR_PATH, exist_ok=True)
+    # Inference Parameters
+    N_INFERENCES_2_EXEC: int = 9
 
-# Model serialized object "pth" path
-MODEL_SERIALIZED_PATH = MODEL_SERIALIZED_DIR_PATH + "/" + MODEL_NAME + "_weights.pth"
+    # Post Init
+    def __post_init__(self):
 
+        torch.set_float32_matmul_precision('high')
 
-# -- Model's Inference Phase Parameters
-N_INFERENCES_2_EXEC = 9
-OUTPUT_INFERENCES_DIR = "model/src/"+MODEL_NAME+"_OUTPUT_INFERENCES"
-os.makedirs(OUTPUT_INFERENCES_DIR, exist_ok=True)
+        if self.IMAGE_MEAN is None:
+            self.IMAGE_MEAN = [
+                0.45484897,
+                0.47033188,
+                0.47973604
+            ]
 
+        if self.IMAGE_STD is None:
+            self.IMAGE_STD = [
+                0.24885239,
+                0.24789241,
+                0.24780511
+            ]
 
+        # ---------- Dynamic model name ----------
+        self.MODEL_NAME = (
+            f"{self.MODEL_PREFIX}_"
+            f"{self.IMAGE_HEIGHTS_MEDIAN}_"
+            f"{self.IMAGE_WIDTHS_MEDIAN}_"
+            f"{self.N_SAMPLES}samples"
+        )
+
+        # ---------- Dynamic paths ----------
+        self.MODEL_SERIALIZED_PATH = (
+            f"{self.MODEL_SERIALIZED_DIR_PATH}/"
+            f"{self.MODEL_NAME}_weights.pth"
+        )
+
+        self.OUTPUT_INFERENCES_DIR = (
+            f"model/src/TabluarVelocityEstimator/"
+            f"{self.MODEL_NAME}_OUTPUT_INFERENCES"
+        )
+
+        self.EXPERIMENT_CONFIG_PATH = (
+            f"{self.CONFIG_OUTPUT_DIR}/"
+            f"{self.MODEL_NAME}_config.json"
+        )
+
+        # ---------- Create dirs ----------
+        os.makedirs(self.CHECKPOINTS_DIR_PATH, exist_ok=True)
+
+        os.makedirs(self.TRAININGLOGS_DIR_PATH, exist_ok=True)
+
+        os.makedirs(self.METRICS_PLOTS_OUTPUT_DIR_PATH, exist_ok=True)
+
+        os.makedirs(self.MODEL_SERIALIZED_DIR_PATH, exist_ok=True)
+
+        os.makedirs(self.OUTPUT_INFERENCES_DIR, exist_ok=True)
+
+        os.makedirs(self.CONFIG_OUTPUT_DIR, exist_ok=True)
+
+    # Save config
+    def save(self, output_path="model/config/TabularVelocityEstimator/Experiments"):
+
+        if output_path is None:
+            output_path = self.EXPERIMENT_CONFIG_PATH
+
+        with open(output_path, "w") as f:
+            json.dump(
+                asdict(self),
+                f,
+                indent=4
+            )
+
+        print(f"[INFO] Config saved at: {output_path}")
+
+    # Load config
+    def load(cls, config_path):
+
+        with open(config_path, "r") as f:
+            config_dict = json.load(f)
+
+        return cls(**config_dict)
+    
+# Configuration
+CONFIG = TrainingConfig()

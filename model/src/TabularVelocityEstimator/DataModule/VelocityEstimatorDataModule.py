@@ -1,8 +1,8 @@
 # Import libraries and required modules
 from torch.utils.data import DataLoader
-from model.src.TabularVelocityEstimator.DataModule.VelocityEstimatorDataset import VelocityEstimatorDataset
+from model.src.ImageVelocityEstimator.DataModule.VelocityEstimatorDataset import VelocityEstimatorDataset
 from model.config.libraries import *
-from model.config.TabularVelocityEstimator.config import N_SAMPLES
+from model.config.TabularVelocityEstimator.config import CONFIG
 
 
 # Data Module for dataloader creation
@@ -42,8 +42,8 @@ class VelocityEstimatorDataModule(L.LightningDataModule):
     # Method for dataset's subsets creation
     def setup(self, stage=None):
         # Compute correct split's dimensions
-        train_size = int(N_SAMPLES * self.train_proportion)
-        test_size = N_SAMPLES - train_size
+        train_size = int(CONFIG.N_SAMPLES * self.train_proportion)
+        test_size = CONFIG.N_SAMPLES - train_size
         val_size = int(train_size * (1 - self.val_proportion))
         train_size = train_size - val_size
 
@@ -54,7 +54,7 @@ class VelocityEstimatorDataModule(L.LightningDataModule):
 
         # Execute random split with computed index
         train_idx, val_idx, test_idx = torch.utils.data.random_split(
-            range(N_SAMPLES),
+            range(CONFIG.N_SAMPLES),
             [train_size, val_size, test_size],
             generator=generator
         )

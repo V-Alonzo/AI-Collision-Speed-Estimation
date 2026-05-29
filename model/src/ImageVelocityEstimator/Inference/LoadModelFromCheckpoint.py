@@ -4,8 +4,7 @@
 
 # Import libraries and required modules
 from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator
-from model.config.ImageVelocityEstimator.config import MODEL_SERIALIZED_PATH, MODEL_NAME, N_INFERENCES_2_EXEC, OUTPUT_INFERENCES_DIR
-from model.config.ImageVelocityEstimator.config import BATCH_SIZE, NUM_WORKERS, TRAIN_PROPORTION, VAL_PROPORTION, CHECKPOINTS_DIR_PATH
+from model.config.ImageVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
 
@@ -13,18 +12,18 @@ from model.config.libraries import *
 def execute_inference():
     # Create model
     model = VelocityEstimator(
-        batch_size = BATCH_SIZE,
-        num_workers = NUM_WORKERS,
-        train_proportion = TRAIN_PROPORTION,
-        val_proportion = VAL_PROPORTION
+        batch_size = CONFIG.BATCH_SIZE,
+        num_workers = CONFIG.NUM_WORKERS,
+        train_proportion = CONFIG.TRAIN_PROPORTION,
+        val_proportion = CONFIG.VAL_PROPORTION
     )
 
     # Load Model from Checkpointi
-    model.load_from_checkpoint(CHECKPOINTS_DIR_PATH + "best_model_" + MODEL_NAME + ".ckpt")
+    model.load_from_checkpoint(CONFIG.CHECKPOINTS_DIR_PATH + "best_model_" + CONFIG.MODEL_NAME + ".ckpt")
 
     # Get n number of Inferences
     generated_imgs = []
-    for i in tqdm(range(N_INFERENCES_2_EXEC)):
+    for i in tqdm(range(CONFIG.N_INFERENCES_2_EXEC)):
         xt = model.inference()      # (1, C, H, W) en [0,1]
         generated_imgs.append(img)
 
@@ -53,7 +52,7 @@ def execute_inference():
     plt.tight_layout()
 
     # Store figure
-    output_path = os.path.join(OUTPUT_INFERENCES_DIR, MODEL_NAME + "_inference_"+str(N_INFERENCES_2_EXEC)+"_grid.png")
+    output_path = os.path.join(CONFIG.OUTPUT_INFERENCES_DIR, CONFIG.MODEL_NAME + "_inference_"+str(CONFIG.N_INFERENCES_2_EXEC)+"_grid.png")
     plt.savefig(output_path, dpi=300)
     plt.close(fig)
     print("Inference phase finished, grid saves in "+output_path+ "...")
