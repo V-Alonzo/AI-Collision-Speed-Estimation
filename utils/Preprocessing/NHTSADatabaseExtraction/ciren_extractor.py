@@ -184,6 +184,10 @@ def _build_ciren_case_payload(case_entry: Dict[str, Any], cached_case: Dict[str,
             "validatedImageRecords": _normalize_validated_image_records(cached_case.get("validatedImageRecords")),
         }
     )
+    
+    if len(case_payload["errors"])  > 0 and len(case_payload["candidateImages"]) == len(case_payload["revisedImages"]):
+        case_payload["errors"] = []
+        
     case_payload["validImages"] = _normalize_valid_ciren_object_ids(case_payload, cached_case)
     case_payload.pop("candidateImagesCataloged", None)
     _prune_unconfigured_ciren_metadata(case_payload)
