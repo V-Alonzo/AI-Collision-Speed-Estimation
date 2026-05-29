@@ -22,9 +22,24 @@ def execute_inference():
     model.load_model( CONFIG.MODEL_SERIALIZED_PATH)
     print("Model was correctly loaded from " +CONFIG.MODEL_SERIALIZED_PATH+ " ...")
 
-    # Sample n rows for inference
-    features_df = pd.read_csv(CONFIG.TABULAR_FEATURES_PATH)
-    sample_df = features_df.sample(n=CONFIG.N_INFERENCES_2_EXEC, random_state=CONFIG.SEED)
+    # Load payload for inference
+    payload_path = CONFIG.INFERENCE_SAMPLE_PATH
+
+    with open(payload_path, "r") as f:
+        payload = json.load(f)
+
+    if isinstance(payload, dict):
+        payload = [payload]
+
+    sample_df = pd.DataFrame(payload)
+
+    expected_columns = pd.read_csv(CONFIG.TABULAR_FEATURES_PATH).columns
+    missing_columns = set(expected_columns) - set(sample_df.columns)
+    if missing_columns:
+        missing_list = ", ".join(sorted(missing_columns))
+        raise ValueError("Payload is missing required columns: " + missing_list)
+
+    sample_df = sample_df.reindex(columns=expected_columns)
 
     predictions = model.inference(sample_df)
 
@@ -33,7 +48,7 @@ def execute_inference():
 
     output_path = os.path.join(
         CONFIG.OUTPUT_INFERENCES_DIR,
-        CONFIG.MODEL_NAME + "_inference_" + str(CONFIG.N_INFERENCES_2_EXEC) + "_rows.csv"
+            CONFIG.MODEL_NAME + "_inference_" + str(len(sample_df)) + "_rows.csv"
     )
     output_df.to_csv(output_path, index=False)
     print("Inference phase finished, results saved in " + output_path + "...")

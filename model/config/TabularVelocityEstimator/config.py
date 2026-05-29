@@ -11,6 +11,7 @@ class TrainingConfig:
     # Tabular dataset paths
     TABULAR_FEATURES_PATH: str = "model/data/CSV/HF_tabular_processed.csv"
     TABULAR_TARGET_PATH: str = "model/data/CSV/HF_target_processed.csv"
+    INFERENCE_SAMPLE_PATH: str = "model/src/TabularVelocityEstimator/Inference/payloads/sample_payload.json"
 
     # Training Parameters
     BATCH_SIZE: int = 128
