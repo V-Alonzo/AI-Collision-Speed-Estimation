@@ -36,8 +36,11 @@ class TrainingConfig:
     MODEL_PREFIX: str = "TabularVelocityEstimator_v1"
     EXPERIMENTS_ROOT_DIR: str = "model/experiments"
 
-    # Inference Parameters
-    N_INFERENCES_2_EXEC: int = 9
+    # INFERENCE_MODE
+    INFERENCE_MODE: bool = False
+
+    # METRICS MODE
+    METRICS_MODE: bool = False
 
     # Post Init
     def __post_init__(self):
@@ -97,18 +100,19 @@ class TrainingConfig:
             f"{self.EXPERIMENT_DIR}/config.json"
         )
 
-        # ---------- Create dirs ----------
-        os.makedirs(self.EXPERIMENT_DIR, exist_ok=True)
+        if not self.INFERENCE_MODE and not self.METRICS_MODE:
+            # ---------- Create dirs ----------
+            os.makedirs(self.EXPERIMENT_DIR, exist_ok=True)
 
-        os.makedirs(self.CHECKPOINTS_DIR_PATH, exist_ok=True)
+            os.makedirs(self.CHECKPOINTS_DIR_PATH, exist_ok=True)
 
-        os.makedirs(self.TRAININGLOGS_DIR_PATH, exist_ok=True)
+            os.makedirs(self.TRAININGLOGS_DIR_PATH, exist_ok=True)
 
-        os.makedirs(self.METRICS_PLOTS_OUTPUT_DIR_PATH, exist_ok=True)
+            os.makedirs(self.METRICS_PLOTS_OUTPUT_DIR_PATH, exist_ok=True)
 
-        os.makedirs(self.MODEL_SERIALIZED_DIR_PATH, exist_ok=True)
+            os.makedirs(self.MODEL_SERIALIZED_DIR_PATH, exist_ok=True)
 
-        os.makedirs(self.OUTPUT_INFERENCES_DIR, exist_ok=True)
+            os.makedirs(self.OUTPUT_INFERENCES_DIR, exist_ok=True)
 
     # Save config
     def save(self, output_path=None):

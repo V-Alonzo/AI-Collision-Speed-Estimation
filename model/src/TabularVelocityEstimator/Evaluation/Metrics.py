@@ -1,171 +1,416 @@
-# == Function for plotting metrics
+# Metrics Plotter
 
-# Import libraries and required modules
 from model.config.libraries import *
-from model.config.TabularVelocityEstimator.config import CONFIG
 
-# --- CONFIG ---
-CSV_PATH = (
-    "model/src/TrainingLogs/"
-    + CONFIG.MODEL_NAME
-    + "/version_"
-    + str(CONFIG.METRICS_MODEL_VERSION_TO_PLOT)
-    + "/metrics.csv"
-)
 
-def plot_metrics():
+class MetricsPlotter:
 
-    # LOAD CSV
-    print(f"Loading metrics from {CSV_PATH} ...")
+    def __init__(
+        self,
+        config,
+        version="latest",
+        smoothing_window=3
+    ):
 
-    df = pd.read_csv(CSV_PATH)
+        self.config = config
 
-    # Remove empty rows/cols
-    df = df.dropna(axis=1, how='all')
-    df = df.dropna(how='all')
+        self.smoothing_window = smoothing_window
 
-    # PREPARE DATA
-
-    # Epoch metrics
-    epoch_df = df[
-        [
-            "epoch",
-            "train_loss_epoch",
-            "val_loss",
-            "train_mae",
-            "val_mae"
-        ]
-    ].dropna(how="all")
-
-    # Group by epoch and keep latest value
-    epoch_df = epoch_df.groupby("epoch").last().reset_index()
-
-    # Step metrics
-    step_df = df[
-        [
-            "step",
-            "train_loss_step"
-        ]
-    ].dropna()
-
-    # Final test MAE
-    test_mae_row = df[df["test_mae"].notna()]
-    test_mae = None
-
-    if not test_mae_row.empty:
-        test_mae = test_mae_row["test_mae"].values[-1]
-
-    # PLOT TRAIN VS VAL LOSS
-
-    plt.figure(figsize=(10, 6))
-
-    plt.plot(
-        epoch_df["epoch"],
-        epoch_df["train_loss_epoch"],
-        marker='o',
-        label="Train Loss"
-    )
-
-    plt.plot(
-        epoch_df["epoch"],
-        epoch_df["val_loss"],
-        marker='o',
-        label="Validation Loss"
-    )
-
-    plt.title(f"{CONFIG.MODEL_NAME} | Train vs Validation Loss")
-    plt.xlabel("Epoch")
-    plt.ylabel("Loss")
-    plt.grid(True)
-    plt.legend()
-
-    loss_path = os.path.join(
-        CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH,
-        CONFIG.MODEL_NAME + "_loss.png"
-    )
-
-    plt.savefig(loss_path, dpi=150, bbox_inches="tight")
-    plt.close()
-
-    print(f"Generated: {loss_path}")
-
-    # PLOT TRAIN VS VAL MAE
-    plt.figure(figsize=(10, 6))
-
-    plt.plot(
-        epoch_df["epoch"],
-        epoch_df["train_mae"],
-        marker='o',
-        label="Train MAE"
-    )
-
-    plt.plot(
-        epoch_df["epoch"],
-        epoch_df["val_mae"],
-        marker='o',
-        label="Validation MAE"
-    )
-
-    # Plot final test MAE
-    if test_mae is not None:
-
-        plt.axhline(
-            y=test_mae,
-            linestyle='--',
-            label=f"Test MAE = {test_mae:.3f}"
+        self.logs_dir = Path(
+            self.config.TRAININGLOGS_DIR_PATH + "/lightning_logs"
         )
 
-    plt.title(f"{CONFIG.MODEL_NAME} | Train vs Validation MAE")
-    plt.xlabel("Epoch")
-    plt.ylabel("MAE")
-    plt.grid(True)
-    plt.legend()
+        self.metrics_dir = Path(
+            self.config.METRICS_PLOTS_OUTPUT_DIR_PATH
+        )
 
-    mae_path = os.path.join(
-        CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH,
-        CONFIG.MODEL_NAME + "_mae.png"
-    )
+        # ----------------------------------------------------
+        # Resolve version
+        # ----------------------------------------------------
+        if version == "latest":
+            print(" PATH: ", self.logs_dir)
 
-    plt.savefig(mae_path, dpi=150, bbox_inches="tight")
-    plt.close()
+            versions = sorted(
+                self.logs_dir.glob("version_*")
+            )
 
-    print(f"Generated: {mae_path}")
+            if len(versions) == 0:
+                raise Exception(
+                    "No Lightning versions found"
+                )
 
-    # PLOT STEP LOSS
-    plt.figure(figsize=(12, 6))
+            self.version_dir = versions[-1]
 
-    plt.plot(
-        step_df["step"],
-        step_df["train_loss_step"],
-        linewidth=1
-    )
+        else:
 
-    plt.title(f"{CONFIG.MODEL_NAME} | Train Loss per Step")
-    plt.xlabel("Step")
-    plt.ylabel("Train Loss Step")
-    plt.grid(True)
+            self.version_dir = (
+                self.logs_dir / f"version_{version}"
+            )
 
-    step_path = os.path.join(
-        CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH,
-        CONFIG.MODEL_NAME + "_step_loss.png"
-    )
+        self.csv_path = (
+            self.version_dir / "metrics.csv"
+        )
 
-    plt.savefig(step_path, dpi=150, bbox_inches="tight")
-    plt.close()
+        if not self.csv_path.exists():
+            raise FileNotFoundError(
+                f"Metrics CSV not found: {self.csv_path}"
+            )
 
-    print(f"Generated: {step_path}")
+        print(f"[INFO] Loading metrics from:")
+        print(self.csv_path)
 
-    # SUMMARY
-    print("\n===== TRAINING SUMMARY =====")
+        # ----------------------------------------------------
+        # Load dataframe
+        # ----------------------------------------------------
+        self.df = pd.read_csv(self.csv_path)
 
-    if test_mae is not None:
-        print(f"Final Test MAE: {test_mae:.4f}")
+        self.df = self.df.dropna(
+            axis=1,
+            how='all'
+        )
 
-    print(f"Best Validation Loss: {epoch_df['val_loss'].min():.4f}")
-    print(f"Best Validation MAE: {epoch_df['val_mae'].min():.4f}")
+        self.df = self.df.dropna(
+            how='all'
+        )
 
-    print("\nPlot phase finished...")
+        # ----------------------------------------------------
+        # Prepare data
+        # ----------------------------------------------------
+        self.prepare_data()
+
+    # Prepare Data
+    def prepare_data(self):
+
+        # Epoch metrics
+        epoch_columns = [
+            col for col in [
+                "epoch",
+                "train_loss_epoch",
+                "val_loss",
+                "train_mae",
+                "val_mae"
+            ]
+            if col in self.df.columns
+        ]
+
+        self.epoch_df = (
+            self.df[epoch_columns]
+            .dropna(how="all")
+            .groupby("epoch")
+            .last()
+            .reset_index()
+        )
+
+        # Step metrics
+        step_columns = [
+            col for col in [
+                "step",
+                "train_loss_step"
+            ]
+            if col in self.df.columns
+        ]
+
+        self.step_df = (
+            self.df[step_columns]
+            .dropna()
+        )
+
+        # Optional smoothing
+        if (
+            self.smoothing_window > 1
+            and "train_loss_step" in self.step_df.columns
+        ):
+
+            self.step_df["train_loss_step_smooth"] = (
+                self.step_df["train_loss_step"]
+                .rolling(self.smoothing_window)
+                .mean()
+            )
+
+        # Test MAE
+        self.test_mae = None
+
+        if "test_mae" in self.df.columns:
+
+            test_mae_rows = self.df[
+                self.df["test_mae"].notna()
+            ]
+
+            if not test_mae_rows.empty:
+
+                self.test_mae = (
+                    test_mae_rows["test_mae"]
+                    .values[-1]
+                )
+
+    # Plot Loss Curves
+    def plot_loss(self):
+
+        if "val_loss" not in self.epoch_df.columns:
+            return
+
+        plt.figure(figsize=(10, 6))
+
+        if "train_loss_epoch" in self.epoch_df.columns:
+
+            plt.plot(
+                self.epoch_df["epoch"],
+                self.epoch_df["train_loss_epoch"],
+                marker='o',
+                label="Train Loss"
+            )
+
+        plt.plot(
+            self.epoch_df["epoch"],
+            self.epoch_df["val_loss"],
+            marker='o',
+            label="Validation Loss"
+        )
+
+        # Best val loss
+        best_idx = self.epoch_df["val_loss"].idxmin()
+
+        best_epoch = self.epoch_df.loc[
+            best_idx,
+            "epoch"
+        ]
+
+        best_loss = self.epoch_df.loc[
+            best_idx,
+            "val_loss"
+        ]
+
+        plt.scatter(
+            best_epoch,
+            best_loss,
+            s=120,
+            label=f"Best Val Loss ({best_loss:.3f})"
+        )
+
+        plt.title(
+            f"{self.config.MODEL_NAME}\nLoss Curves"
+        )
+
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+
+        plt.grid(True)
+        plt.legend()
+
+        output_path = (
+            self.metrics_dir /
+            "loss_curves.png"
+        )
+
+        plt.savefig(
+            output_path,
+            dpi=200,
+            bbox_inches="tight"
+        )
+
+        plt.close()
+
+        print(f"[INFO] Generated:")
+        print(output_path)
+
+    # Plot MAE Curves
+    def plot_mae(self):
+
+        if "val_mae" not in self.epoch_df.columns:
+            return
+
+        plt.figure(figsize=(10, 6))
+
+        if "train_mae" in self.epoch_df.columns:
+
+            plt.plot(
+                self.epoch_df["epoch"],
+                self.epoch_df["train_mae"],
+                marker='o',
+                label="Train MAE"
+            )
+
+        plt.plot(
+            self.epoch_df["epoch"],
+            self.epoch_df["val_mae"],
+            marker='o',
+            label="Validation MAE"
+        )
+
+        # Best val mae
+        best_idx = self.epoch_df["val_mae"].idxmin()
+
+        best_epoch = self.epoch_df.loc[
+            best_idx,
+            "epoch"
+        ]
+
+        best_mae = self.epoch_df.loc[
+            best_idx,
+            "val_mae"
+        ]
+
+        plt.scatter(
+            best_epoch,
+            best_mae,
+            s=120,
+            label=f"Best Val MAE ({best_mae:.3f})"
+        )
+
+        # Test MAE
+        if self.test_mae is not None:
+
+            plt.axhline(
+                y=self.test_mae,
+                linestyle='--',
+                label=f"Test MAE ({self.test_mae:.3f})"
+            )
+
+        plt.title(
+            f"{self.config.MODEL_NAME}\nMAE Curves"
+        )
+
+        plt.xlabel("Epoch")
+        plt.ylabel("MAE")
+
+        plt.grid(True)
+        plt.legend()
+
+        output_path = (
+            self.metrics_dir /
+            "mae_curves.png"
+        )
+
+        plt.savefig(
+            output_path,
+            dpi=200,
+            bbox_inches="tight"
+        )
+
+        plt.close()
+
+        print(f"[INFO] Generated:")
+        print(output_path)
+
+    # Plot Step Loss
+    def plot_step_loss(self):
+
+        if "train_loss_step" not in self.step_df.columns:
+            return
+
+        plt.figure(figsize=(12, 6))
+
+        plt.plot(
+            self.step_df["step"],
+            self.step_df["train_loss_step"],
+            alpha=0.4,
+            linewidth=1,
+            label="Raw"
+        )
+
+        if "train_loss_step_smooth" in self.step_df.columns:
+
+            plt.plot(
+                self.step_df["step"],
+                self.step_df["train_loss_step_smooth"],
+                linewidth=2,
+                label="Smoothed"
+            )
+
+        plt.title(
+            f"{self.config.MODEL_NAME}\nTrain Loss per Step"
+        )
+
+        plt.xlabel("Step")
+        plt.ylabel("Loss")
+
+        plt.grid(True)
+        plt.legend()
+
+        output_path = (
+            self.metrics_dir /
+            "step_loss.png"
+        )
+
+        plt.savefig(
+            output_path,
+            dpi=200,
+            bbox_inches="tight"
+        )
+
+        plt.close()
+
+        print(f"[INFO] Generated:")
+        print(output_path)
+
+    # Export Summary
+    def export_summary(self):
+
+        summary = {}
+
+        if "val_loss" in self.epoch_df.columns:
+
+            summary["best_val_loss"] = float(
+                self.epoch_df["val_loss"].min()
+            )
+
+        if "val_mae" in self.epoch_df.columns:
+
+            summary["best_val_mae"] = float(
+                self.epoch_df["val_mae"].min()
+            )
+
+        if self.test_mae is not None:
+
+            summary["test_mae"] = float(
+                self.test_mae
+            )
+
+        summary["epochs"] = int(
+            self.epoch_df["epoch"].max()
+        )
+
+        summary_path = (
+            self.metrics_dir /
+            "training_summary.json"
+        )
+
+        with open(summary_path, "w") as f:
+
+            json.dump(
+                summary,
+                f,
+                indent=4
+            )
+
+        print(f"[INFO] Summary exported:")
+        print(summary_path)
+
+    # Run All
+    def run(self):
+
+        self.plot_loss()
+
+        self.plot_mae()
+
+        self.plot_step_loss()
+
+        self.export_summary()
+
+        print("\n[INFO] Plot phase finished")
 
 
+# Main
 if __name__ == "__main__":
-    plot_metrics()
+
+    from model.config.ImageVelocityEstimator.config import (
+        CONFIG
+    )
+
+    plotter = MetricsPlotter(
+        config=CONFIG,
+        version="latest",
+        smoothing_window=10
+    )
+
+    plotter.run()
