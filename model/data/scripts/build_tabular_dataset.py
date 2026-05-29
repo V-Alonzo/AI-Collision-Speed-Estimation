@@ -4,10 +4,7 @@ from utils.Preprocessing.HuggingFaceExtraction.HF_DB_Pipeline import (
     PreprocessingHuggingFaceDB
 )
 
-from PATHS import (
-    HF_PROCESSED_TABULAR_DATA_CSV_PATH,
-    HF_PROCESSED_TABULAR_TARGET_CSV_PATH
-)
+from model.config.TabularVelocityEstimator.config import CONFIG
 
 TARGET_COLUMN = "totalDeltaVKph"
 
@@ -42,12 +39,12 @@ def export_processed_tabular_dataset():
 
     # Export datasets
     X_processed_df.to_csv(
-        HF_PROCESSED_TABULAR_DATA_CSV_PATH,
+        CONFIG.TABULAR_FEATURES_PATH,
         index=False
     )
 
     y_df.to_csv(
-        HF_PROCESSED_TABULAR_TARGET_CSV_PATH,
+        CONFIG.TABULAR_TARGET_PATH,
         index=False
     )
 
