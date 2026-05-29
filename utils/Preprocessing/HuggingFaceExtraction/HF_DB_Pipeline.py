@@ -222,9 +222,12 @@ def PreprocessingHuggingFaceDB():
         columns=feature_names
     )
 
+    y_df = pd.DataFrame(y, columns=['totalDeltaVKph'])
+
     # Guardar CSV
-    X_processed_df.to_csv(HF_TABULAR_PROCESSED_CSV_PATH, index=False)
-    
+    X_processed_df.to_csv(HF_PROCESSED_TABULAR_DATA_CSV_PATH, index=False)
+    y_df.to_csv(HF_PROCESSED_TABULAR_TARGET_CSV_PATH, index=False)
+
     print(f"Preprocesamiento completado.")
     print(f"Dimensiones originales de X: {X.shape}")
     print(f"Dimensiones de X preprocesado: {X_processed.shape}")
