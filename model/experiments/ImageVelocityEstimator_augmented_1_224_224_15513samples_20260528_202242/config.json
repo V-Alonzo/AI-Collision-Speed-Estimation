@@ -1,0 +1,35 @@
+{
+    "DEVICE": "cuda",
+    "FLOAT32_MATMUL_PRECISION": "high",
+    "DIM_SIZE_FACTOR": 1,
+    "IMAGE_HEIGHTS_MEDIAN": 224,
+    "IMAGE_WIDTHS_MEDIAN": 224,
+    "IMAGE_CHANNELS": 3,
+    "IMAGE_MEAN": [
+        0.45484897,
+        0.47033188,
+        0.47973604
+    ],
+    "IMAGE_STD": [
+        0.24885239,
+        0.24789241,
+        0.24780511
+    ],
+    "N_SAMPLES": 15513,
+    "BATCH_SIZE": 128,
+    "NUM_WORKERS": 20,
+    "TRAIN_PROPORTION": 0.8,
+    "VAL_PROPORTION": 0.8,
+    "N_EPOCHS": 1,
+    "LEARNING_RATE": 0.0001,
+    "SEED": 42,
+    "EARLY_STOPPING_PATIENCE": 20,
+    "TRAINER_ACCELERATOR": "gpu",
+    "TRAINER_PRECISION": "16-mixed",
+    "IO_DATASET_MAP_LOCAL_PATH": "model/data/CSV/ciren_training_augmented_manifest.csv",
+    "INPUT_IMAGES_CSV_INDEX": "image_relpath",
+    "OUTPUT_LABEL_CSV_INDEX": "final_speed_kph",
+    "MODEL_PREFIX": "ImageVelocityEstimator_augmented_1",
+    "EXPERIMENTS_ROOT_DIR": "model/experiments",
+    "N_INFERENCES_2_EXEC": 9
+}

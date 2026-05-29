@@ -1,7 +1,7 @@
 # Import libraries and required modules
 from model.config.libraries import *
 
-
+@dataclass
 class TrainingConfig:
 
     # Device configuration
@@ -24,10 +24,10 @@ class TrainingConfig:
     BATCH_SIZE: int = 128
     NUM_WORKERS: int = 20
 
-    TRAIN_PROPORTION: float = 0.80
-    VAL_PROPORTION: float = 0.20
+    TRAIN_PROPORTION: float = 0.8 
+    VAL_PROPORTION: float = 0.8
 
-    N_EPOCHS: int = 25
+    N_EPOCHS: int = 1
 
     LEARNING_RATE: float = 1e-4
 
@@ -47,21 +47,13 @@ class TrainingConfig:
     OUTPUT_LABEL_CSV_INDEX: str = "final_speed_kph"
 
     # Experiment / Model Naming
-    MODEL_PREFIX: str = "VelocityEstimator_augmented"
+    MODEL_PREFIX: str = "ImageVelocityEstimator_augmented_1"
 
-    # Paths
-    CHECKPOINTS_DIR_PATH: str = "model/src/ImageVelocityEstimator/ImageVelocityEstimator/ModelCheckpoints"
-
-    TRAININGLOGS_DIR_PATH: str = "model/src/ImageVelocityEstimator/TrainingLogs"
-
-    METRICS_PLOTS_OUTPUT_DIR_PATH: str = "model/src/ImageVelocityEstimator/Metrics_Plots"
-
-    MODEL_SERIALIZED_DIR_PATH: str = "model/src/ImageVelocityEstimator/SerializedObjects"
-
-    CONFIG_OUTPUT_DIR: str = "model/src/ImageVelocityEstimator/ExperimentConfigs"
+    EXPERIMENTS_ROOT_DIR: str = "model/experiments"
 
     # Inference Parameters
     N_INFERENCES_2_EXEC: int = 9
+    
 
     # Post Init
     def __post_init__(self):
@@ -82,31 +74,59 @@ class TrainingConfig:
                 0.24780511
             ]
 
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
         # ---------- Dynamic model name ----------
         self.MODEL_NAME = (
             f"{self.MODEL_PREFIX}_"
             f"{self.IMAGE_HEIGHTS_MEDIAN}_"
             f"{self.IMAGE_WIDTHS_MEDIAN}_"
-            f"{self.N_SAMPLES}samples"
+            f"{self.N_SAMPLES}samples_"
+            f"{timestamp}"
+        )
+
+        # ---------- Experiment root ----------
+        self.EXPERIMENT_DIR = (
+            f"{self.EXPERIMENTS_ROOT_DIR}/"
+            f"{self.MODEL_NAME}"
         )
 
         # ---------- Dynamic paths ----------
+        # Serialized model path inside dir
         self.MODEL_SERIALIZED_PATH = (
-            f"{self.MODEL_SERIALIZED_DIR_PATH}/"
+            f"{self.EXPERIMENT_DIR}/serialized/"
             f"{self.MODEL_NAME}_weights.pth"
         )
 
+        # ---------- Experiment subdirs ----------
+
+        self.CHECKPOINTS_DIR_PATH = (
+            f"{self.EXPERIMENT_DIR}/checkpoints"
+        )
+
+        self.TRAININGLOGS_DIR_PATH = (
+            f"{self.EXPERIMENT_DIR}/logs"
+        )
+
+        self.METRICS_PLOTS_OUTPUT_DIR_PATH = (
+            f"{self.EXPERIMENT_DIR}/metrics"
+        )
+
+        self.MODEL_SERIALIZED_DIR_PATH = (
+            f"{self.EXPERIMENT_DIR}/serialized/"
+        )
+
         self.OUTPUT_INFERENCES_DIR = (
-            f"model/src/ImageVelocityEstimator/"
-            f"{self.MODEL_NAME}_OUTPUT_INFERENCES"
+            f"{self.EXPERIMENT_DIR}/inference_outputs"
         )
 
         self.EXPERIMENT_CONFIG_PATH = (
-            f"{self.CONFIG_OUTPUT_DIR}/"
-            f"{self.MODEL_NAME}_config.json"
+            f"{self.EXPERIMENT_DIR}/config.json"
         )
 
         # ---------- Create dirs ----------
+        os.makedirs(self.EXPERIMENT_DIR, exist_ok=True)
+
         os.makedirs(self.CHECKPOINTS_DIR_PATH, exist_ok=True)
 
         os.makedirs(self.TRAININGLOGS_DIR_PATH, exist_ok=True)
@@ -117,10 +137,8 @@ class TrainingConfig:
 
         os.makedirs(self.OUTPUT_INFERENCES_DIR, exist_ok=True)
 
-        os.makedirs(self.CONFIG_OUTPUT_DIR, exist_ok=True)
-
     # Save config
-    def save(self, output_path="model/config/ImageVelocityEstimator/Experiments"):
+    def save(self, output_path=None):
 
         if output_path is None:
             output_path = self.EXPERIMENT_CONFIG_PATH
@@ -135,6 +153,7 @@ class TrainingConfig:
         print(f"[INFO] Config saved at: {output_path}")
 
     # Load config
+    @classmethod
     def load(cls, config_path):
 
         with open(config_path, "r") as f:
