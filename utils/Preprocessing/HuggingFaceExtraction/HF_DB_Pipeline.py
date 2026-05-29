@@ -48,6 +48,9 @@ class TextNumberExtractor(BaseEstimator, TransformerMixin):
             X_copy[col] = pd.to_numeric(extracted, errors='coerce')
         return X_copy
 
+    def get_feature_names_out(self, input_features=None):
+        return np.array(input_features)
+
 class CyclicalTransformer(BaseEstimator, TransformerMixin):
     """Aplica transformación seno y coseno a variables cíclicas (grados o reloj)."""
     def __init__(self, max_value):
@@ -64,6 +67,17 @@ class CyclicalTransformer(BaseEstimator, TransformerMixin):
             transformed[f'{col}_cos'] = np.cos(2 * np.pi * X_copy[col] / self.max_value)
         return transformed
 
+    def get_feature_names_out(self, input_features=None):
+        output_features = []
+
+        for col in input_features:
+            output_features.extend([
+                f"{col}_sin",
+                f"{col}_cos"
+            ])
+
+        return np.array(output_features)
+
 class BinaryRolloverEncoder(BaseEstimator, TransformerMixin):
     """Binariza el estado de volcadura."""
     def fit(self, X, y=None):
@@ -76,6 +90,9 @@ class BinaryRolloverEncoder(BaseEstimator, TransformerMixin):
                 lambda x: 0 if 'No rollover' in x else 1
             )
         return X_copy
+    
+    def get_feature_names_out(self, input_features=None):
+        return np.array(input_features)
 
 # 2. Definición del Pipeline Principal
 
@@ -189,6 +206,24 @@ def PreprocessingHuggingFaceDB():
     # 4. Ajustar (fit) y transformar (transform) los datos
     print("Aplicando transformaciones...")
     X_processed = preprocessor.fit_transform(X)
+
+    # Obtener nombres de columnas transformadas
+    feature_names = preprocessor.get_feature_names_out()
+
+    # Eliminar prefijos automáticos agregados por ColumnTransformer
+    feature_names = [
+        col.split("__")[-1]
+        for col in feature_names
+    ]
+
+    # Crear DataFrame conservando nombres
+    X_processed_df = pd.DataFrame(
+        X_processed,
+        columns=feature_names
+    )
+
+    # Guardar CSV
+    X_processed_df.to_csv(HF_TABULAR_PROCESSED_CSV_PATH, index=False)
     
     print(f"Preprocesamiento completado.")
     print(f"Dimensiones originales de X: {X.shape}")
