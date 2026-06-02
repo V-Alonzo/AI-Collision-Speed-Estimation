@@ -5,7 +5,7 @@ import os
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder, StandardScaler, OrdinalEncoder
+from sklearn.preprocessing import OneHotEncoder, StandardScaler, OrdinalEncoder, TargetEncoder
 from sklearn.impute import SimpleImputer
 from datasets import load_dataset
 
@@ -30,7 +30,6 @@ def load_hf_dataset():
 # 1. Transformadores Personalizados para la limpieza específica
 
 class TextNumberExtractor(BaseEstimator, TransformerMixin):
-    """Extrae el primer número de una cadena de texto (útil para mais, forceDirection, clockDirection)."""
     def __init__(self, replace_unknown_with_nan=False):
         self.replace_unknown_with_nan = replace_unknown_with_nan
 
@@ -40,16 +39,16 @@ class TextNumberExtractor(BaseEstimator, TransformerMixin):
     def transform(self, X):
         X_copy = pd.DataFrame(X).copy()
         for col in X_copy.columns:
-            # Extraer secuencias de dígitos
             extracted = X_copy[col].astype(str).str.extract(r'(\d+)')[0]
             if self.replace_unknown_with_nan:
-                # Específico para 'mais' donde 9 es Unknown
                 extracted = np.where(extracted == '9', np.nan, extracted)
             X_copy[col] = pd.to_numeric(extracted, errors='coerce')
         return X_copy
+    
+    def get_feature_names_out(self, input_features=None):
+        return input_features
 
 class CyclicalTransformer(BaseEstimator, TransformerMixin):
-    """Aplica transformación seno y coseno a variables cíclicas (grados o reloj)."""
     def __init__(self, max_value):
         self.max_value = max_value
 
@@ -64,8 +63,15 @@ class CyclicalTransformer(BaseEstimator, TransformerMixin):
             transformed[f'{col}_cos'] = np.cos(2 * np.pi * X_copy[col] / self.max_value)
         return transformed
 
+    def get_feature_names_out(self, input_features=None):
+        if input_features is None:
+            return None
+        out_features = []
+        for col in input_features:
+            out_features.extend([f'{col}_sin', f'{col}_cos'])
+        return np.array(out_features)
+
 class BinaryRolloverEncoder(BaseEstimator, TransformerMixin):
-    """Binariza el estado de volcadura."""
     def fit(self, X, y=None):
         return self
 
@@ -76,6 +82,9 @@ class BinaryRolloverEncoder(BaseEstimator, TransformerMixin):
                 lambda x: 0 if 'No rollover' in x else 1
             )
         return X_copy
+        
+    def get_feature_names_out(self, input_features=None):
+        return input_features
 
 # 2. Definición del Pipeline Principal
 
@@ -97,7 +106,8 @@ def HuggingFacePipeline():
     categorical_features = ['vehicleClass', 'damagePlaneDescription']
     categorical_transformer = Pipeline(steps=[
         ('imputer', SimpleImputer(strategy='constant', fill_value='Unknown')),
-        ('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
+        #('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False)),
+        ('target_encoder', TargetEncoder(smooth='auto', cv=5, target_type='continuous')),
     ])
 
     # C. Categóricos Ordinales (Severidad)
@@ -139,7 +149,6 @@ def HuggingFacePipeline():
         ('imputer', SimpleImputer(strategy='constant', fill_value='No rollover (no overturning)')),
         ('binarizer', BinaryRolloverEncoder())
     ])
-
     # Ensamblar el ColumnTransformer
     preprocessor = ColumnTransformer(
         transformers=[
@@ -151,7 +160,8 @@ def HuggingFacePipeline():
             ('clock_cyc', clock_transformer, clock_dir_features),
             ('rollover', rollover_transformer, rollover_features)
         ],
-        remainder='drop' # Ignora columnas como 'cdc', 'primaryVehicleNumber', strings de peso crudo, etc.
+        remainder='drop', # Ignora columnas como 'cdc', 'primaryVehicleNumber', strings de peso crudo, etc.
+        verbose_feature_names_out=False # Para evitar nombres de columnas excesivamente largos
     )
 
     return preprocessor
@@ -161,16 +171,26 @@ def prepareDataset(df):
     """Realiza la limpieza inicial a nivel de fila antes de pasar por el pipeline."""
     df_clean = df.copy()
     
-    # Eliminar filas donde el target es nulo
+    # Eliminar filas donde el target es nulo en ambas columnas
+    df_clean = df_clean.dropna(subset=['totalDeltaVKph', 'dvBarrierEquivalentSpeedDescription'], how='all')
+    df_clean['dvBarrierEquivalentSpeedDescription'] = TextNumberExtractor().fit_transform(df_clean[['dvBarrierEquivalentSpeedDescription']])
     
-    print(f"Total filas antes de limpiar nulos en target: {len(df_clean)}")
-    print(f"Filas con nulos en target: {df_clean['totalDeltaVKph'].isnull().sum()}")
+    # Combinar ambas columnas para crear una única variable objetivo, dando prioridad a totalDeltaVKph
+    df_clean['targetVariable'] = df_clean['totalDeltaVKph'].combine_first(df_clean['dvBarrierEquivalentSpeedDescription'])
     
-    df_clean = df_clean.dropna(subset=['totalDeltaVKph'])
+    # Forzar que el target sea numérico continuo (float)
+    df_clean['targetVariable'] = pd.to_numeric(df_clean['targetVariable'], errors='coerce').astype(float)
+    
+    df_clean = df_clean.dropna(subset=['targetVariable']) # Asegurar que no queden filas sin target
+    
+    df_clean = df_clean.drop_duplicates(subset="cirenId") # Verificar que no haya duplicados en cirenId después de la limpieza
+    df_clean = df_clean.reset_index(drop=True) # Resetear índices después de la limpieza
+    print(df_clean["cirenId"])
+    print(df_clean.shape)
     
     # Separar features (X) y target (y)
-    X = df_clean.drop(columns=['totalDeltaVKph', 'totalDeltaVMph'])
-    y = df_clean['totalDeltaVKph'].values
+    X = df_clean.drop(columns=['totalDeltaVKph', 'totalDeltaVMph', 'dvBarrierEquivalentSpeedDescription'])
+    y = df_clean['targetVariable'].values
     
     return X, y
 
@@ -188,9 +208,16 @@ def PreprocessingHuggingFaceDB():
     
     # 4. Ajustar (fit) y transformar (transform) los datos
     print("Aplicando transformaciones...")
-    X_processed = preprocessor.fit_transform(X)
+    X_processed = preprocessor.fit_transform(X, y)
+    
+    final_columns = preprocessor.get_feature_names_out()
     
     print(f"Preprocesamiento completado.")
     print(f"Dimensiones originales de X: {X.shape}")
+    print(f"Columnas originales de X: {X.columns.tolist()}")
     print(f"Dimensiones de X preprocesado: {X_processed.shape}")
     print(f"Dimensiones de y: {y.shape}")
+    
+    print(f"\nColumnas preprocesadas ({len(final_columns)} en total):")
+    for col in final_columns:
+        print(f" - {col}")
