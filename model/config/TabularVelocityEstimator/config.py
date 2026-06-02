@@ -14,24 +14,24 @@ class TrainingConfig:
     INFERENCE_SAMPLE_PATH: str = "model/src/TabularVelocityEstimator/Inference/payloads/sample_payload.json"
 
     # Training Parameters
-    BATCH_SIZE: int = 128
-    NUM_WORKERS: int = 4
+    BATCH_SIZE: int = 16
+    NUM_WORKERS: int = 2
 
     TRAIN_PROPORTION: float = 0.8
     VAL_PROPORTION: float = 0.8
 
-    N_EPOCHS: int = 10
-    LEARNING_RATE: float = 1e-3
+    N_EPOCHS: int = 100
+    LEARNING_RATE: float = 3e-4
     SEED: int = 42
 
-    EARLY_STOPPING_PATIENCE: int = 20
+    EARLY_STOPPING_PATIENCE: int = 10
 
     TRAINER_ACCELERATOR: str = 'gpu'
     TRAINER_PRECISION: str = "16-mixed"
 
     # Tabular model parameters
-    TABULAR_HIDDEN_DIMS: tuple = (128, 64, 32)
-    TABULAR_DROPOUT: float = 0.2
+    TABULAR_HIDDEN_DIMS: tuple = (64, 32, 16)
+    TABULAR_DROPOUT: float = 0.05
 
     # Experiment / Model Naming
     MODEL_PREFIX: str = "TabularVelocityEstimator_v1"
