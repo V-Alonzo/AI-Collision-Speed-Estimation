@@ -47,7 +47,7 @@ class TrainingConfig:
     OUTPUT_LABEL_CSV_INDEX: str = "final_speed_kph"
 
     # Experiment / Model Naming
-    MODEL_PREFIX: str = "ImagVelEst_augmented_Modifiedfc"
+    MODEL_PREFIX: str = "ImgVelEst_aug_ModFc_EmbHdNoNorm_l1Loss_dycLR_v2"
 
     EXPERIMENTS_ROOT_DIR: str = "model/experiments"
 
@@ -57,7 +57,6 @@ class TrainingConfig:
     # METRICS MODE
     METRICS_MODE: bool = False
     
-
     # Post Init
     def __post_init__(self):
 

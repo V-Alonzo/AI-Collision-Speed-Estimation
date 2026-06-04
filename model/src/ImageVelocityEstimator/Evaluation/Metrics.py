@@ -1,27 +1,25 @@
 # Metrics Plotter
-
+from model.config.ImageVelocityEstimator.config import CONFIG
 from model.config.libraries import *
+from model.src.ImageVelocityEstimator.Evaluation.Inference import load_model, extract_all_embeddings
 
 
 class MetricsPlotter:
 
     def __init__(
         self,
-        config,
         version="latest",
         smoothing_window=3
     ):
 
-        self.config = config
-
         self.smoothing_window = smoothing_window
 
         self.logs_dir = Path(
-            self.config.TRAININGLOGS_DIR_PATH + "/lightning_logs"
+            CONFIG.TRAININGLOGS_DIR_PATH + "/lightning_logs"
         )
 
         self.metrics_dir = Path(
-            self.config.METRICS_PLOTS_OUTPUT_DIR_PATH
+            CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH
         )
 
         # ----------------------------------------------------
@@ -188,7 +186,7 @@ class MetricsPlotter:
         )
 
         plt.title(
-            f"{self.config.MODEL_NAME}\nLoss Curves"
+            f"{CONFIG.MODEL_NAME}\nLoss Curves"
         )
 
         plt.xlabel("Epoch")
@@ -267,7 +265,7 @@ class MetricsPlotter:
             )
 
         plt.title(
-            f"{self.config.MODEL_NAME}\nMAE Curves"
+            f"{CONFIG.MODEL_NAME}\nMAE Curves"
         )
 
         plt.xlabel("Epoch")
@@ -318,7 +316,7 @@ class MetricsPlotter:
             )
 
         plt.title(
-            f"{self.config.MODEL_NAME}\nTrain Loss per Step"
+            f"{CONFIG.MODEL_NAME}\nTrain Loss per Step"
         )
 
         plt.xlabel("Step")
@@ -385,6 +383,225 @@ class MetricsPlotter:
 
         print(f"[INFO] Summary exported:")
         print(summary_path)
+    
+    def get_inferences(self):
+        # Load model
+        velocityEstimator = load_model()
+
+        print("\033[0;34m" + "[Generating Inferences...] \033[0m" + "\n")
+        # Extract embeddings and labels
+        embeddings, true_labels, predictions, image_paths = (
+            extract_all_embeddings(
+                velocityEstimator
+            )
+        )
+
+        return true_labels, predictions
+
+    #Comparative Plots
+    def plot_true_vs_predicted(
+            self,
+            true_labels,
+            predictions
+        ):
+
+        plt.figure(figsize=(8,8))
+
+        plt.scatter(
+            true_labels,
+            predictions,
+            alpha=0.5,
+            s=10
+        )
+
+        min_val = min(
+            true_labels.min(),
+            predictions.min()
+        )
+
+        max_val = max(
+            true_labels.max(),
+            predictions.max()
+        )
+
+        plt.plot(
+            [min_val, max_val],
+            [min_val, max_val],
+            "r--",
+            linewidth=2
+        )
+
+        plt.xlabel("True Speed (km/h)")
+        plt.ylabel("Predicted Speed (km/h)")
+        plt.title("Predicted vs True Speed")
+
+        plt.tight_layout()
+
+        plt.savefig(
+            os.path.join(
+                CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH,
+                "predicted_vs_true.png"
+            ),
+            dpi=300
+        )
+
+        plt.close()
+
+    def plot_error_vs_speed(
+            self,
+            true_labels,
+            predictions
+        ):
+
+        errors = predictions - true_labels
+
+        plt.figure(figsize=(10,6))
+
+        plt.scatter(
+            true_labels,
+            errors,
+            alpha=0.5,
+            s=10
+        )
+
+        plt.axhline(
+            0,
+            linestyle="--"
+        )
+
+        plt.xlabel("True Speed (km/h)")
+        plt.ylabel("Prediction Error")
+
+        plt.title(
+            "Prediction Error vs True Speed"
+        )
+
+        plt.tight_layout()
+
+        plt.savefig(
+            os.path.join(
+                CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH,
+                "error_vs_speed.png"
+            ),
+            dpi=300
+        )
+
+        plt.close()
+
+    def plot_violin_error_by_speed(
+            self,
+            true_labels,
+            predictions
+        ):
+
+        df = pd.DataFrame({
+
+            "true_speed": true_labels,
+
+            "error": np.abs(
+                predictions - true_labels
+            )
+        })
+
+        bins = np.arange(
+            0,
+            np.ceil(df["true_speed"].max()) + 10,
+            10
+        )
+
+        df["speed_bin"] = pd.cut(
+            df["true_speed"],
+            bins=bins
+        )
+
+        plt.figure(figsize=(14,6))
+
+        sns.violinplot(
+            data=df,
+            x="speed_bin",
+            y="error"
+        )
+
+        plt.xticks(
+            rotation=45
+        )
+
+        plt.xlabel(
+            "Speed Range (km/h)"
+        )
+
+        plt.ylabel(
+            "Absolute Error"
+        )
+
+        plt.title(
+            "Error Distribution by Speed Range"
+        )
+
+        plt.tight_layout()
+
+        plt.savefig(
+            os.path.join(
+                CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH,
+                "violin_error_by_speed.png"
+            ),
+            dpi=300
+        )
+
+        plt.close()
+
+    def plot_true_predicted_curves(
+            self,
+            true_labels,
+            predictions
+        ):
+
+        order = np.argsort(
+            true_labels
+        )
+
+        true_sorted = true_labels[order]
+        pred_sorted = predictions[order]
+
+        plt.figure(
+            figsize=(14,6)
+        )
+
+        plt.plot(
+            true_sorted,
+            label="True Speed"
+        )
+
+        plt.plot(
+            pred_sorted,
+            label="Predicted Speed"
+        )
+
+        plt.legend()
+
+        plt.xlabel(
+            "Samples sorted by true speed"
+        )
+
+        plt.ylabel(
+            "Speed (km/h)"
+        )
+
+        plt.title(
+            "True vs Predicted Speed"
+        )
+
+        plt.tight_layout()
+
+        plt.savefig(
+            os.path.join(
+                CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH,
+                "true_vs_predicted_curves.png"
+            ),
+            dpi=300
+        )
+
+        plt.close()
 
     # Run All
     def run(self):
@@ -395,22 +612,41 @@ class MetricsPlotter:
 
         self.plot_step_loss()
 
+        true_labels, predictions = self.get_inferences()
+
+        self.plot_true_vs_predicted(true_labels, predictions)
+
+        self.plot_error_vs_speed(true_labels, predictions)
+
+        self.plot_violin_error_by_speed(true_labels, predictions)
+
+        self.plot_true_predicted_curves(true_labels, predictions)
+
         self.export_summary()
 
         print("\n[INFO] Plot phase finished")
 
 
 # Main
-if __name__ == "__main__":
-
-    from model.config.ImageVelocityEstimator.config import (
-        CONFIG
-    )
-
+def main():
     plotter = MetricsPlotter(
-        config=CONFIG,
         version="latest",
         smoothing_window=10
     )
 
     plotter.run()
+
+    return
+
+
+# Entry point
+if __name__ == "__main__":
+    start = datetime.datetime.now()
+    print("\n" + "\033[0;34m" + "[start] " + str(start) + "\033[0m" + "\n")
+    main()
+    end = datetime.datetime.now()
+    print("\n" + "\033[0;34m" + "[end] "+ str(end) + "\033[0m" + "\n")
+
+    exectime= end - start
+    print("Exectime: ",exectime.total_seconds() )
+

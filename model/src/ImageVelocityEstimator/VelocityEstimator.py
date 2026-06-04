@@ -1,9 +1,10 @@
 # Import libraries and required modules
 from model.config.libraries import *
+from model.config.ImageVelocityEstimator.config import CONFIG
 from model.src.ImageVelocityEstimator.DataModule.VelocityEstimatorDataModule import VelocityEstimatorDataModule
 from model.src.ImageVelocityEstimator.DataModule import Transformations
-from model.config.ImageVelocityEstimator.config import CONFIG
 from model.src.ImageVelocityEstimator.LightningModule.VelocityEstimatorModel import VelocityEstimatorModel
+from model.src.ImageVelocityEstimator.VelocityNetwork.VelocityNetwork import VelocityNetwork
 
 # Import lightning tools
 from lightning.pytorch.loggers import CSVLogger
@@ -24,7 +25,7 @@ class VelocityEstimator:
         ):
 
         # General class properties
-        self.model = None
+        self.lightningModel = None
         self.learning_rate = None
 
         if load_dm:
@@ -53,25 +54,9 @@ class VelocityEstimator:
 
         return model
     
-    def build_fc(self, in_features):
-        # return nn.Linear(
-        #     in_features,
-        #     1
-        # )
-
-        return nn.Sequential(
-            nn.Linear(in_features, 512),
-            nn.BatchNorm1d(512),
-            nn.GELU(),
-            nn.Dropout(0.3),
-
-            nn.Linear(512, 128),
-            nn.BatchNorm1d(128),
-            nn.GELU(),
-            nn.Dropout(0.2),
-
-            nn.Linear(128, 1)
-        )
+    # Build EmbeddingHead/fc
+    def build_fc(self, backbone_model):
+        return VelocityNetwork(backbone_model)
         
     # Build model
     def build_model(self, learning_rate):
@@ -86,24 +71,17 @@ class VelocityEstimator:
             param.requires_grad = False
 
         # Unfreeze last resnet layer
-        # for param in resnet50_model.layer4.parameters():
-        #     param.requires_grad = True
-
-        # Unfreeze resnet fc
-        for param in resnet50_model.fc.parameters():
+        for param in resnet50_model.layer4.parameters():
             param.requires_grad = True
 
-        # Get number of features
-        in_features = resnet50_model.fc.in_features
-
-        # Replace final layer
-        resnet50_model.fc = self.build_fc(in_features)
+        # Build final model arquitecture
+        model_arq = self.build_fc(backbone_model= resnet50_model)
 
         # ============ END Model Arq ============
 
         # Instance VelocityEstimator lightning model and use resnet as backbone model
         velocityEstimatorModel = VelocityEstimatorModel(
-            model = resnet50_model,
+            model = model_arq,
             learning_rate = learning_rate
         )
 
@@ -120,9 +98,9 @@ class VelocityEstimator:
         self.learning_rate = learning_rate
         
         # Create new Model instance if this doesnt exist
-        if self.model is None:
+        if self.lightningModel is None:
             # Create backbone model arq
-            self.model = self.build_model(self.learning_rate)
+            self.lightningModel = self.build_model(self.learning_rate)
 
         # Create VelocityEstimator's trainer
         self.trainer = L.Trainer(
@@ -140,7 +118,7 @@ class VelocityEstimator:
 
         # Execute model's training step
         self.trainer.fit(
-            model = self.model,
+            model = self.lightningModel,
             train_dataloaders = self.dm.train_dataloader(),
             val_dataloaders = self.dm.val_dataloader()
         )
@@ -153,12 +131,15 @@ class VelocityEstimator:
         )
 
     # Method for executing inference with the trained model
-    def inference(self, image_path):
+    # This method uses as input the desired image_path to use for inference
+    # This method can return: (embedding_representation_of_a_given_image, velocity_estimation_scalar)
+    #           Or          : (null, velocity_estimation_scalar)
+    def inference(self, image_path, return_embedding = False):
         # Verify model
-        assert self.model is not None, "Model is not loaded or Training Phase is missing"
+        assert self.lightningModel is not None, "Model is not loaded or Training Phase is missing"
 
         # Eval mode
-        self.model.eval()
+        self.lightningModel.eval()
 
         # Load image
         image = Image.open(image_path).convert("RGB")
@@ -176,30 +157,81 @@ class VelocityEstimator:
         with torch.no_grad():
 
             # Execute inference
-            prediction = self.model(transformed_image)
+            if return_embedding:
+                # Execute inference with embedding return and velocity estimation scalar
+                # Get embedding directly from VelocityNetwork's get_embedding method
+                embedding = self.lightningModel.get_embedding(transformed_image)
 
-            # Remove dimensions
-            prediction = prediction.squeeze()
+                # Execute direcet regression inference
+                prediction = self.lightningModel(transformed_image)
 
-            # Tensor to python float
-            prediction = prediction.item()
+                # Remove embedding overdimention and move tensor to cpu
+                embedding = embedding.squeeze(0).cpu()
 
-        return prediction
+                # Remove dimensions
+                prediction = prediction.squeeze()
+
+                # Tensor to python float
+                prediction = prediction.item()
+
+                return embedding, prediction
+            else:
+                # Execute inference and return only velocity estimation scalar value
+                prediction = self.lightningModel(transformed_image)
+
+                # Remove dimensions
+                prediction = prediction.squeeze()
+
+                # Tensor to python float
+                prediction = prediction.item()
+
+                return None, prediction
     
+    # Method for executing inference with an image batch where :
+    #           batch_images = [N_Batch, n_Image_Channels, Height, Width]
+    def inference_batch(self, batch_images, return_embedding=False ):
+        # Verify model
+        assert self.lightningModel is not None, "Model is not loaded or Training Phase is missing"
+
+        # Eval mode
+        self.lightningModel.eval()
+
+        # Load image
+        batch_images = batch_images.to(CONFIG.DEVICE)
+
+        # Disable gradients
+        with torch.no_grad():
+            # Execute inference
+            if return_embedding:
+                # Execute inference with embedding return and velocity estimation scalar
+                # Get embedding directly from VelocityNetwork's get_embedding method
+                embeddings = self.lightningModel.get_embedding(batch_images)
+
+                # Execute direcet regression inference
+                predictions = self.lightningModel(batch_images)
+
+                return (
+                    embeddings.cpu(),
+                    predictions.squeeze(1).cpu()
+                )
+            
+            # Execute inference and return only velocity estimation scalar value
+            predictions = self.lightningModel(batch_images)
+
+            return predictions.squeeze(1).cpu()
+
     # Method for loading pretrained VelocityEstimator model from serialized file
     def load_model(self, serialized_object_path=CONFIG.MODEL_SERIALIZED_DIR_PATH):
 
         # Create base resnet
         resnet50_model = self.build_backbone_model(weights=None)
 
-        # -Replace FC exactly as in training
-        in_features = resnet50_model.fc.in_features
-
-        resnet50_model.fc = self.build_fc(in_features)
+        # Build final model arquitecture exactly as in training
+        model_arq = self.build_fc(backbone_model= resnet50_model)
 
         # Create lightning module
         velocityEstimatorModel = VelocityEstimatorModel(
-            model=resnet50_model,
+            model=model_arq,
             learning_rate=self.learning_rate
         )
 
@@ -212,10 +244,10 @@ class VelocityEstimator:
         )
 
         # Save model
-        self.model = velocityEstimatorModel
+        self.lightningModel = velocityEstimatorModel
 
         # Move to device
-        self.model.to(CONFIG.DEVICE)
+        self.lightningModel.to(CONFIG.DEVICE)
 
         print(f"Model loaded from: {serialized_object_path}")
 
@@ -237,13 +269,13 @@ class VelocityEstimator:
         )
 
         # Set model as actual
-        self.model = velocityEstimatorModel
+        self.lightningModel = velocityEstimatorModel
 
         # Save serialized Model as object 
-        torch.save(self.model.state_dict(), CONFIG.MODEL_SERIALIZED_DIR_PATH)
+        torch.save(self.lightningModel.state_dict(), CONFIG.MODEL_SERIALIZED_DIR_PATH)
 
         # Send Model to proper device
-        self.model.to(CONFIG.DEVICE)
+        self.lightningModel.to(CONFIG.DEVICE)
 
         print(f"Model loaded from checkpoint path : {checkpoint_path}")
 
@@ -251,8 +283,28 @@ class VelocityEstimator:
 
     # Method for saving model as serialized object
     def save_model(self, serialized_object_path_destination = CONFIG.MODEL_SERIALIZED_DIR_PATH):
-        torch.save(self.model.state_dict(), serialized_object_path_destination)
+        torch.save(self.lightningModel.state_dict(), serialized_object_path_destination)
         return True
+    
+    # Method for getting model's architecture
+    def get_model_architecture(self):
+
+        assert self.lightningModel is not None, "Model has not been created"
+
+        architecture = {
+            "lightning_module": self.lightningModel.__class__.__name__,
+            "total_parameters": sum(
+                p.numel() for p in self.lightningModel.parameters()
+            ),
+            "trainable_parameters": sum(
+                p.numel()
+                for p in self.lightningModel.parameters()
+                if p.requires_grad
+            ),
+            "model_structure": str(self.lightningModel)
+        }
+
+        return architecture
 
     # Method for showing a train dataloader's batch  -- Missing correction
     def show_batch(self, n):
