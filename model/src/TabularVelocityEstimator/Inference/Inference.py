@@ -53,5 +53,50 @@ def execute_inference():
     output_df.to_csv(output_path, index=False)
     print("Inference phase finished, results saved in " + output_path + "...")
 
-if __name__ == "__main__":
-    execute_inference()
+
+def get_test_inferences():
+
+    model = VelocityEstimator(
+        batch_size=CONFIG.BATCH_SIZE,
+        num_workers=CONFIG.NUM_WORKERS,
+        train_proportion=CONFIG.TRAIN_PROPORTION,
+        val_proportion=CONFIG.VAL_PROPORTION
+    )
+
+    model.load_model(
+        CONFIG.MODEL_SERIALIZED_PATH
+    )
+
+    model.model.eval()
+
+    predictions = []
+    true_labels = []
+
+    with torch.no_grad():
+
+        for features, labels in model.dm.test_dataloader():
+
+            features = features.to(CONFIG.DEVICE)
+
+            preds = (
+                model.model(features)
+                .squeeze(-1)
+            )
+
+            predictions.append(
+                preds.cpu().numpy()
+            )
+
+            true_labels.append(
+                labels.cpu().numpy()
+            )
+
+    predictions = np.concatenate(
+        predictions
+    )
+
+    true_labels = np.concatenate(
+        true_labels
+    )
+
+    return true_labels, predictions
