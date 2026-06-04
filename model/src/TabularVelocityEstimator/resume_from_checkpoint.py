@@ -1,9 +1,8 @@
 # == Main for resuming a model's training phase from lightning's checkpoint
 
 # Import libraries and required modules
-from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator
-from model.config.config import MODEL_SERIALIZED_PATH, BATCH_SIZE, NUM_WORKERS, TRAIN_PROPORTION, VAL_PROPORTION
-from model.config.config import N_EPOCHS, LEARNING_RATE
+from model.src.TabularVelocityEstimator.VelocityEstimator import VelocityEstimator
+from model.config.TabularVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
 
@@ -11,10 +10,10 @@ from model.config.libraries import *
 def resume_training():
      # Create model
     model = VelocityEstimator(
-        batch_size = BATCH_SIZE,
-        num_workers = NUM_WORKERS,
-        train_proportion = TRAIN_PROPORTION,
-        val_proportion = VAL_PROPORTION
+        batch_size = CONFIG.BATCH_SIZE,
+        num_workers = CONFIG.NUM_WORKERS,
+        train_proportion = CONFIG.TRAIN_PROPORTION,
+        val_proportion = CONFIG.VAL_PROPORTION
     )
 
     # Load Model from checkpoint
@@ -23,13 +22,13 @@ def resume_training():
 
     # Start training phase
     model.train(
-        epochs = N_EPOCHS,
-        learning_rate = LEARNING_RATE
+        epochs = CONFIG.N_EPOCHS,
+        learning_rate = CONFIG.LEARNING_RATE
     )
 
     # Save model
-    model.save_model(serialized_object_path_destination = MODEL_SERIALIZED_PATH)
-    print("Model was saved in : ", MODEL_SERIALIZED_PATH)    
+    model.save_model(serialized_object_path_destination = CONFIG.MODEL_SERIALIZED_PATH)
+    print("Model was saved in : ", CONFIG.MODEL_SERIALIZED_PATH)    
 
 if __name__ == "__main__":
     start = datetime.datetime.now()

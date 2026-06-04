@@ -33,7 +33,8 @@ class VelocityEstimatorModel(L.LightningModule):
         predicted_labels = self(features).squeeze(1)
 
         # --- Loss
-        loss = F.smooth_l1_loss(predicted_labels, true_labels)
+        #loss = F.smooth_l1_loss(predicted_labels, true_labels)
+        loss = F.l1_loss(predicted_labels, true_labels) 
 
         return loss, true_labels, predicted_labels
     
@@ -50,7 +51,6 @@ class VelocityEstimatorModel(L.LightningModule):
         self.log("train_mae", self.train_mae, prog_bar=True, on_epoch=True, on_step=False)
         return loss
 
-    
     # Execute validation step and store loss 
     def validation_step(self, batch, batch_idx):
         # Execute model's shared steps
@@ -78,8 +78,29 @@ class VelocityEstimatorModel(L.LightningModule):
     # Configure Model Optimizer
     def configure_optimizers(self):
         # Configure optimizer as AdamW with specified learning rate
+        # optimizer = torch.optim.AdamW(
+        #     self.parameters(),
+        #     lr=self.learning_rate
+        # )
+        
         optimizer = torch.optim.AdamW(
-            self.parameters(),
-            lr=self.learning_rate
+            [
+                {
+                    "params": self.model.backbone[7].parameters(),
+                    "lr": 1e-5
+                },
+                {
+                    "params": self.model.embedding_head.parameters(),
+                    "lr": 1e-4
+                },
+                {
+                    "params": self.model.regression_head.parameters(),
+                    "lr": 1e-4
+                }
+            ]
         )
         return optimizer
+
+    # Return sample embedding using VelocityNetwork's get_embedding method
+    def get_embedding(self, x):
+        return self.model.get_embedding(x)

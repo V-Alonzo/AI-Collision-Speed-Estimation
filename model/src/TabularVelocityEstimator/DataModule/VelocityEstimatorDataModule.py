@@ -1,8 +1,8 @@
 # Import libraries and required modules
 from torch.utils.data import DataLoader
-from model.src.ImageVelocityEstimator.DataModule.VelocityEstimatorDataset import VelocityEstimatorDataset
+from model.src.TabularVelocityEstimator.DataModule.VelocityEstimatorDataset import VelocityEstimatorDataset
 from model.config.libraries import *
-from model.config.config import N_SAMPLES
+from model.config.TabularVelocityEstimator.config import CONFIG
 
 
 # Data Module for dataloader creation
@@ -10,7 +10,8 @@ class VelocityEstimatorDataModule(L.LightningDataModule):
     # Class constructor
     def __init__(
             self, 
-            annotations_file, 
+            features_path,
+            target_path,
             batch_size=64, 
             num_workers=0, 
             train_transform=None, 
@@ -23,7 +24,8 @@ class VelocityEstimatorDataModule(L.LightningDataModule):
 
         # General class properties
         self.batch_size = batch_size
-        self.annotations_file = annotations_file
+        self.features_path = features_path
+        self.target_path = target_path
         self.num_workers = num_workers
         self.seed = seed
 
@@ -41,9 +43,19 @@ class VelocityEstimatorDataModule(L.LightningDataModule):
 
     # Method for dataset's subsets creation
     def setup(self, stage=None):
+        # Load full dataset once
+        features_df = pd.read_csv(self.features_path)
+        target_df = pd.read_csv(self.target_path)
+
+        if len(features_df) != len(target_df):
+            raise ValueError("Features and target CSVs must have the same number of rows.")
+
+        n_samples = len(features_df)
+        self.input_dim = features_df.shape[1]
+
         # Compute correct split's dimensions
-        train_size = int(N_SAMPLES * self.train_proportion)
-        test_size = N_SAMPLES - train_size
+        train_size = int(n_samples * self.train_proportion)
+        test_size = n_samples - train_size
         val_size = int(train_size * (1 - self.val_proportion))
         train_size = train_size - val_size
 
@@ -54,15 +66,27 @@ class VelocityEstimatorDataModule(L.LightningDataModule):
 
         # Execute random split with computed index
         train_idx, val_idx, test_idx = torch.utils.data.random_split(
-            range(N_SAMPLES),
+            range(n_samples),
             [train_size, val_size, test_size],
             generator=generator
         )
         
         # Create datasets with its transformation
-        self.train = VelocityEstimatorDataset(self.annotations_file, transform=self.train_transform)
-        self.valid = VelocityEstimatorDataset(self.annotations_file, transform=self.test_transform)
-        self.test = VelocityEstimatorDataset(self.annotations_file, transform=self.test_transform)
+        self.train = VelocityEstimatorDataset(
+            features_df=features_df,
+            target_df=target_df,
+            transform=self.train_transform
+        )
+        self.valid = VelocityEstimatorDataset(
+            features_df=features_df,
+            target_df=target_df,
+            transform=self.test_transform
+        )
+        self.test = VelocityEstimatorDataset(
+            features_df=features_df,
+            target_df=target_df,
+            transform=self.test_transform
+        )
 
         # Subsets extraction according to computed random splits
         self.train = torch.utils.data.Subset(self.train, train_idx.indices)

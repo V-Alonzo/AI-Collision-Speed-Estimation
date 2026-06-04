@@ -1,12 +1,10 @@
 # Import libraries and required modules
 from model.config.libraries import *
+from model.config.ImageVelocityEstimator.config import CONFIG
 from model.src.ImageVelocityEstimator.DataModule.VelocityEstimatorDataModule import VelocityEstimatorDataModule
 from model.src.ImageVelocityEstimator.DataModule import Transformations
-from model.config.config import IO_DATASET_MAP_LOCAL_PATH, DEVICE
-from model.config.config import CHECKPOINTS_DIR_PATH, TRAININGLOGS_DIR_PATH, MODEL_NAME, MODEL_SERIALIZED_PATH
-from model.config.config import IMAGE_CHANNELS
-from model.config.config import EARLY_STOPPING_PATIENCE, TRAINER_ACCELERATOR, TRAINER_PRECISION, METRICS_PLOTS_OUTPUT_DIR_PATH
 from model.src.ImageVelocityEstimator.LightningModule.VelocityEstimatorModel import VelocityEstimatorModel
+from model.src.ImageVelocityEstimator.VelocityNetwork.VelocityNetwork import VelocityNetwork
 
 # Import lightning tools
 from lightning.pytorch.loggers import CSVLogger
@@ -27,13 +25,13 @@ class VelocityEstimator:
         ):
 
         # General class properties
-        self.model = None
+        self.lightningModel = None
         self.learning_rate = None
 
         if load_dm:
             # Create DataModule
             self.dm  = VelocityEstimatorDataModule(
-                annotations_file=IO_DATASET_MAP_LOCAL_PATH, 
+                annotations_file=CONFIG.IO_DATASET_MAP_LOCAL_PATH, 
                 batch_size=batch_size, 
                 num_workers=num_workers, 
                 train_transform= Transformations.train_transform, 
@@ -45,10 +43,28 @@ class VelocityEstimator:
         else:
             self.dm = None
 
+    # Build backbone model (with pretrained params or not)
+    def build_backbone_model(self, weights=None):
+        # Create base resnet
+        model = torch.hub.load(
+            "pytorch/vision",
+            "resnet50",
+            weights=weights
+        )
+
+        return model
+    
+    # Build EmbeddingHead/fc
+    def build_fc(self, backbone_model):
+        return VelocityNetwork(backbone_model)
+        
     # Build model
     def build_model(self, learning_rate):
-        # ==== Inital model (Existant arq or custom one) 
-        resnet50_model = torch.hub.load("pytorch/vision", "resnet50", weights="IMAGENET1K_V2")
+        
+        # ============ Model Arq ============
+
+        # ==== Backbone model (Existant arq or custom one) 
+        resnet50_model = self.build_backbone_model(weights="IMAGENET1K_V2")
 
         # freeze layers as default
         for param in resnet50_model.parameters():
@@ -58,22 +74,14 @@ class VelocityEstimator:
         for param in resnet50_model.layer4.parameters():
             param.requires_grad = True
 
-        # Unfreeze resnet fc
-        for param in resnet50_model.fc.parameters():
-            param.requires_grad = True
+        # Build final model arquitecture
+        model_arq = self.build_fc(backbone_model= resnet50_model)
 
-        # Get number of features
-        in_features = resnet50_model.fc.in_features
-
-        # Replace final layer
-        resnet50_model.fc = nn.Linear(
-            in_features,
-            1
-        )
+        # ============ END Model Arq ============
 
         # Instance VelocityEstimator lightning model and use resnet as backbone model
         velocityEstimatorModel = VelocityEstimatorModel(
-            model = resnet50_model,
+            model = model_arq,
             learning_rate = learning_rate
         )
 
@@ -82,7 +90,7 @@ class VelocityEstimator:
     # Execute model training
     def train(
             self,
-            image_channels = IMAGE_CHANNELS,
+            image_channels = CONFIG.IMAGE_CHANNELS,
             epochs = 5,
             learning_rate = 1e-4
         ):
@@ -90,61 +98,158 @@ class VelocityEstimator:
         self.learning_rate = learning_rate
         
         # Create new Model instance if this doesnt exist
-        if self.model is None:
+        if self.lightningModel is None:
             # Create backbone model arq
-            self.model = self.build_model(self.learning_rate)
+            self.lightningModel = self.build_model(self.learning_rate)
 
         # Create VelocityEstimator's trainer
         self.trainer = L.Trainer(
             max_epochs = epochs,
-            logger = CSVLogger(TRAININGLOGS_DIR_PATH, name = MODEL_NAME),
+            logger = CSVLogger(CONFIG.TRAININGLOGS_DIR_PATH),
             callbacks=[
-                EarlyStopping(monitor="val_loss", mode="min", patience=EARLY_STOPPING_PATIENCE),
-                ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1, dirpath=CHECKPOINTS_DIR_PATH, filename="best_model_"+MODEL_NAME)
+                EarlyStopping(monitor="val_loss", mode="min", patience=CONFIG.EARLY_STOPPING_PATIENCE),
+                ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1, dirpath=CONFIG.CHECKPOINTS_DIR_PATH, filename="best_model_"+CONFIG.MODEL_NAME)
                 ],
-            accelerator = TRAINER_ACCELERATOR,
+            accelerator = CONFIG.TRAINER_ACCELERATOR,
             devices=1,
-            precision= TRAINER_PRECISION
+            precision= CONFIG.TRAINER_PRECISION,
+            log_every_n_steps=5
         )
 
         # Execute model's training step
         self.trainer.fit(
-            model = self.model,
+            model = self.lightningModel,
             train_dataloaders = self.dm.train_dataloader(),
             val_dataloaders = self.dm.val_dataloader()
         )
 
-    # Test trained model with datamodule's test dataset
+    # Test last epoch model's checkpoint with datamodule's test dataset
     def test(self):
-        self.trainer.test(datamodule=self.dm)
-
-    # Method for generating new images with trained model
-    def inference(self):
-        # Verify if there is a model loaded
-        assert self.model is not None, "Training Phase is missing for model's inference mode" 
-
-        # Results
-        
-        
-    # Method for loading pretrained VelocityEstimator model
-    def load_model(self, serialized_object_path = MODEL_SERIALIZED_PATH):
-        # ==== Inital model (Existant arq or custom one) 
-        resnet50_model_transfer_learning = torch.hub.load("pytorch/vision", "resnet50", weights=None)
-
-        # Instance VelocityEstimator lightning model
-        velocityEstimatorModel = VelocityEstimatorModel(
-            model = resnet50_model_transfer_learning,
-            learning_rate = self.learning_rate
+        self.trainer.test(
+            datamodule=self.dm,
+            ckpt_path="last" # {last, best}
         )
 
-        # Load weights from serialized object
-        velocityEstimatorModel.load_state_dict(torch.load(serialized_object_path))
+    # Method for executing inference with the trained model
+    # This method uses as input the desired image_path to use for inference
+    # This method can return: (embedding_representation_of_a_given_image, velocity_estimation_scalar)
+    #           Or          : (null, velocity_estimation_scalar)
+    def inference(self, image_path, return_embedding = False):
+        # Verify model
+        assert self.lightningModel is not None, "Model is not loaded or Training Phase is missing"
 
-        # Assign Loaded model
-        self.model = velocityEstimatorModel
+        # Eval mode
+        self.lightningModel.eval()
 
-        # Send model to proper device
-        self.model.to(DEVICE)
+        # Load image
+        image = Image.open(image_path).convert("RGB")
+
+        # Apply transforms
+        transformed_image = Transformations.test_transform(image)
+
+        # Add batch dimension
+        transformed_image = transformed_image.unsqueeze(0)
+
+        # Move to device
+        transformed_image = transformed_image.to(CONFIG.DEVICE)
+
+        # Disable gradients
+        with torch.no_grad():
+
+            # Execute inference
+            if return_embedding:
+                # Execute inference with embedding return and velocity estimation scalar
+                # Get embedding directly from VelocityNetwork's get_embedding method
+                embedding = self.lightningModel.get_embedding(transformed_image)
+
+                # Execute direcet regression inference
+                prediction = self.lightningModel(transformed_image)
+
+                # Remove embedding overdimention and move tensor to cpu
+                embedding = embedding.squeeze(0).cpu()
+
+                # Remove dimensions
+                prediction = prediction.squeeze()
+
+                # Tensor to python float
+                prediction = prediction.item()
+
+                return embedding, prediction
+            else:
+                # Execute inference and return only velocity estimation scalar value
+                prediction = self.lightningModel(transformed_image)
+
+                # Remove dimensions
+                prediction = prediction.squeeze()
+
+                # Tensor to python float
+                prediction = prediction.item()
+
+                return None, prediction
+    
+    # Method for executing inference with an image batch where :
+    #           batch_images = [N_Batch, n_Image_Channels, Height, Width]
+    def inference_batch(self, batch_images, return_embedding=False ):
+        # Verify model
+        assert self.lightningModel is not None, "Model is not loaded or Training Phase is missing"
+
+        # Eval mode
+        self.lightningModel.eval()
+
+        # Load image
+        batch_images = batch_images.to(CONFIG.DEVICE)
+
+        # Disable gradients
+        with torch.no_grad():
+            # Execute inference
+            if return_embedding:
+                # Execute inference with embedding return and velocity estimation scalar
+                # Get embedding directly from VelocityNetwork's get_embedding method
+                embeddings = self.lightningModel.get_embedding(batch_images)
+
+                # Execute direcet regression inference
+                predictions = self.lightningModel(batch_images)
+
+                return (
+                    embeddings.cpu(),
+                    predictions.squeeze(1).cpu()
+                )
+            
+            # Execute inference and return only velocity estimation scalar value
+            predictions = self.lightningModel(batch_images)
+
+            return predictions.squeeze(1).cpu()
+
+    # Method for loading pretrained VelocityEstimator model from serialized file
+    def load_model(self, serialized_object_path=CONFIG.MODEL_SERIALIZED_DIR_PATH):
+
+        # Create base resnet
+        resnet50_model = self.build_backbone_model(weights=None)
+
+        # Build final model arquitecture exactly as in training
+        model_arq = self.build_fc(backbone_model= resnet50_model)
+
+        # Create lightning module
+        velocityEstimatorModel = VelocityEstimatorModel(
+            model=model_arq,
+            learning_rate=self.learning_rate
+        )
+
+        # Load weights
+        velocityEstimatorModel.load_state_dict(
+            torch.load(
+                serialized_object_path,
+                map_location=CONFIG.DEVICE
+            )
+        )
+
+        # Save model
+        self.lightningModel = velocityEstimatorModel
+
+        # Move to device
+        self.lightningModel.to(CONFIG.DEVICE)
+
+        print(f"Model loaded from: {serialized_object_path}")
 
         return True
     
@@ -164,24 +269,44 @@ class VelocityEstimator:
         )
 
         # Set model as actual
-        self.model = velocityEstimatorModel
+        self.lightningModel = velocityEstimatorModel
 
         # Save serialized Model as object 
-        torch.save(self.model.state_dict(), MODEL_SERIALIZED_PATH)
+        torch.save(self.lightningModel.state_dict(), CONFIG.MODEL_SERIALIZED_DIR_PATH)
 
         # Send Model to proper device
-        self.model.to(DEVICE)
+        self.lightningModel.to(CONFIG.DEVICE)
 
         print(f"Model loaded from checkpoint path : {checkpoint_path}")
 
         return True
 
     # Method for saving model as serialized object
-    def save_model(self, serialized_object_path_destination = MODEL_SERIALIZED_PATH):
-        torch.save(self.model.state_dict(), serialized_object_path_destination)
+    def save_model(self, serialized_object_path_destination = CONFIG.MODEL_SERIALIZED_DIR_PATH):
+        torch.save(self.lightningModel.state_dict(), serialized_object_path_destination)
         return True
+    
+    # Method for getting model's architecture
+    def get_model_architecture(self):
 
-    # Method for showing a train dataloader's batch
+        assert self.lightningModel is not None, "Model has not been created"
+
+        architecture = {
+            "lightning_module": self.lightningModel.__class__.__name__,
+            "total_parameters": sum(
+                p.numel() for p in self.lightningModel.parameters()
+            ),
+            "trainable_parameters": sum(
+                p.numel()
+                for p in self.lightningModel.parameters()
+                if p.requires_grad
+            ),
+            "model_structure": str(self.lightningModel)
+        }
+
+        return architecture
+
+    # Method for showing a train dataloader's batch  -- Missing correction
     def show_batch(self, n):
         # Get traiing batch for visualization
         images = next(iter(self.dm.train_dataloader()))
@@ -205,6 +330,6 @@ class VelocityEstimator:
         plt.show()
 
         # Save images
-        out_path = os.path.join(METRICS_PLOTS_OUTPUT_DIR_PATH, MODEL_NAME+"training_batch_grid.png")
+        out_path = os.path.join(CONFIG.METRICS_PLOTS_OUTPUT_DIR_PATH, CONFIG.MODEL_NAME+"training_batch_grid.png")
         plt.savefig(out_path, dpi=150)
         plt.close()

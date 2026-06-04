@@ -25,6 +25,7 @@ utils/Preprocessing/ImagesExtractionClassification/__pycache__/*.pyc
 # ==== Model
 # Data Manifest and csv
 model/data/CSV/*.csv
+model/data/CSV/
 
 # Training Logs
 model/src/TrainingLogs/*/
@@ -82,3 +83,5 @@ next-env.d.ts
 __pycache__/
 *.pyc
 *.vscode
+
+# ML experiments

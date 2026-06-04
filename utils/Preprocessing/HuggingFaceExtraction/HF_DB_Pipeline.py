@@ -108,6 +108,7 @@ def HuggingFacePipeline():
         ('imputer', SimpleImputer(strategy='constant', fill_value='Unknown')),
         #('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False)),
         ('target_encoder', TargetEncoder(smooth='auto', cv=5, target_type='continuous')),
+        ('scaler', StandardScaler())
     ])
 
     # C. Categóricos Ordinales (Severidad)
@@ -221,3 +222,5 @@ def PreprocessingHuggingFaceDB():
     print(f"\nColumnas preprocesadas ({len(final_columns)} en total):")
     for col in final_columns:
         print(f" - {col}")
+
+    return X_processed, y, final_columns

@@ -1,38 +1,48 @@
 # Import libraries and required modules
 from torch.utils.data import Dataset
-from model.config.config import IO_DATASET_MAP_LOCAL_PATH, INPUT_IMAGES_CSV_INDEX, OUTPUT_LABEL_CSV_INDEX
+from model.config.TabularVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
 
-# Pico banana dataset loader
+# Tabular dataset loader
 class VelocityEstimatorDataset(Dataset):
     # Class constructor
-    def __init__(self, annotations_file = IO_DATASET_MAP_LOCAL_PATH, transform=None):
-        # Annotation file as pandas df
-        self.df = pd.read_csv(annotations_file)
+    def __init__(
+        self,
+        features_df=None,
+        target_df=None,
+        features_path=CONFIG.TABULAR_FEATURES_PATH,
+        target_path=CONFIG.TABULAR_TARGET_PATH,
+        transform=None
+    ):
+        if features_df is None:
+            features_df = pd.read_csv(features_path)
+        if target_df is None:
+            target_df = pd.read_csv(target_path)
 
-        # Remove samples without target
-        self.df = self.df.dropna(
-            subset=[OUTPUT_LABEL_CSV_INDEX]
-        ).reset_index(drop=True)
+        if len(features_df) != len(target_df):
+            raise ValueError("Features and target CSVs must have the same number of rows.")
 
+        self.features_df = features_df.reset_index(drop=True)
+        self.target_df = target_df.reset_index(drop=True)
         self.transform = transform
 
     # Get dataset n_samples
     def __len__(self):
-        return len(self.df)
+        return len(self.features_df)
 
     # Get next iterator item
     def __getitem__(self, idx):
-        # Extract input image path
-        sample_input_img_path = self.df.loc[idx, INPUT_IMAGES_CSV_INDEX]
-        sample_input_image = Image.open(sample_input_img_path).convert("RGB")
+        features = self.features_df.iloc[idx].to_numpy(dtype=np.float32)
+        target = self.target_df.iloc[idx].to_numpy(dtype=np.float32)
 
-        # Label
-        sample_label = float(self.df.loc[idx, OUTPUT_LABEL_CSV_INDEX])
+        if target.ndim > 0:
+            target = target.squeeze()
 
-        # Apply transformation
+        features_tensor = torch.tensor(features, dtype=torch.float32)
+        target_tensor = torch.tensor(target, dtype=torch.float32)
+
         if self.transform:
-            sample_input_image = self.transform(sample_input_image)
+            features_tensor = self.transform(features_tensor)
 
-        return sample_input_image, sample_label
+        return features_tensor, target_tensor

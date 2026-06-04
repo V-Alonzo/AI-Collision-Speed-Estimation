@@ -3,9 +3,8 @@
 # == Main for model's inference phase
 
 # Import libraries and required modules
-from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator 
-from model.config.config import MODEL_SERIALIZED_PATH, MODEL_NAME, N_INFERENCES_2_EXEC, OUTPUT_INFERENCES_DIR
-from model.config.config import BATCH_SIZE, NUM_WORKERS, TRAIN_PROPORTION, VAL_PROPORTION
+from model.src.TabularVelocityEstimator.VelocityEstimator import VelocityEstimator 
+from model.config.TabularVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
 
@@ -13,51 +12,91 @@ from model.config.libraries import *
 def execute_inference():
     # Create model
     model = VelocityEstimator(
-        batch_size = BATCH_SIZE,
-        num_workers = NUM_WORKERS,
-        train_proportion = TRAIN_PROPORTION,
-        val_proportion = VAL_PROPORTION
+        batch_size = CONFIG.BATCH_SIZE,
+        num_workers = CONFIG.NUM_WORKERS,
+        train_proportion = CONFIG.TRAIN_PROPORTION,
+        val_proportion = CONFIG.VAL_PROPORTION
     )
 
     # Save model
-    model.load_model( MODEL_SERIALIZED_PATH)
-    print("Model was correctly loaded from " +MODEL_SERIALIZED_PATH+ " ...")
+    model.load_model( CONFIG.MODEL_SERIALIZED_PATH)
+    print("Model was correctly loaded from " +CONFIG.MODEL_SERIALIZED_PATH+ " ...")
 
-    # Get n number of Inferences
-    generated_imgs = []
-    for i in tqdm(range(N_INFERENCES_2_EXEC)):
-        xt = model.inference()      # (1, C, H, W) en [0,1]
-        generated_imgs.append(img)
+    # Load payload for inference
+    payload_path = CONFIG.INFERENCE_SAMPLE_PATH
 
-    # Plot inferences
-    fig, axes = plt.subplots(3, 3, figsize=(10, 10))
+    with open(payload_path, "r") as f:
+        payload = json.load(f)
 
-    # Subplot iteration for ploting generated images
-    for i, ax in enumerate(axes.flat):
-        if i >= len(generated_imgs):
-            ax.axis("off")
-            continue
-        
-        # Generated image as (C, H, W)
-        img = generated_imgs[i] 
+    if isinstance(payload, dict):
+        payload = [payload]
 
-        # Detect image channels
-        if img.shape[0] == 1:
-            # Grayscale
-            ax.imshow(img[0], cmap="gray")
-        else:
-            # RGB and tensor transformation for a correct plot
-            ax.imshow(np.transpose(img, (1, 2, 0)))
+    sample_df = pd.DataFrame(payload)
 
-        ax.axis('off')
+    expected_columns = pd.read_csv(CONFIG.TABULAR_FEATURES_PATH).columns
+    missing_columns = set(expected_columns) - set(sample_df.columns)
+    if missing_columns:
+        missing_list = ", ".join(sorted(missing_columns))
+        raise ValueError("Payload is missing required columns: " + missing_list)
 
-    plt.tight_layout()
-    
-    # Store figure
-    output_path = os.path.join(OUTPUT_INFERENCES_DIR, MODEL_NAME + "_inference_"+str(N_INFERENCES_2_EXEC)+"_grid.png")
-    plt.savefig(output_path, dpi=300)
-    plt.close(fig)
-    print("Inference phase finished, grid saves in "+output_path+ "...")
+    sample_df = sample_df.reindex(columns=expected_columns)
 
-if __name__ == "__main__":
-    execute_inference()
+    predictions = model.inference(sample_df)
+
+    output_df = sample_df.copy()
+    output_df["predicted_speed_kph"] = predictions
+
+    output_path = os.path.join(
+        CONFIG.OUTPUT_INFERENCES_DIR,
+            CONFIG.MODEL_NAME + "_inference_" + str(len(sample_df)) + "_rows.csv"
+    )
+    output_df.to_csv(output_path, index=False)
+    print("Inference phase finished, results saved in " + output_path + "...")
+
+
+def get_test_inferences():
+
+    model = VelocityEstimator(
+        batch_size=CONFIG.BATCH_SIZE,
+        num_workers=CONFIG.NUM_WORKERS,
+        train_proportion=CONFIG.TRAIN_PROPORTION,
+        val_proportion=CONFIG.VAL_PROPORTION
+    )
+
+    model.load_model(
+        CONFIG.MODEL_SERIALIZED_PATH
+    )
+
+    model.model.eval()
+
+    predictions = []
+    true_labels = []
+
+    with torch.no_grad():
+
+        for features, labels in model.dm.test_dataloader():
+
+            features = features.to(CONFIG.DEVICE)
+
+            preds = (
+                model.model(features)
+                .squeeze(-1)
+            )
+
+            predictions.append(
+                preds.cpu().numpy()
+            )
+
+            true_labels.append(
+                labels.cpu().numpy()
+            )
+
+    predictions = np.concatenate(
+        predictions
+    )
+
+    true_labels = np.concatenate(
+        true_labels
+    )
+
+    return true_labels, predictions
