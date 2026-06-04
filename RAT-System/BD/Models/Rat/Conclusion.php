@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models\Rat;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Conclusion extends Model
+{
+    protected $table      = 'RAT_CONCLUSION';
+    public    $timestamps = false;
+
+    protected $fillable = [
+        'principios_forenses_id', 'orden', 'texto_conclusion',
+        'validado_perito', 'validado_por_id', 'validado_en',
+    ];
+
+    protected $casts = [
+        'validado_perito' => 'boolean',
+        'validado_en'     => 'datetime',
+    ];
+
+    public function principiosForenses()
+    {
+        return $this->belongsTo(PrincipiosForenses::class, 'principios_forenses_id');
+    }
+}

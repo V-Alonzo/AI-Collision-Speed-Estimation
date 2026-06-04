@@ -183,6 +183,11 @@ def prepareDataset(df):
     
     df_clean = df_clean.dropna(subset=['targetVariable']) # Asegurar que no queden filas sin target
     
+    df_clean = df_clean.drop_duplicates(subset="cirenId") # Verificar que no haya duplicados en cirenId después de la limpieza
+    df_clean = df_clean.reset_index(drop=True) # Resetear índices después de la limpieza
+    print(df_clean["cirenId"])
+    print(df_clean.shape)
+    
     # Separar features (X) y target (y)
     X = df_clean.drop(columns=['totalDeltaVKph', 'totalDeltaVMph', 'dvBarrierEquivalentSpeedDescription'])
     y = df_clean['targetVariable'].values
