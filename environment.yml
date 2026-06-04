@@ -12,7 +12,6 @@ dependencies:
       # Datos y serializacion
       - pandas
       - pyarrow
-      - huggingface_hub
       - python-dotenv
       - openai
       - pillow

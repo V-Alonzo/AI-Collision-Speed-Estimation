@@ -217,6 +217,8 @@ def convert_cache_to_parquet(cache_path: str, output_path: str, originDB: str = 
     if "cargoWeight" in configured_metadata_keys:
         case_metadata_columns.extend(["cargoWeight", "cargoWeightKg"])
         metadata_integer_columns.append("cargoWeightKg")
+    if "dvBarrierEquivalentSpeedDescription" in configured_metadata_keys:
+        case_metadata_columns.append("dvBarrierEquivalentSpeedDescription")
 
     case_records: List[Dict[str, Any]] = []
     image_records: List[Dict[str, Any]] = []
@@ -247,6 +249,7 @@ def convert_cache_to_parquet(cache_path: str, output_path: str, originDB: str = 
                 "cargoWeight": case_data.get("cargoWeight"),
                 "curbWeightKg": _extract_first_integer(case_data.get("curbWeight")),
                 "cargoWeightKg": _extract_first_integer(case_data.get("cargoWeight")),
+                "dvBarrierEquivalentSpeedDescription" : case_data.get("dvBarrierEquivalentSpeedDescription"),
             }
         )
 

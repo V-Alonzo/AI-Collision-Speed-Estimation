@@ -5,19 +5,6 @@ from model.src.TabularVelocityEstimator.VelocityEstimator import VelocityEstimat
 from model.config.TabularVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
-def test_inference():
-
-    velocityEstimator = VelocityEstimator(load_dm=True)
-
-    velocityEstimator.load_model(
-        CONFIG.MODEL_SERIALIZED_PATH
-    )
-
-    sample_features = pd.read_csv(CONFIG.TABULAR_FEATURES_PATH).iloc[0]
-    prediction = velocityEstimator.inference(sample_features)[0]
-
-    print(f"Predicted speed: {prediction:.2f} km/h")
-
 # Main file for VelocityEstimator model training execution
 def main():
     # Save training parameters
