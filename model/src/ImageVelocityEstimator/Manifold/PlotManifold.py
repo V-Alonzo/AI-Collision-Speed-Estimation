@@ -1,101 +1,9 @@
 # Import libraries and required modules
 from model.config.libraries import *
 from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator
-from model.src.ImageVelocityEstimator.DataModule.VelocityEstimatorDatasetWithPaths import VelocityEstimatorDatasetWithPaths
-from model.src.ImageVelocityEstimator.DataModule import Transformations
 from model.config.ImageVelocityEstimator.config import CONFIG
+from model.src.ImageVelocityEstimator.Evaluation.Inference import load_model, extract_all_embeddings
 
-
-# Create dataloader over the complete dataset
-def full_dataloader():
-
-    dataset = VelocityEstimatorDatasetWithPaths(
-        annotations_file=CONFIG.IO_DATASET_MAP_LOCAL_PATH,
-        transform=Transformations.test_transform,
-    )
-
-    return DataLoader(
-        dataset,
-        batch_size=CONFIG.BATCH_SIZE,
-        shuffle=False,
-        num_workers=CONFIG.NUM_WORKERS,
-        pin_memory=True
-    )
-
-# Extract embeddings, ground-truth labels and predictions
-def extract_all_embeddings(
-        velocityEstimator
-    ):
-
-    all_embeddings = []
-    all_true_labels = []
-    all_predictions = []
-    all_image_paths = []
-
-    model = velocityEstimator.lightningModel
-
-    # Set model to evaluation mode
-    model.eval()
-
-    dataloader = full_dataloader()
-
-    # Disable gradient computation
-    with torch.no_grad():
-
-        for images, speeds, image_paths in tqdm(dataloader):
-
-            # Move batch to device
-            images = images.to(CONFIG.DEVICE)
-
-            # Extract normalized embeddings
-            embeddings = model.get_embedding(
-                images
-            )
-
-            # Predict impact speed
-            predictions = model(
-                images
-            )
-
-            # Store batch outputs
-            all_embeddings.append(
-                embeddings.cpu()
-            )
-
-            all_true_labels.append(
-                speeds.cpu()
-            )
-
-            all_predictions.append(
-                predictions.squeeze(1).cpu()
-            )
-
-            all_image_paths.extend(
-                image_paths
-            )
-
-    # Merge all batches
-    embeddings = torch.cat(
-        all_embeddings,
-        dim=0
-    ).numpy()
-
-    true_labels = torch.cat(
-        all_true_labels,
-        dim=0
-    ).numpy()
-
-    predictions = torch.cat(
-        all_predictions,
-        dim=0
-    ).numpy()
-
-    return (
-        embeddings,
-        true_labels,
-        predictions,
-        all_image_paths
-    )
 
 # Compute embedding dimensionality reduction 
 def compute_manifold(
@@ -269,7 +177,7 @@ def plot_manifold_interactive(
         f"Saved interactive manifold at {output_path}"
     )
 
-# Plot automation
+# Plot manifold automation
 def generate_visualizations(
         embeddings,
         true_labels,
@@ -338,18 +246,10 @@ def generate_visualizations(
         method
     )
 
-
-# Generate t-SNE visualizations
+# Generate dim reduction visualizations
 def main():
-    print("\033[0;34m" + "[Loading Model...] \033[0m" + "\n")
-    # Load trained model
-    velocityEstimator = VelocityEstimator(
-        load_dm=False
-    )
-
-    velocityEstimator.load_model(
-        CONFIG.MODEL_SERIALIZED_PATH
-    )
+    # Load model
+    velocityEstimator = load_model()
 
     print("\033[0;34m" + "[Generating Embeddings...] \033[0m" + "\n")
     # Extract embeddings and labels

@@ -25,3 +25,4 @@ from sklearn.manifold import TSNE
 from sklearn.manifold import Isomap
 from sklearn.decomposition import PCA
 import umap
+import seaborn as sns

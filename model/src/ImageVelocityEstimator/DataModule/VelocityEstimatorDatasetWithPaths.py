@@ -2,6 +2,7 @@
 from model.src.ImageVelocityEstimator.DataModule.VelocityEstimatorDataset import (
     VelocityEstimatorDataset
 )
+from model.src.ImageVelocityEstimator.DataModule import Transformations
 from model.config.ImageVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
@@ -43,3 +44,20 @@ class VelocityEstimatorDatasetWithPaths(VelocityEstimatorDataset):
             sample_label,
             sample_input_img_path
         )
+    
+
+# Create dataloader over the complete dataset
+def full_dataloader():
+
+    dataset = VelocityEstimatorDatasetWithPaths(
+        annotations_file=CONFIG.IO_DATASET_MAP_LOCAL_PATH,
+        transform=Transformations.test_transform,
+    )
+
+    return DataLoader(
+        dataset,
+        batch_size=CONFIG.BATCH_SIZE,
+        shuffle=False,
+        num_workers=CONFIG.NUM_WORKERS,
+        pin_memory=True
+    )
