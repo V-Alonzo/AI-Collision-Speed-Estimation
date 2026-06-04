@@ -33,7 +33,8 @@ class VelocityEstimatorModel(L.LightningModule):
         predicted_labels = self(features).squeeze(1)
 
         # --- Loss
-        loss = F.smooth_l1_loss(predicted_labels, true_labels)
+        #loss = F.smooth_l1_loss(predicted_labels, true_labels)
+        loss = F.l1_loss(predicted_labels, true_labels) 
 
         return loss, true_labels, predicted_labels
     

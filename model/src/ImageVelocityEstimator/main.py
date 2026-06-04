@@ -41,7 +41,7 @@ def test_inference():
     
     print("\033[0;34m" + "[Loading Model...] \033[0m" + "\n")
     # Load Model  ImagVelEst_augmented_Modifiedfc
-    velocityEstimator = load_model("ImagVelEst_aug_ModFc_EmbeddingHead_v0", print_model_arq= False)
+    velocityEstimator = load_model(CONFIG.MODEL_PREFIX, print_model_arq= False)
 
     BASE_VALIDATION_IMAGE_PATH = "model/data/ExtraValidationData/Images/"
 
@@ -99,6 +99,10 @@ def main():
             model,
             f"{CONFIG.EXPERIMENT_DIR}/model_architecture.json"
         )
+
+        print("\033[0;34m" + "[Model architecture...] \033[0m" + "\n") 
+        print(model.lightningModel)
+        
     else:
         print(" Warning: Active Inference Mode, Training phase can't start...")
         return

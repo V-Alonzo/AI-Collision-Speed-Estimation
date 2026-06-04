@@ -1,6 +1,5 @@
 # Import libraries and required modules
 from model.config.libraries import *
-from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator
 from model.config.ImageVelocityEstimator.config import CONFIG
 from model.src.ImageVelocityEstimator.Evaluation.Inference import load_model, extract_all_embeddings
 

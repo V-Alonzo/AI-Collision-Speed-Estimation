@@ -71,11 +71,7 @@ class VelocityEstimator:
             param.requires_grad = False
 
         # Unfreeze last resnet layer
-        # for param in resnet50_model.layer4.parameters():
-        #     param.requires_grad = True
-
-        # Unfreeze resnet fc
-        for param in resnet50_model.fc.parameters():
+        for param in resnet50_model.layer4.parameters():
             param.requires_grad = True
 
         # Build final model arquitecture

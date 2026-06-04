@@ -35,14 +35,9 @@ class VelocityNetwork(nn.Module):
 
         features = self.backbone(x)
 
-        features = torch.flatten(
-            features,
-            1
-        )
+        features = torch.flatten(features, 1)
 
-        embedding = self.embedding_head(
-            features
-        )
+        embedding = self.embedding_head(features)
 
         embedding = F.normalize(
             embedding,

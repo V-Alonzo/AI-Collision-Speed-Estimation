@@ -47,7 +47,7 @@ class TrainingConfig:
     OUTPUT_LABEL_CSV_INDEX: str = "final_speed_kph"
 
     # Experiment / Model Naming
-    MODEL_PREFIX: str = "ImagVelEst_aug_ModFc_EmbeddingHead_v0"
+    MODEL_PREFIX: str = "ImagVelEst_aug_ModFc_EmbHead_l1Loss_v1"
 
     EXPERIMENTS_ROOT_DIR: str = "model/experiments"
 
