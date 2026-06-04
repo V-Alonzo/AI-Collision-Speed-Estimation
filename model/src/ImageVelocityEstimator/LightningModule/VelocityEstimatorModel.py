@@ -50,7 +50,6 @@ class VelocityEstimatorModel(L.LightningModule):
         self.log("train_mae", self.train_mae, prog_bar=True, on_epoch=True, on_step=False)
         return loss
 
-    
     # Execute validation step and store loss 
     def validation_step(self, batch, batch_idx):
         # Execute model's shared steps
@@ -83,3 +82,7 @@ class VelocityEstimatorModel(L.LightningModule):
             lr=self.learning_rate
         )
         return optimizer
+
+    # Return sample embedding using VelocityNetwork's get_embedding method
+    def get_embedding(self, x):
+        return self.model.get_embedding(x)

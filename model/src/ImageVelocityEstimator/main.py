@@ -5,38 +5,68 @@ from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator
 from model.config.ImageVelocityEstimator.config import CONFIG
 from model.config.libraries import *
 
-def test_inference():
-    
-    print("\033[0;34m" + "[Starting Inference Execution...] \033[0m" + "\n")
 
+# Function for loading custom model and print its arquitecture
+def load_model(model_name, print_model_arq = False):
     velocityEstimator = VelocityEstimator(load_dm=False)
 
     velocityEstimator.load_model(
-        "model/experiments/ImagVelEst_augmented_Modifiedfc/serialized/ImagVelEst_augmented_Modifiedfc_weights.pth"
+        f"model/experiments/{model_name}/serialized/{model_name}_weights.pth"
     )
+
+    if print_model_arq: 
+        model_arq_string = None # Model Arq as json for its storage in Config file
+        print(velocityEstimator.lightningModel)
+
+    return velocityEstimator
+
+# Save model
+def save_model_architecture(model:VelocityEstimator, output_path):
+
+    architecture = model.get_model_architecture()
+
+    with open(output_path, "w") as f:
+        json.dump(
+            architecture,
+            f,
+            indent=4
+        )
+
+    print(
+        f"[INFO] Model architecture saved at: {output_path}"
+    )
+
+# Function for executing model custom inference
+def test_inference():
+    
+    print("\033[0;34m" + "[Loading Model...] \033[0m" + "\n")
+    # Load Model  ImagVelEst_augmented_Modifiedfc
+    velocityEstimator = load_model("ImagVelEst_aug_ModFc_EmbeddingHead_v0", print_model_arq= False)
 
     BASE_VALIDATION_IMAGE_PATH = "model/data/ExtraValidationData/Images/"
 
+    # Validation images for inference testing
     validation_images_path = [
         "43-kmph-27-mph_4-Severe_019_Vehicle4.jpg",
         "test_conf_1.jpeg",
         "test_conf_2.jpeg"  
-    ] 
+    ]
 
+    print("\033[0;34m" + "[Starting Inference Execution...] \033[0m" + "\n")
     for path in validation_images_path:
+        # Get full sample path
         path = BASE_VALIDATION_IMAGE_PATH + path
 
-        prediction = velocityEstimator.inference(
-            path
-        )
+        # Get inference
+        embedding, prediction = velocityEstimator.inference(path, return_embedding=True)
 
         print(f"\n    [Inference] Predicted speed: {prediction:.2f} km/h  for image: {path}")
+        print(embedding)
+
 
 # Main file for VelocityEstimator model training execution
 def main():
-    # Save training parameters
-    CONFIG.save()
-
+    
     # Load Training Params
     # config = TrainingConfig.load(
     #     "model/experiments/VelocityEstimator_640_691_4559samples/config.json"
@@ -63,6 +93,12 @@ def main():
             epochs = CONFIG.N_EPOCHS,
             learning_rate = CONFIG.LEARNING_RATE
         )
+
+        # Save model architecture
+        save_model_architecture(
+            model,
+            f"{CONFIG.EXPERIMENT_DIR}/model_architecture.json"
+        )
     else:
         print(" Warning: Active Inference Mode, Training phase can't start...")
         return
@@ -75,13 +111,18 @@ def main():
     print("\033[0;34m" + "[Starting testing phase...] \033[0m" + "\n")
     model.test()
 
+    # Save training parameters
+    CONFIG.save()
+
+
+
 if __name__ == "__main__":
     start = datetime.datetime.now()
-    print("\n" + "\033[0;34m" + "[start] " + str(start) + "\033[0m" + "\n");
-    #main();
+    print("\n" + "\033[0;34m" + "[start] " + str(start) + "\033[0m" + "\n")
+    #main()
     test_inference()
     end = datetime.datetime.now()
-    print("\n" + "\033[0;34m" + "[end] "+ str(end) + "\033[0m" + "\n");
+    print("\n" + "\033[0;34m" + "[end] "+ str(end) + "\033[0m" + "\n")
 
     exectime= end - start
     print("Exectime: ",exectime.total_seconds() )
