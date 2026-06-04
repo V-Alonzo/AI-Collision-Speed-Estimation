@@ -6,7 +6,7 @@ from utils.Preprocessing.HuggingFaceExtraction.HF_DB_Pipeline import (
 
 from model.config.TabularVelocityEstimator.config import CONFIG
 
-TARGET_COLUMN = "totalDeltaVKph"
+TARGET_COLUMN = CONFIG.TARGET_COLUMN
 
 def export_processed_tabular_dataset():
     """

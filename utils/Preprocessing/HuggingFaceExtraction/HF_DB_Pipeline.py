@@ -48,10 +48,6 @@ class TextNumberExtractor(BaseEstimator, TransformerMixin):
     def get_feature_names_out(self, input_features=None):
         return input_features
 
-    # Retorna los nombres originales de las columnas transformadas
-    def get_feature_names_out(self, input_features=None):
-        return np.array(input_features)
-
 class CyclicalTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, max_value):
         self.max_value = max_value
@@ -67,6 +63,14 @@ class CyclicalTransformer(BaseEstimator, TransformerMixin):
             transformed[f'{col}_cos'] = np.cos(2 * np.pi * X_copy[col] / self.max_value)
         return transformed
 
+    def get_feature_names_out(self, input_features=None):
+        if input_features is None:
+            return None
+        out_features = []
+        for col in input_features:
+            out_features.extend([f'{col}_sin', f'{col}_cos'])
+        return np.array(out_features)
+
 class BinaryRolloverEncoder(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
@@ -81,10 +85,6 @@ class BinaryRolloverEncoder(BaseEstimator, TransformerMixin):
         
     def get_feature_names_out(self, input_features=None):
         return input_features
-
-    # Retorna los nombres originales de las columnas transformadas
-    def get_feature_names_out(self, input_features=None):
-        return np.array(input_features)
 
 # 2. Definición del Pipeline Principal
 
@@ -108,6 +108,7 @@ def HuggingFacePipeline():
         ('imputer', SimpleImputer(strategy='constant', fill_value='Unknown')),
         #('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False)),
         ('target_encoder', TargetEncoder(smooth='auto', cv=5, target_type='continuous')),
+        ('scaler', StandardScaler())
     ])
 
     # C. Categóricos Ordinales (Severidad)
@@ -208,10 +209,18 @@ def PreprocessingHuggingFaceDB():
     
     # 4. Ajustar (fit) y transformar (transform) los datos
     print("Aplicando transformaciones...")
-    X_processed = preprocessor.fit_transform(X)
+    X_processed = preprocessor.fit_transform(X, y)
+    
+    final_columns = preprocessor.get_feature_names_out()
     
     print(f"Preprocesamiento completado.")
     print(f"Dimensiones originales de X: {X.shape}")
     print(f"Columnas originales de X: {X.columns.tolist()}")
     print(f"Dimensiones de X preprocesado: {X_processed.shape}")
     print(f"Dimensiones de y: {y.shape}")
+    
+    print(f"\nColumnas preprocesadas ({len(final_columns)} en total):")
+    for col in final_columns:
+        print(f" - {col}")
+
+    return X_processed, y, final_columns

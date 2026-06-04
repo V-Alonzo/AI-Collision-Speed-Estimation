@@ -8,9 +8,12 @@ class TrainingConfig:
     DEVICE: str = 'cuda' if torch.cuda.is_available() else 'cpu'
     FLOAT32_MATMUL_PRECISION: str = 'high'
 
+    # Dataset name
+    DATASET_NAME: str = "dataset_v3"
+
     # Tabular dataset paths
-    TABULAR_FEATURES_PATH: str = "model/data/CSV/HF_tabular_processed.csv"
-    TABULAR_TARGET_PATH: str = "model/data/CSV/HF_target_processed.csv"
+    TABULAR_FEATURES_PATH = f"model/data/CSV/{DATASET_NAME}/tabular_features.csv"
+    TABULAR_TARGET_PATH = f"model/data/CSV/{DATASET_NAME}/tabular_target.csv"
     INFERENCE_SAMPLE_PATH: str = "model/src/TabularVelocityEstimator/Inference/payloads/sample_payload.json"
 
     # Training Parameters
@@ -34,7 +37,7 @@ class TrainingConfig:
     TABULAR_DROPOUT: float = 0.05
 
     # Experiment / Model Naming
-    MODEL_PREFIX: str = "TabularVelocityEstimator_v1"
+    MODEL_PREFIX: str = "TabularVelocityEstimator_v3"
     EXPERIMENTS_ROOT_DIR: str = "model/experiments"
 
     # INFERENCE_MODE
@@ -42,6 +45,8 @@ class TrainingConfig:
 
     # METRICS MODE
     METRICS_MODE: bool = False
+
+    TARGET_COLUMN: str = "targetVariable"
 
     # Post Init
     def __post_init__(self):
