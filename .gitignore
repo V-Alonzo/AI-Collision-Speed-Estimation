@@ -84,4 +84,3 @@ __pycache__/
 *.vscode
 
 # ML experiments
-model/experiments/*
