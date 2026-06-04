@@ -15,7 +15,12 @@ class VelocityNetwork(nn.Module):
         self.fc_in_features = backbone.fc.in_features
 
         self.embedding_head = nn.Sequential(
-            nn.Linear(self.fc_in_features, 512),
+            nn.Linear(self.fc_in_features, 1024),
+            nn.BatchNorm1d(1024),
+            nn.GELU(),
+            nn.Dropout(0.2),
+
+            nn.Linear(1024, 512),
             nn.BatchNorm1d(512),
             nn.GELU(),
             nn.Dropout(0.3)
