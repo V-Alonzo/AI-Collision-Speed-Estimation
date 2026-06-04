@@ -1,4 +1,4 @@
-# == Main for model's training phase
+# == Main file
 
 # Import libraries and required modules
 from model.src.ImageVelocityEstimator.VelocityEstimator import VelocityEstimator 

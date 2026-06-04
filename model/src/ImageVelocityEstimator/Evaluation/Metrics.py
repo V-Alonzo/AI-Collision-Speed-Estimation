@@ -401,7 +401,7 @@ class MetricsPlotter:
 
 
 # Main
-if __name__ == "__main__":
+def main():
 
     from model.config.ImageVelocityEstimator.config import (
         CONFIG
@@ -414,3 +414,17 @@ if __name__ == "__main__":
     )
 
     plotter.run()
+
+    return
+
+# Entry point
+if __name__ == "__main__":
+    start = datetime.datetime.now()
+    print("\n" + "\033[0;34m" + "[start] " + str(start) + "\033[0m" + "\n")
+    main()
+    end = datetime.datetime.now()
+    print("\n" + "\033[0;34m" + "[end] "+ str(end) + "\033[0m" + "\n")
+
+    exectime= end - start
+    print("Exectime: ",exectime.total_seconds() )
+
