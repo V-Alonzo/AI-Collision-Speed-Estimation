@@ -78,9 +78,26 @@ class VelocityEstimatorModel(L.LightningModule):
     # Configure Model Optimizer
     def configure_optimizers(self):
         # Configure optimizer as AdamW with specified learning rate
+        # optimizer = torch.optim.AdamW(
+        #     self.parameters(),
+        #     lr=self.learning_rate
+        # )
+        
         optimizer = torch.optim.AdamW(
-            self.parameters(),
-            lr=self.learning_rate
+            [
+                {
+                    "params": self.model.backbone[7].parameters(),
+                    "lr": 1e-5
+                },
+                {
+                    "params": self.model.embedding_head.parameters(),
+                    "lr": 1e-4
+                },
+                {
+                    "params": self.model.regression_head.parameters(),
+                    "lr": 1e-4
+                }
+            ]
         )
         return optimizer
 
