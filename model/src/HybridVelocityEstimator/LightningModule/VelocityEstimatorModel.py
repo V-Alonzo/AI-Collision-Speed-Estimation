@@ -32,7 +32,11 @@ class VelocityEstimatorModel(L.LightningModule):
         predicted_labels = self(images, tabular_features).squeeze(1)
 
         # --- Loss
-        loss = F.l1_loss(predicted_labels, true_labels) 
+        #loss = F.l1_loss(predicted_labels, true_labels) 
+
+        weights = 1 + true_labels / 100
+
+        loss = (weights * torch.abs(predicted_labels - true_labels)).mean()
 
         return loss, true_labels, predicted_labels
     
