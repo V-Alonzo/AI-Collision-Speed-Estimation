@@ -68,15 +68,50 @@ class VelocityEstimatorDataModule(L.LightningDataModule):
         self.valid = torch.utils.data.Subset(self.valid, val_idx.indices)
         self.test = torch.utils.data.Subset(self.test, test_idx.indices)
 
+        # -------------------------
+        # TRAIN LABELS FOR SAMPLER
+        # -------------------------
+        self.train_labels = np.array([
+            self.train.dataset.df.loc[i, CONFIG.OUTPUT_LABEL_CSV_INDEX]
+            for i in self.train.indices
+        ])
+
+        bins = [0,20,40,60,80,100,200]
+
+        bin_ids = np.digitize(
+            self.train_labels,
+            bins
+        )
+
+        bin_counts = np.bincount(bin_ids)
+
+        weights = 1.0 / bin_counts[bin_ids]
+
+        self.sample_weights = torch.DoubleTensor(weights)
+
     # Training dataloader
     def train_dataloader(self):
+        sampler = WeightedRandomSampler(
+            weights=self.sample_weights,
+            num_samples=len(self.sample_weights),
+            replacement=True
+        )
+
         train_loader = DataLoader(
             dataset=self.train,
             batch_size=self.batch_size,
+            sampler=sampler,
             drop_last=True,
-            shuffle=True,
             num_workers=self.num_workers,
         )
+
+        # train_loader = DataLoader(
+        #     dataset=self.train,
+        #     batch_size=self.batch_size,
+        #     drop_last=True,
+        #     shuffle=True,
+        #     num_workers=self.num_workers,
+        # )
         return train_loader
 
     # Validation Dataloader
