@@ -27,7 +27,7 @@ yarn-error.log*
 *.log
 .DS_Store
 Thumbs.db1
-FrontEnd/.env.example
+
 
 # Backend
 BackEnd/web/vendor/
