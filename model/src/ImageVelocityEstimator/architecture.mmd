@@ -1,0 +1,37 @@
+---
+config:
+  layout: fixed
+---
+flowchart LR
+ subgraph B["Feature Extraction"]
+        C["ResNet50 Backbone<br>Fine-Tuning"]
+        D["Feature Vector<br>2048 Features"]
+  end
+ subgraph E1["Embedding Learning"]
+        E["Embedding Head<br>2048 → 1024 → 512"]
+        F["L2 Normalization<br>512D Embedding"]
+  end
+ subgraph R["Velocity Regression"]
+        G["Regression Head<br>512 → 128 → 1"]
+  end
+ subgraph M["ImageVelocityEstimator"]
+        B
+        E1
+        R
+  end
+    A["Imagen de Entrada"] --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G & n1["Embedding Normalizado 512D"]
+    G --> H["Velocidad Estimada"]
+
+    n1@{ shape: rect}
+    style C fill:#E1BEE7
+    style D fill:#E1BEE7
+    style E fill:#FFCDD2
+    style F fill:#D7CCC8
+    style G fill:#FFE0B2
+    style A fill:#BBDEFB
+    style n1 fill:#C8E6C9
+    style H fill:#C8E6C9
