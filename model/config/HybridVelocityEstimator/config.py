@@ -27,13 +27,13 @@ class TrainingConfig:
     TRAIN_PROPORTION: float = 0.8 
     VAL_PROPORTION: float = 0.8
 
-    N_EPOCHS: int = 60
+    N_EPOCHS: int = 80
 
     LEARNING_RATE: float = 1e-4
 
     SEED: int = 42
 
-    EARLY_STOPPING_PATIENCE: int = 20
+    EARLY_STOPPING_PATIENCE: int = 10
 
     TRAINER_ACCELERATOR: str = 'gpu'
     TRAINER_PRECISION: str = "bf16-mixed"
@@ -64,7 +64,7 @@ class TrainingConfig:
     ENCODER_IMAGEVELOCITYESTIMATOR_SERIALIZED_PATH: str = "model/experiments/ImagVelEst_aug_ModFc_EmbHead_l1Loss_v1/serialized/ImagVelEst_aug_ModFc_EmbHead_l1Loss_v1_weights.pth"
 
     # Experiment / Model Naming
-    MODEL_PREFIX: str = "HybVelEst_v0"
+    MODEL_PREFIX: str = "HybVelEst_weightedLoss_v2"
 
     EXPERIMENTS_ROOT_DIR: str = "model/experiments"
 
