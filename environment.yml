@@ -5,6 +5,9 @@ channels:
 dependencies:
   - python=3.11
   - pip
+  - plotly
+  - umap-learn
+  - seaborn
   - pip:
       # Datos y serializacion
       - pandas
@@ -16,10 +19,19 @@ dependencies:
       - numpy
       - matplotlib
       - opencv-python
+      - huggingface_hub
+      - datasets
+      - scikit-learn
+
       # Vision y modelos
-      - torch
-      - torchvision
       - open-clip-torch
       - ultralytics
       - imagededup
       - curl_cffi
+
+      # Torch
+      - torch
+      - torchvision
+      - torchmetrics
+      - lightning
+      

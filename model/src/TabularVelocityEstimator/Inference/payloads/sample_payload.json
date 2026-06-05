@@ -1,0 +1,27 @@
+[
+  {
+    "curbWeightKg": -0.9634865706598303,
+    "cargoWeightKg": -0.09540147614864423,
+    "vehicleClass_Compact (wheelbase >= 254 but < 265 cm)": 0.0,
+    "vehicleClass_Compact pickup truck (<=4,536 kgs GVWR)": 0.0,
+    "vehicleClass_Compact utility vehicle": 0.0,
+    "vehicleClass_Full size (wheelbase >=278 but < 291 cm)": 0.0,
+    "vehicleClass_Intermediate (wheelbase >=265 but < 278 cm)": 1.0,
+    "vehicleClass_Large pickup truck (<=4,536 kgs GVWR)": 0.0,
+    "vehicleClass_Large utility vehicle (<=4,536 kgs GVWR)": 0.0,
+    "vehicleClass_Largest (wheelbase >=291 cm)": 0.0,
+    "vehicleClass_Minivan (<=4,536 kgs GVWR)": 0.0,
+    "vehicleClass_Subcompact/mini (wheelbase < 254 cm)": 0.0,
+    "damagePlaneDescription_Back": 0.0,
+    "damagePlaneDescription_Front": 1.0,
+    "damagePlaneDescription_Left side": 0.0,
+    "damagePlaneDescription_Right side": 0.0,
+    "severityDescription": 0.9858430033694422,
+    "mais": 0.035709526513876585,
+    "forceDirection_sin": -0.17364817766693127,
+    "forceDirection_cos": 0.9848077530122079,
+    "clockDirection_sin": -2.4492935982947064e-16,
+    "clockDirection_cos": 1.0,
+    "rolloverStatus": 0.0
+  }
+]

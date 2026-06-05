@@ -58,7 +58,8 @@ CIREN_REQUIRED_METADATA_KEYS = (
     "curbWeight",
     "cargoWeight",
     "totalDeltaV",
-    "mais"
+    "mais",
+    "dvBarrierEquivalentSpeedDescription"
 )
 CIREN_IGNORED_SUBTYPE_KEYWORDS = (
     "INTERIOR",
@@ -71,3 +72,7 @@ CIREN_IGNORED_SUBTYPE_KEYWORDS = (
 )
 CIREN_IGNORED_DESCRIPTION_KEYWORDS = ("TIRE", "FILLER")
 CIREN_DEFAULT_CASE_ID_RANGE = range(10000)
+
+# HuggingFace dataset settings.
+HF_DATASET_NAME = "CrashVisionAITeam/CrashedDB"
+HF_SPLIT = "train"

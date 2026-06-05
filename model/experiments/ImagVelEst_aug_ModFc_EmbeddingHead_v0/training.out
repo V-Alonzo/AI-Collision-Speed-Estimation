@@ -1,0 +1,56 @@
+[start] 2026-06-03 20:44:01.423674
+
+Split sizes -> Train: 9929, Val: 2481, Test: 3103
+[Starting training phase...]
+
+Using cache found in /home/mapa/.cache/torch/hub/pytorch_vision_main
+Using bfloat16 Automatic Mixed Precision (AMP)
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+VelocityEstimationAI/lib/python3.11/site-packages/lightning/pytorch/utilities/model_summary/model_summary.py:242: Precision bf16-mixed is not supported by the model summary.  Estimated model size in MB will not be accurate. Using 32 bits instead.
+┏━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name      ┃ Type              ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ model     │ VelocityNetwork   │ 24.6 M │ train │     0 │
+│ 1 │ train_mae │ MeanAbsoluteError │      0 │ train │     0 │
+│ 2 │ val_mae   │ MeanAbsoluteError │      0 │ train │     0 │
+│ 3 │ test_mae  │ MeanAbsoluteError │      0 │ train │     0 │
+└───┴───────────┴───────────────────┴────────┴───────┴───────┘
+Trainable params: 1.1 M
+Non-trainable params: 23.5 M
+Total params: 24.6 M
+Total estimated model params size (MB): 98
+Modules in train mode: 165
+Modules in eval mode: 0
+Total FLOPs: 0
+VelocityEstimationAI/lib/python3.11/site-packages/lightning/pytorch/utilitie
+s/_pytree.py:21: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec)
+and treespec.is_leaf()` instead.
+Epoch 59/59 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 77/77 0:00:14 • 0:00:00 5.35it/s v_num: 0.000
+                                                                          train_loss_step: 8.254
+Epoch 59/59 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 77/77 0:00:14 • 0:00:00 5.35it/s v_num: 0.000
+                                                                          train_loss_step: 8.254
+                                                                          val_loss: 14.003 val_mae:                                                                             14.496 train_loss_epoch:
+                                                                          6.695 train_mae: 7.175
+[INFO] Model architecture saved at: model/experiments/ImagVelEst_aug_ModFc_EmbeddingHead_v0/model_architecture.json
+[Serialized model was saved in: model/experiments/ImagVelEst_aug_ModFc_EmbeddingHead_v0/serialized/ImagVelEst_aug_ModFc_EmbeddingHead_v0_weights.pth]
+
+[Starting testing phase...]
+
+VelocityEstimationAI/lib/python3.11/site-packages/lightning/pytorch/trainer/connectors/checkpoint_connector.py:190: .test(ckpt_path="last") is set, but there is no last checkpoint available. No checkpoint will be loaded. HINT: Set `ModelCheckpoint(..., save_last=True)`.
+Split sizes -> Train: 9929, Val: 2481, Test: 3103
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+VelocityEstimationAI/lib/python3.11/site-packages/lightning/pytorch/utilities/_pytree.py:21: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│         test_mae          │    14.447803497314453     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 25/25 0:00:03 • 0:00:00 6.07it/s
+[INFO] Config saved at: model/experiments/ImagVelEst_aug_ModFc_EmbeddingHead_v0/config.json
+
+[end] 2026-06-03 21:03:01.788386
+
+Exectime:  1140.364712

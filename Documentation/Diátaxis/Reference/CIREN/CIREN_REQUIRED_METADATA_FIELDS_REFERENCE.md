@@ -27,7 +27,7 @@ No intenta reemplazar una taxonomía oficial de NHTSA o CIREN. Cuando un campo u
 | Artefacto | Variables principales | Uso |
 | --- | --- | --- |
 | `cacheCIREN.json` | `cirenId`, `caseId`, `caseNumber`, metadatos CIREN, `candidateImages`, `revisedImages`, `validImages`, `validatedImageRecords`, `errors` | estado reanudable del extractor |
-| `ciren_cases.parquet` | `cirenId`, `caseId`, `mais`, `totalDeltaVKph`, `totalDeltaVMph`, `cdc`, `clockDirection`, `forceDirection`, `rolloverStatus`, `primaryVehicleNumber`, `damagePlaneDescription`, `severityDescription`, `vehicleClass`, `curbWeight`, `curbWeightKg`, `cargoWeight`, `cargoWeightKg` | tabla de casos para análisis |
+| `ciren_cases.parquet` | `cirenId`, `caseId`, `mais`, `totalDeltaVKph`, `totalDeltaVMph`, `dvBarrierEquivalentSpeedDescription`, `cdc`, `clockDirection`, `forceDirection`, `rolloverStatus`, `primaryVehicleNumber`, `damagePlaneDescription`, `severityDescription`, `vehicleClass`, `curbWeight`, `curbWeightKg`, `cargoWeight`, `cargoWeightKg` | tabla de casos para análisis |
 | `ciren_images.parquet` | `image_id`, `cirenId`, `caseId`, `image_relpath`, `image_filename`, `vehicleNumber`, `image_sequence`, `photoId`, `objectID`, `description`, `subtype` | tabla de imágenes validadas |
 | `ciren_training_manifest.parquet` | columnas de `ciren_images.parquet` más los metadatos de caso incluidos en `CIREN_REQUIRED_METADATA_KEYS` | unión analítica para modelado |
 | tabla interna de errores | `cirenId`, `caseId`, `errorIndex`, `errorMessage` | normalización interna de errores. |
@@ -54,6 +54,7 @@ Cada campo se documenta con una de estas dos profundidades:
 | `curbWeight` | texto con unidad | peso base del vehículo | masa cruda reportada |
 | `cargoWeight` | texto con unidad | carga reportada | ajuste de masa adicional |
 | `totalDeltaV` | texto semiestructurado | delta-v total reportado por CIREN | variable objetivo y fuente de columnas numéricas derivadas |
+| `dvBarrierEquivalentSpeedDescription` | texto semiestructurado | velocidad equivalente contra barrera reportada en General Vehicle > DeltaV | severidad cinemática complementaria |
 | `mais` | entero o texto numérico corto | severidad máxima de lesión reportada | target alterno y estratificación de gravedad |
 
 ## Esquema actual por tabla
@@ -67,6 +68,7 @@ Esta tabla contiene:
 - `mais`
 - `totalDeltaVKph`
 - `totalDeltaVMph`
+- `dvBarrierEquivalentSpeedDescription`
 - `cdc`
 - `clockDirection`
 - `forceDirection`
@@ -103,7 +105,7 @@ Esta tabla se genera con un `merge` entre `ciren_images.parquet` y `ciren_cases.
 - Todas las columnas de `ciren_images.parquet`.
 - Todas las columnas de caso habilitadas por `CIREN_REQUIRED_METADATA_KEYS` después de sus derivaciones numéricas.
 
-Esto incluye: `mais`, `totalDeltaVKph`, `totalDeltaVMph`, `cdc`, `clockDirection`, `forceDirection`, `rolloverStatus`, `primaryVehicleNumber`, `damagePlaneDescription`, `severityDescription`, `vehicleClass`, `curbWeight`, `curbWeightKg`, `cargoWeight` y `cargoWeightKg`.
+Esto incluye: `mais`, `totalDeltaVKph`, `totalDeltaVMph`, `dvBarrierEquivalentSpeedDescription`, `cdc`, `clockDirection`, `forceDirection`, `rolloverStatus`, `primaryVehicleNumber`, `damagePlaneDescription`, `severityDescription`, `vehicleClass`, `curbWeight`, `curbWeightKg`, `cargoWeight` y `cargoWeightKg`.
 
 ## Referencia detallada de metadatos
 
@@ -133,6 +135,28 @@ Es una de las variables objetivo más valiosas del flujo. En parquet no se conse
 **Notas**
 
 Si el valor crudo viene incompleto o con formato distinto, alguna de las derivaciones numéricas puede quedar nula.
+
+### `dvBarrierEquivalentSpeedDescription`
+
+**Propósito**
+
+Conservar la velocidad equivalente contra barrera reportada para el vehículo principal.
+
+**Significado**
+
+Corresponde al valor mostrado en `Case Overview -> Vehicle N -> General Vehicle -> DeltaV -> Barrier Equivalent Speed` dentro de Crash Viewer.
+
+**Tipo**
+
+Texto semiestructurado.
+
+**Utilidad**
+
+Aporta una señal cinemática complementaria a `totalDeltaV` y puede servir como covariable de severidad o de energía equivalente cuando está disponible.
+
+**Notas**
+
+El extractor la toma del payload de `General Vehicle`. Si CIREN no la informa para un caso, el cache la dejará ausente o nula según el estado de la corrida.
 
 ### `mais`
 

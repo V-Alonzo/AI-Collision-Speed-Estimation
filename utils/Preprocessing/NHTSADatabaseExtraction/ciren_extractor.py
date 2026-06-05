@@ -49,6 +49,7 @@ _CIREN_CONFIGURABLE_METADATA_KEYS = (
     "vehicleTransport",
     "mais",
     "totalDeltaV",
+    "dvBarrierEquivalentSpeedDescription",
     "vehicleClass",
     "primaryVehicleNumber",
     "crashSummaryText",
@@ -82,6 +83,12 @@ def _get_configured_ciren_metadata_keys() -> tuple[str, ...]:
     return tuple(CIREN_REQUIRED_METADATA_KEYS)
 
 
+def _has_present_ciren_metadata_value(metadata_value: Any) -> bool:
+    """Return whether a configured CIREN metadata value should count as populated."""
+
+    return metadata_value not in (None, "")
+
+
 def _prune_unconfigured_ciren_metadata(case_payload: Dict[str, Any]) -> None:
     """Remove configurable CIREN metadata keys that are no longer selected in configuration."""
 
@@ -96,7 +103,10 @@ def _prune_unconfigured_ciren_metadata(case_payload: Dict[str, Any]) -> None:
 def _has_required_ciren_cache_metadata(case_payload: Dict[str, Any]) -> bool:
     """Return whether a cache entry already includes all required persisted metadata."""
 
-    return all(metadata_key in case_payload for metadata_key in _get_configured_ciren_metadata_keys()) and all(
+    return all(
+        metadata_key in case_payload and _has_present_ciren_metadata_value(case_payload.get(metadata_key))
+        for metadata_key in _get_configured_ciren_metadata_keys()
+    ) and all(
         cache_key in case_payload for cache_key in _CIREN_STABLE_CACHE_KEYS
     )
 
@@ -150,7 +160,7 @@ def _sync_ciren_metadata_errors(case_payload: Dict[str, Any]) -> None:
         normalized_errors.append(error_message)
 
     for metadata_key in configured_metadata_keys:
-        if metadata_key in case_payload:
+        if _has_present_ciren_metadata_value(case_payload.get(metadata_key)):
             continue
         if metadata_key in seen_errors:
             continue
@@ -174,6 +184,10 @@ def _build_ciren_case_payload(case_entry: Dict[str, Any], cached_case: Dict[str,
             "validatedImageRecords": _normalize_validated_image_records(cached_case.get("validatedImageRecords")),
         }
     )
+    
+    if len(case_payload["errors"])  > 0 and len(case_payload["candidateImages"]) == len(case_payload["revisedImages"]):
+        case_payload["errors"] = []
+        
     case_payload["validImages"] = _normalize_valid_ciren_object_ids(case_payload, cached_case)
     case_payload.pop("candidateImagesCataloged", None)
     _prune_unconfigured_ciren_metadata(case_payload)
@@ -308,8 +322,93 @@ def _append_validated_ciren_image_record(
     )
 
 
+def _get_selected_ciren_vehicle_number(
+    general_vehicle: Dict[str, Any], crash_summary_vehicle: Dict[str, Any]
+) -> int | None:
+    """Return the selected vehicle number used for CIREN case metadata."""
+
+    vehicle_number = general_vehicle.get("vehicleNumber")
+    if isinstance(vehicle_number, int):
+        return vehicle_number
+
+    vehicle_number = crash_summary_vehicle.get("vehicleNumber")
+    if isinstance(vehicle_number, int):
+        return vehicle_number
+
+    return None
+
+
+def _select_ciren_vehicle_delta_v_record(
+    detail_payload: Dict[str, Any], selected_vehicle_number: int | None
+) -> Dict[str, Any]:
+    """Return the DeltaV payload associated with the selected vehicle when available."""
+
+    for payload_key in ("cirenGeneralVehicleDeltaV", "cirenEvCdc"):
+        delta_v_records = detail_payload.get(payload_key)
+        if not isinstance(delta_v_records, list) or not delta_v_records:
+            continue
+
+        if selected_vehicle_number is not None:
+            for delta_v_record in delta_v_records:
+                if not isinstance(delta_v_record, dict):
+                    continue
+                if delta_v_record.get("vehicleNumber") == selected_vehicle_number:
+                    return delta_v_record
+
+        for delta_v_record in delta_v_records:
+            if isinstance(delta_v_record, dict):
+                return delta_v_record
+
+    return {}
+
+
+def _extract_barrier_equivalent_speed_description(
+    detail_payload: Dict[str, Any],
+    general_vehicle: Dict[str, Any],
+    crash_summary_vehicle: Dict[str, Any],
+) -> Any:
+    """Return the selected vehicle barrier-equivalent speed from known CIREN payload shapes."""
+
+    candidate_keys = (
+        "dvBarrierEquivalentSpeedDescription",
+        "barrierEquivalentSpeedDescription",
+        "dvBarrierEquivalentSpeed",
+        "barrierEquivalentSpeed",
+        "highestDeltaVBarrierEquivalentSpeed",
+    )
+
+    for metadata_key in candidate_keys:
+        metadata_value = general_vehicle.get(metadata_key)
+        if metadata_value not in (None, ""):
+            return metadata_value
+
+    delta_v_payload = general_vehicle.get("deltaV") or general_vehicle.get("DeltaV")
+    if isinstance(delta_v_payload, dict):
+        for metadata_key in candidate_keys:
+            metadata_value = delta_v_payload.get(metadata_key)
+            if _has_present_ciren_metadata_value(metadata_value):
+                return metadata_value
+
+        nested_barrier_equivalent_speed = delta_v_payload.get("barrierEquivalentSpeed")
+        if isinstance(nested_barrier_equivalent_speed, dict):
+            for metadata_key in ("description", "value"):
+                metadata_value = nested_barrier_equivalent_speed.get(metadata_key)
+                if _has_present_ciren_metadata_value(metadata_value):
+                    return metadata_value
+
+    selected_vehicle_number = _get_selected_ciren_vehicle_number(general_vehicle, crash_summary_vehicle)
+    delta_v_record = _select_ciren_vehicle_delta_v_record(detail_payload, selected_vehicle_number)
+    for metadata_key in candidate_keys:
+        metadata_value = delta_v_record.get(metadata_key)
+        if _has_present_ciren_metadata_value(metadata_value):
+            return metadata_value
+
+    return None
+
+
 def _update_ciren_case_metadata(
     case_payload: Dict[str, Any],
+    detail_payload: Dict[str, Any],
     summary: Dict[str, Any],
     general_vehicle: Dict[str, Any],
     crash_summary_vehicle: Dict[str, Any],
@@ -346,11 +445,17 @@ def _update_ciren_case_metadata(
         "vehicleTransport": general_vehicle.get("vehicleTransport"),
         "mais": summary.get("mais"),
         "totalDeltaV": summary.get("totalDeltaV"),
+        "dvBarrierEquivalentSpeedDescription": _extract_barrier_equivalent_speed_description(
+            detail_payload, general_vehicle, crash_summary_vehicle
+        ),
         "crashSummaryText": summary.get("crashSummaryText") or summary.get("crashSummary"),
         "make": summary.get("make"),
         "model": summary.get("model"),
         "modelYear": summary.get("modelYear"),
     }
+
+    if available_metadata["dvBarrierEquivalentSpeedDescription"] == "Unknown" and available_metadata["totalDeltaV"] == "Unknown":
+        return "INVALID CASE"
 
     missing_supported_mappings = [
         metadata_key
@@ -431,7 +536,8 @@ def refresh_ciren_case_metadata(
         summary = extract_case_summary(detail_payload)
         general_vehicle = extract_case_general_vehicle(detail_payload)
         crash_summary_vehicle = extract_case_crash_summary_vehicle(detail_payload)
-        _update_ciren_case_metadata(cached_case, summary, general_vehicle, crash_summary_vehicle)
+        _update_ciren_case_metadata(cached_case, detail_payload, summary, general_vehicle, crash_summary_vehicle)
+
         cached_cases[cache_key] = cached_case
         write_cached_results(cache_path, cached_cases)
 
@@ -552,7 +658,12 @@ def extract_ciren_case_candidates(
             general_vehicle = extract_case_general_vehicle(detail_payload)
             crash_summary_vehicle = extract_case_crash_summary_vehicle(detail_payload)
 
-            _update_ciren_case_metadata(case_payload, summary, general_vehicle, crash_summary_vehicle)
+            result =_update_ciren_case_metadata(case_payload, detail_payload, summary, general_vehicle, crash_summary_vehicle)
+
+            if result == "INVALID CASE":
+                print(f"CIREN case {ciren_id} is invalid due to missing target variables")
+                continue
+            
             case_payload["candidateImages"] = [
                 _build_ciren_candidate_record(image_candidate)
                 for image_candidate in iter_vehicle_image_candidates(ciren_id, detail_payload)

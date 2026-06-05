@@ -1,0 +1,27 @@
+{
+    "DEVICE": "cuda",
+    "FLOAT32_MATMUL_PRECISION": "high",
+    "DATASET_NAME": "dataset_V1",
+    "INFERENCE_SAMPLE_PATH": "model/src/TabularVelocityEstimator/Inference/payloads/sample_payload.json",
+    "BATCH_SIZE": 16,
+    "NUM_WORKERS": 2,
+    "TRAIN_PROPORTION": 0.8,
+    "VAL_PROPORTION": 0.8,
+    "N_EPOCHS": 100,
+    "LEARNING_RATE": 0.0003,
+    "SEED": 42,
+    "EARLY_STOPPING_PATIENCE": 10,
+    "TRAINER_ACCELERATOR": "gpu",
+    "TRAINER_PRECISION": "16-mixed",
+    "TABULAR_HIDDEN_DIMS": [
+        64,
+        32,
+        16
+    ],
+    "TABULAR_DROPOUT": 0.05,
+    "MODEL_PREFIX": "TabularVelocityEstimator_v1",
+    "EXPERIMENTS_ROOT_DIR": "model/experiments",
+    "INFERENCE_MODE": false,
+    "METRICS_MODE": false,
+    "TARGET_COLUMN": "targetVariable"
+}
