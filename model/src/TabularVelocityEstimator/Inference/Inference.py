@@ -4,7 +4,9 @@
 
 # Import libraries and required modules
 from model.src.TabularVelocityEstimator.VelocityEstimator import VelocityEstimator 
+
 from model.config.TabularVelocityEstimator.config import CONFIG
+
 from model.config.libraries import *
 
 
@@ -101,7 +103,7 @@ def execute_inference():
         + output_path
         + "..."
     )
-    
+
 
 def get_test_inferences():
     """

@@ -1,0 +1,20 @@
+{
+    "DATASET_NAME": "dataset_v3",
+    "TABULAR_FEATURES_PATH": "model/data/CSV/dataset_v3/tabular_features.csv",
+    "TABULAR_TARGET_PATH": "model/data/CSV/dataset_v3/tabular_target.csv",
+    "TARGET_COLUMN": "targetVariable",
+    "SEED": 42,
+    "TRAIN_PROPORTION": 0.8,
+    "N_ESTIMATORS": 1000,
+    "MAX_DEPTH": 5,
+    "LEARNING_RATE": 0.05,
+    "EVAL_METRIC": "mae",
+    "SUBSAMPLE": 0.8,
+    "COLSAMPLE_BYTREE": 0.8,
+    "EARLY_STOPPING_ROUNDS": 50,
+    "OBJECTIVE": "reg:squarederror",
+    "MODEL_PREFIX": "TabularVelocity_XGBoost_v1",
+    "EXPERIMENTS_ROOT_DIR": "model/experiments",
+    "INFERENCE_MODE": false,
+    "METRICS_MODE": false
+}
