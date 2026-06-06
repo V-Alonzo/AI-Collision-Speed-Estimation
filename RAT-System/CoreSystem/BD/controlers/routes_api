@@ -1,0 +1,74 @@
+<?php
+
+// =============================================================================
+// routes/api.php — Módulo RAT · CESVI México
+// =============================================================================
+// Todas las rutas van bajo el prefijo /api/rat y requieren autenticación.
+// Se asume Laravel Sanctum (o el guard que use la plataforma base de CESVI).
+//
+// Para registrar estas rutas, añadir en RouteServiceProvider o en api.php:
+//   Route::prefix('rat')->middleware(['auth:sanctum'])->group(function() { ... });
+// =============================================================================
+
+use App\Http\Controllers\Rat\DashboardController;
+use App\Http\Controllers\Rat\IncidenteController;
+use App\Http\Controllers\Rat\ExpedienteWizardController;
+use App\Http\Controllers\Rat\PerfilController;
+use App\Http\Controllers\Rat\CatalogoController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('rat')->middleware(['auth:sanctum'])->group(function () {
+
+    // ── Dashboard ─────────────────────────────────────────────────────────────
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // ── Expedientes (lista + detalle + estado + eliminación) ──────────────────
+    Route::get   ('/incidentes',              [IncidenteController::class, 'index']);
+    Route::get   ('/incidentes/{uuid}',       [IncidenteController::class, 'show']);
+    Route::patch ('/incidentes/{uuid}/estado',[IncidenteController::class, 'cambiarEstado']);
+    Route::delete('/incidentes/{uuid}',       [IncidenteController::class, 'destroy']);
+
+    // ── Wizard "Nuevo Expediente" (9 pasos) ───────────────────────────────────
+    //
+    // Paso 1 — Crear expediente (POST) o editar (PUT)
+    Route::post('/wizard/paso1-incidente',                       [ExpedienteWizardController::class, 'storePaso1']);
+    Route::put ('/wizard/{uuid}/paso1-incidente',                [ExpedienteWizardController::class, 'updatePaso1']);
+
+    // Paso 2 — Vehículo
+    Route::put('/wizard/{uuid}/paso2-vehiculo',                  [ExpedienteWizardController::class, 'updatePaso2']);
+
+    // Paso 3 — Ocupantes / Carga
+    Route::put('/wizard/{uuid}/paso3-ocupantes',                 [ExpedienteWizardController::class, 'updatePaso3']);
+
+    // Paso 4 — Vía y huellas de la escena
+    Route::put('/wizard/{uuid}/paso4-via',                       [ExpedienteWizardController::class, 'updatePaso4']);
+
+    // Paso 5 — Evidencia fotográfica
+    Route::post  ('/wizard/{uuid}/paso5-evidencia',              [ExpedienteWizardController::class, 'storePaso5']);
+    Route::delete('/wizard/{uuid}/paso5-evidencia/{foto_id}',    [ExpedienteWizardController::class, 'destroyFoto']);
+
+    // Paso 6 — Deformación (mediciones McHenry)
+    Route::put('/wizard/{uuid}/paso6-deformacion',               [ExpedienteWizardController::class, 'updatePaso6']);
+
+    // Paso 7 — Cálculo de velocidad
+    Route::post('/wizard/{uuid}/paso7-calculo',                  [ExpedienteWizardController::class, 'storePaso7']);
+
+    // Paso 8 — Narrativa + fase del accidente
+    Route::put('/wizard/{uuid}/paso8-narrativa',                 [ExpedienteWizardController::class, 'updatePaso8']);
+
+    // Paso 9 — Reporte / conclusiones / emitir
+    Route::put('/wizard/{uuid}/paso9-reporte',                   [ExpedienteWizardController::class, 'updatePaso9']);
+
+    // ── Perfil del perito ─────────────────────────────────────────────────────
+    Route::get ('/perfil',                   [PerfilController::class, 'show']);
+    Route::put ('/perfil',                   [PerfilController::class, 'update']);
+    Route::get ('/perfil/expedientes',       [PerfilController::class, 'misExpedientes']);
+    Route::put ('/perfil/password',          [PerfilController::class, 'cambiarPassword']);
+
+    // ── Catálogos (para poblar selects del wizard) ────────────────────────────
+    Route::get('/catalogos',                 [CatalogoController::class, 'index']);
+    Route::get('/catalogos/peritos',         [CatalogoController::class, 'peritos']);
+    Route::get('/catalogos/rigidez',         [CatalogoController::class, 'rigidez']);
+    Route::get('/catalogos/mu',              [CatalogoController::class, 'mu']);
+
+});
