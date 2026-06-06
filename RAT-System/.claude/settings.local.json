@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(php --version)",
-      "Bash(where node *)",
-      "Bash(xargs grep *)"
-    ]
-  }
-}
