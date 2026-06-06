@@ -211,7 +211,7 @@ export default function AdminUsuarios() {
                       <td className="px-3 py-2 text-xs text-gray-600">{u.numero_empleado ?? "—"}</td>
                       <td className="px-3 py-2 text-xs text-gray-700 text-center">{u.total_expedientes ?? 0}</td>
                       <td className="px-3 py-2">
-                        {u.email !== "admin@cesvi.mx" && (
+                        {u.email !== "admin@cesvi.com" && (
                           <button
                             onClick={() => setModalUser(u)}
                             className="flex items-center gap-1 px-2 py-1 text-xs border border-gray-300 rounded hover:border-[#00ADCF] hover:text-[#00ADCF] text-gray-600"

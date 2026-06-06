@@ -14,7 +14,7 @@ class AdminController extends Controller
     {
         $user  = $request->attributes->get('user');
         $email = $user->email ?? '';
-        if ($email !== 'admin@cesvi.mx') {
+        if ($email !== 'admin@cesvi.com') {
             abort(403, 'Acceso restringido a administradores.');
         }
     }
@@ -61,7 +61,7 @@ class AdminController extends Controller
         }
 
         // No permitir cambiar la contraseña del propio admin desde este endpoint
-        if ($user->email === 'admin@cesvi.mx') {
+        if ($user->email === 'admin@cesvi.com') {
             return response()->json(['message' => 'Use el perfil para cambiar su propia contraseña.'], 422);
         }
 

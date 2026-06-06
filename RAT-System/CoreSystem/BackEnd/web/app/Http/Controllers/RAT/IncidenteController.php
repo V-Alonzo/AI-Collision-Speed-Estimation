@@ -18,7 +18,7 @@ class IncidenteController extends Controller
 
     private function isAdmin(Request $request): bool
     {
-        return ($this->getJwtUser($request)->email ?? '') === 'admin@cesvi.mx';
+        return ($this->getJwtUser($request)->email ?? '') === 'admin@cesvi.com';
     }
 
     private function checkOwnership(Request $request, Incidente $incidente): void
@@ -40,7 +40,7 @@ class IncidenteController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user    = $this->getJwtUser($request);
-        $isAdmin = ($user->email ?? '') === 'admin@cesvi.mx';
+        $isAdmin = ($user->email ?? '') === 'admin@cesvi.com';
 
         $query = DB::table('RAT_INCIDENTE AS i')
             ->join('RAT_CAT_TIPO_HECHO AS th', 'i.tipo_hecho_id', '=', 'th.id')

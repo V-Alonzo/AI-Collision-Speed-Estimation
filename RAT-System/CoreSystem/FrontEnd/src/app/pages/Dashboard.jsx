@@ -33,7 +33,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { dashboard, loading, error } = useDashboard();
   const { user } = useAuth();
-  const isAdmin = user?.email === "admin@cesvi.mx";
+  const isAdmin = user?.email === "admin@cesvi.com";
 
   const kpiCards = loading || !dashboard
     ? [

@@ -108,7 +108,7 @@ export default function Perfil() {
   const [activeTab, setActiveTab] = useState("datos");
   const { perfil, stats, expedientes, loading, error } = usePerfil();
   const { user } = useAuth();
-  const isAdmin = user?.email === "admin@cesvi.mx";
+  const isAdmin = user?.email === "admin@cesvi.com";
 
   return (
     <div className="p-4 flex flex-col gap-4">

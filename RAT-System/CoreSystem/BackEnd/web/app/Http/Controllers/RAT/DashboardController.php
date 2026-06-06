@@ -22,7 +22,7 @@ class DashboardController extends Controller
     public function index(\Illuminate\Http\Request $request): JsonResponse
     {
         $authUser = $request->attributes->get('user');
-        $isAdmin  = ($authUser->email ?? '') === 'admin@cesvi.mx';
+        $isAdmin  = ($authUser->email ?? '') === 'admin@cesvi.com';
         $userId   = $authUser->id_user ?? null;
 
         // ── Contadores por estado ─────────────────────────────────────────────

@@ -42,7 +42,7 @@ class CatalogoController extends Controller
     private function requireAdmin(Request $request): void
     {
         $user = $request->attributes->get('user');
-        if (($user->email ?? '') !== 'admin@cesvi.mx') {
+        if (($user->email ?? '') !== 'admin@cesvi.com') {
             abort(403, 'Acceso restringido a administradores.');
         }
     }

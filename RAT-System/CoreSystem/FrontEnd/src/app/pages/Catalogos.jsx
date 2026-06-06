@@ -117,7 +117,7 @@ function renderCellValue(val) {
 
 export default function Catalogos() {
   const { user }                            = useAuth();
-  const isAdmin                             = user?.email === "admin@cesvi.mx";
+  const isAdmin                             = user?.email === "admin@cesvi.com";
   const [catSelected, setCatSelected]       = useState(CATALOGO_MAP[0].key);
   const [allData,     setAllData]           = useState({});
   const [loading,     setLoading]           = useState(true);

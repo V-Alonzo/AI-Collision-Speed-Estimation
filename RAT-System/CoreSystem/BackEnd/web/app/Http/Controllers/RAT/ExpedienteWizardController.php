@@ -44,7 +44,7 @@ class ExpedienteWizardController extends Controller
     private function isAdmin(Request $request): bool
     {
         $user = $request->attributes->get('user');
-        return ($user->email ?? '') === 'admin@cesvi.mx';
+        return ($user->email ?? '') === 'admin@cesvi.com';
     }
 
     private function checkOwnership(Request $request, Incidente $incidente): void

@@ -11,7 +11,7 @@ export default function Sidebar() {
   const navigate  = useNavigate();
   const location  = useLocation();
   const { user }  = useAuth();
-  const isAdmin   = user?.email === "admin@cesvi.mx";
+  const isAdmin   = user?.email === "admin@cesvi.com";
 
   const NAV_ITEMS = [
     { id: "dashboard",    icon: <LayoutDashboard size={20} />, label: "Dashboard",       path: "/Dashboard" },
