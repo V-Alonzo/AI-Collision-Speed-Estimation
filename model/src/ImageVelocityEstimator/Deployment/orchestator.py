@@ -426,9 +426,28 @@ def lambda_handler(event, context):
             image,
             device=model_data["device"],
         )
-        delete_image_from_s3(image_url)
-        return {"velocity_kph": velocity_kph}
+
+        if "AIVELTEST" not in image_url.split("/")[-1] :
+            delete_image_from_s3(image_url)
+            
+        return {
+                "statusCode": 200,
+                "body": json.dumps({
+                    "velocity_kph": velocity_kph
+                })
+            }
     except (FileNotFoundError, ValueError) as error:
-        return {"error": str(error)}
+        return {
+            "statusCode": 400,
+            "body": json.dumps({"error": str(error)}),
+        }
+    except RuntimeError as error:
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"error": str(error)}),
+        }
     except Exception as error:
-        return {"error": str(error)}
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"error": str(error)}),
+        }
