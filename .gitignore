@@ -10,6 +10,8 @@ Resources/Reports/Uploaded/*.pdf
 Resources/Reports/NotUploaded/*.pdf
 Resources/Reports/Preprocessed/images/*/
 Resources/Reports/Preprocessed/images/*.pdf
+model/src/ImageVelocityEstimator/Deployment/response.json
+model/src/TabularVelocityEstimator/Deployment/response.json
 
 .github/skills
 
