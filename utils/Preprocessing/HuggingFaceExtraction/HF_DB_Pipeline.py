@@ -48,7 +48,9 @@ class TextNumberExtractor(BaseEstimator, TransformerMixin):
         return X_copy
     
     def get_feature_names_out(self, input_features=None):
-        return input_features
+        if input_features is None:
+            return None
+        return np.asarray(input_features, dtype=object)
 
 class CyclicalTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, max_value):
@@ -72,7 +74,8 @@ class CyclicalTransformer(BaseEstimator, TransformerMixin):
         out_features = []
         for col in input_features:
             out_features.extend([f'{col}_sin', f'{col}_cos'])
-        return np.array(out_features)
+        # Wrap the result in a NumPy array
+        return np.asarray(out_features, dtype=object)
 
 class BinaryRolloverEncoder(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
@@ -88,7 +91,9 @@ class BinaryRolloverEncoder(BaseEstimator, TransformerMixin):
         return X_copy
         
     def get_feature_names_out(self, input_features=None):
-        return input_features
+        if input_features is None:
+            return None
+        return np.asarray(input_features, dtype=object)
 
 # 2. Definición del Pipeline Principal
 
@@ -184,7 +189,20 @@ def prepareDataset(df):
     df_clean = df_clean.reset_index(drop=True) # Resetear índices después de la limpieza
     
     # Separar features (X) y target (y)
-    X = df_clean.drop(columns=['totalDeltaVKph', 'totalDeltaVMph', 'dvBarrierEquivalentSpeedDescription'])
+    df_clean = df_clean[["curbWeightKg",
+    "cargoWeightKg",
+    "vehicleClass",
+    "damagePlaneDescription",
+    "severityDescription",
+    "mais",
+    "forceDirection",
+    "rolloverStatus",
+    "targetVariable"]]
+    
+    X = df_clean.drop(columns=['targetVariable'])
+    
+    print(f"Columnas seleccionadas para X: {X.columns.tolist()}")
+    
     y = df_clean['targetVariable'].values
     
     return X, y
