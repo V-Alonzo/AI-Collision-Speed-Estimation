@@ -8,6 +8,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, OrdinalEncoder, TargetEncoder
 from sklearn.impute import SimpleImputer
 from datasets import load_dataset
+import pickle
 
 from PATHS import *
 from configurations import HF_DATASET_NAME, HF_SPLIT
@@ -34,6 +35,7 @@ class TextNumberExtractor(BaseEstimator, TransformerMixin):
         self.replace_unknown_with_nan = replace_unknown_with_nan
 
     def fit(self, X, y=None):
+        self.is_fitted_ = True
         return self
 
     def transform(self, X):
@@ -53,6 +55,7 @@ class CyclicalTransformer(BaseEstimator, TransformerMixin):
         self.max_value = max_value
 
     def fit(self, X, y=None):
+        self.is_fitted_ = True
         return self
 
     def transform(self, X):
@@ -73,6 +76,7 @@ class CyclicalTransformer(BaseEstimator, TransformerMixin):
 
 class BinaryRolloverEncoder(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
+        self.is_fitted_ = True
         return self
 
     def transform(self, X):
@@ -107,7 +111,7 @@ def HuggingFacePipeline():
     categorical_transformer = Pipeline(steps=[
         ('imputer', SimpleImputer(strategy='constant', fill_value='Unknown')),
         #('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False)),
-        ('target_encoder', TargetEncoder(smooth='auto', cv=5, target_type='continuous')),
+        ('target_encoder', TargetEncoder(smooth='auto', cv=5, random_state=67, target_type='continuous')),
         ('scaler', StandardScaler())
     ])
 
@@ -136,13 +140,6 @@ def HuggingFacePipeline():
         ('imputer', SimpleImputer(strategy='median')), # Imputar nulos antes del cálculo
         ('cyclical', CyclicalTransformer(max_value=360.0))
     ])
-    
-    clock_dir_features = ['clockDirection']
-    clock_transformer = Pipeline(steps=[
-        ('extractor', TextNumberExtractor()),
-        ('imputer', SimpleImputer(strategy='median')),
-        ('cyclical', CyclicalTransformer(max_value=12.0))
-    ])
 
     # F. Volcadura (Binario)
     rollover_features = ['rolloverStatus']
@@ -150,20 +147,17 @@ def HuggingFacePipeline():
         ('imputer', SimpleImputer(strategy='constant', fill_value='No rollover (no overturning)')),
         ('binarizer', BinaryRolloverEncoder())
     ])
-
-    image_features = ["image_relpath"]
-
     # Ensamblar el ColumnTransformer
     preprocessor = ColumnTransformer(
         transformers=[
+            ('id', 'passthrough', ['cirenId']), # Mantener cirenId sin cambios para trazabilidad
+            ('image_id', 'passthrough', ['image_id']), # Mantener imageId sin cambios para trazabilidad
             ('num', numeric_transformer, numeric_features),
             ('cat', categorical_transformer, categorical_features),
             ('ord', ordinal_transformer, ordinal_features),
             ('mais', mais_transformer, mais_features),
             ('force_cyc', force_transformer, force_dir_features),
-            ('clock_cyc', clock_transformer, clock_dir_features),
-            ('rollover', rollover_transformer, rollover_features),
-            ("image_relpath", "passthrough", image_features)
+            ('rollover', rollover_transformer, rollover_features)
         ],
         remainder='drop', # Ignora columnas como 'cdc', 'primaryVehicleNumber', strings de peso crudo, etc.
         verbose_feature_names_out=False # Para evitar nombres de columnas excesivamente largos
@@ -188,10 +182,8 @@ def prepareDataset(df):
     
     df_clean = df_clean.dropna(subset=['targetVariable']) # Asegurar que no queden filas sin target
     
-    #df_clean = df_clean.drop_duplicates(subset="cirenId") # Verificar que no haya duplicados en cirenId después de la limpieza
+    df_clean = df_clean.drop_duplicates(subset="cirenId") # Verificar que no haya duplicados en cirenId después de la limpieza
     df_clean = df_clean.reset_index(drop=True) # Resetear índices después de la limpieza
-    print(df_clean["cirenId"])
-    print(df_clean.shape)
     
     # Separar features (X) y target (y)
     X = df_clean.drop(columns=['totalDeltaVKph', 'totalDeltaVMph', 'dvBarrierEquivalentSpeedDescription'])
@@ -202,6 +194,7 @@ def prepareDataset(df):
 def PreprocessingHuggingFaceDB():
     # 1. Cargar el dataset crudo desde Hugging Face
     df_raw = load_hf_dataset()
+    #df_raw = pd.read_csv('utils/Preprocessing/HuggingFaceExtraction/train-data-preview.csv')
     
     # 2. Limpiar filas nulas en el target y separar variables independientes (X) y dependiente (y)
     print("Preparando el dataset inicial...")
@@ -213,7 +206,12 @@ def PreprocessingHuggingFaceDB():
     
     # 4. Ajustar (fit) y transformar (transform) los datos
     print("Aplicando transformaciones...")
-    X_processed = preprocessor.fit_transform(X, y)
+    preprocessor = preprocessor.fit(X, y)
+    
+    X_processed = preprocessor.transform(X)
+
+    with open('utils/Preprocessing/HuggingFaceExtraction/preprocessing_pipeline.pkl', 'wb') as f:
+        pickle.dump(preprocessor, f)
     
     final_columns = preprocessor.get_feature_names_out()
     
@@ -226,5 +224,7 @@ def PreprocessingHuggingFaceDB():
     print(f"\nColumnas preprocesadas ({len(final_columns)} en total):")
     for col in final_columns:
         print(f" - {col}")
+    
+    print("Ejemplo de dato preprocesado: \n", X_processed[:1])
 
-    return X_processed, y, final_columns
+    return y, final_columns
