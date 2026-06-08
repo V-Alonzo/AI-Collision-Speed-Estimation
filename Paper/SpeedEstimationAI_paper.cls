@@ -2,7 +2,7 @@
 %% Versión limpia: español por defecto, inglés opción secundaria
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{cesvi-class}[2026-05-20 CESVI paper class]
+\ProvidesClass{SpeedEstimationAI_paper}[2026-05-20 paper class]
 
 % Basic class options
 \DeclareOption{11pt}{\OptionNotUsed}

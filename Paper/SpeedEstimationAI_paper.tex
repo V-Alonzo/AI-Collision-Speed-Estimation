@@ -1,6 +1,8 @@
 \documentclass[esp]{SpeedEstimationAI_paper}
 \usepackage{authblk}
-
+\usepackage{tabularx}
+\usepackage{float}
+\raggedbottom
 %
 % Publication Title
 \title{Reconstrucción Forense de Velocidad Vehicular Preimpacto mediante Redes Neuronales Convolucionales y Modelado de Deformación Estructural Postcolisión}
@@ -48,11 +50,11 @@ Lorem ipsum, dolor sit amet, consectetur adipiscing, eiusmod tempor, labore et d
 
 % Insert here the abstract in Spanish language
 \resumen{
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.}
+La estimación de la velocidad vehicular precolisión constituye un problema de interés en la reconstrucción forense de accidentes debido a su relevancia para el análisis de la dinámica del impacto. En este trabajo se propone una arquitectura de aprendizaje profundo multimodal que integra evidencia visual postcolisión y datos estructurados de reconstrucción de accidentes provenientes del programa Crash Injury Research and Engineering Network (CIREN). La metodología combina representaciones visuales extraídas mediante redes neuronales convolucionales con variables técnicas del siniestro dentro de un esquema unificado de regresión. Los resultados experimentales muestran que el enfoque propuesto supera el desempeño de modelos unimodales basados exclusivamente en imágenes o datos tabulares, alcanzando una precisión aproximada de ±4.5 km/h. La mayor reducción del error se observó en el intervalo de 0–60 km/h, mientras que el desempeño en velocidades superiores se vio limitado por el desbalance inherente del conjunto de datos. Los hallazgos obtenidos evidencian el potencial de los enfoques multimodales para apoyar procesos automatizados de reconstrucción forense de accidentes vehiculares.}
 
 % Insert here the keywords of your work in Spanish language
 \palabrasclave{
-reconstrucción forense, estimación de velocidad de impacto, visión por computadora, redes neuronales convolucionales, aprendizaje por transferencia, deformación estructural}
+velocidad vehicular precolisión, reconstrucción de accidentes, aprendizaje multimodal, daños estructurales vehiculares, redes neuronales convolucionales, transferencia de aprendizaje, datos estructurados.}
 
 % Roman numerals for section numbering
 \renewcommand{\thesection}{\Roman{section}}
@@ -67,40 +69,61 @@ reconstrucción forense, estimación de velocidad de impacto, visión por comput
 
 \section{INTRODUCCIÓN}
 
-\firstword{L}{os} siniestros viales representan una de las principales problemáticas contemporáneas en materia de salud pública, seguridad vial y pérdidas económicas. La Organización Mundial de la Salud estima que aproximadamente 1.19 millones de personas fallecen anualmente como consecuencia de accidentes de tránsito, mientras que decenas de millones sufren lesiones permanentes o discapacidades asociadas \cite{WHO_RoadTrafficInjuries}. Más allá de su impacto humano, estos eventos generan costos sustanciales para los sistemas de salud, los marcos regulatorios y el sector asegurador, particularmente en los procesos de reconstrucción técnica y determinación de responsabilidades.
+\firstword{L}{os} siniestros viales representan una problemática de alcance global con profundas implicaciones económicas, jurídicas y sociales. Según la Organización Mundial de la Salud, los accidentes de tránsito generan pérdidas equivalentes a aproximadamente el 3\% del producto interno bruto de la mayoría de los países, considerando costos asociados a atención médica, daños materiales, pérdida de productividad e impacto sobre los sistemas de aseguramiento \cite{WHO2023}. Más allá de sus consecuencias económicas directas, estos eventos frecuentemente dan origen a procedimientos administrativos, periciales y judiciales en los que resulta indispensable establecer, de manera objetiva y técnicamente sustentada, las circunstancias bajo las cuales ocurrió la colisión. En este contexto, la reconstrucción técnica del accidente constituye una herramienta fundamental: mediante la aplicación de principios físicos y el análisis sistemático de la evidencia material, permite determinar variables críticas como trayectorias de movimiento, velocidades de circulación, mecanismos de impacto y grado de contribución de cada uno de los involucrados \cite{Brach2011}. Los resultados derivados de estos análisis son empleados como soporte técnico en procesos judiciales, investigaciones de responsabilidad civil y penal, y en la resolución de reclamaciones dentro del sector asegurador, donde la correcta interpretación de los hechos puede tener consecuencias económicas y legales de considerable magnitud \cite{Brach2011,Fricke1990}.
 
-En el ámbito de la ingeniería forense automotriz, la estimación de la velocidad de impacto constituye uno de los parámetros más relevantes para la reconstrucción de colisiones. Dicho parámetro permite inferir la severidad energética del evento, validar trayectorias de movimiento y respaldar técnicamente dictámenes periciales y procedimientos judiciales. Tradicionalmente, estas estimaciones se fundamentan en modelos físico--mecánicos basados en conservación del momento, disipación de energía y análisis de deformación estructural, consolidados históricamente en metodologías como CRASH3, el Método McHenry y diversos modelos de \textit{crush energy analysis} \cite{FrickeTrafficCrashReconstruction,BrachBrach2011,DailyShigemura2020}. Tales enfoques han demostrado alta utilidad en contextos especializados; sin embargo, su aplicación depende de inspecciones presenciales exhaustivas, mediciones geométricas precisas y acceso directo a las zonas deformadas del vehículo.
+Entre las variables analizadas en los procesos de reconstrucción de accidentes, la estimación de la velocidad vehicular previa al impacto reviste particular relevancia técnica. Dado que la energía cinética es proporcional al cuadrado de la velocidad, incrementos relativamente moderados en esta variable se traducen en aumentos sustanciales de la energía disipada durante la colisión, con efectos directos sobre la magnitud de las deformaciones estructurales, el alcance de los daños materiales y las cargas transmitidas a los ocupantes. La velocidad determina, asimismo, la dinámica general del siniestro: las trayectorias posteriores al impacto, las distancias de desplazamiento y los patrones de interacción entre los vehículos involucrados \cite{Fricke1990}. Por estas razones, su determinación constituye un componente central en investigaciones forenses, peritajes técnicos y procesos de evaluación de reclamaciones en el ámbito asegurador \cite{Struble2014}.
 
-A pesar de su robustez teórica, los métodos convencionales presentan limitaciones importantes en escenarios reales de reconstrucción. La evidencia física suele encontrarse incompleta, alterada por maniobras de rescate o degradada por condiciones ambientales posteriores al impacto. Asimismo, la obtención de parámetros de rigidez vehicular y deformación residual requiere instrumentación especializada y personal altamente capacitado, lo que incrementa significativamente los costos operativos y la variabilidad interperito \cite{DailyShigemura2020}. En consecuencia, la reproducibilidad de los análisis puede verse comprometida cuando únicamente se dispone de evidencia parcial o documentación fotográfica del siniestro. Estas limitaciones han motivado el interés por metodologías alternativas capaces de aprovechar evidencia visual disponible incluso en ausencia de inspecciones físicas completas.
+Las metodologías tradicionales para la estimación de velocidad se fundamentan en principios de mecánica clásica, particularmente en el análisis de conservación del momento lineal, modelos de energía de deformación y procedimientos basados en la cuantificación del daño estructural vehicular \cite{Fricke1990,Mrowicki2020}. Entre los enfoques más consolidados se encuentran los modelos de análisis de deformación desarrollados por McHenry, posteriormente formalizados en metodologías como CRASH3, los cuales estiman la energía absorbida durante la colisión a partir de la deformación residual del vehículo y de parámetros de rigidez estructural específicos para cada configuración vehicular \cite{Mrowicki2020,McHenry2001}. La implementación de estos métodos requiere la medición precisa de perfiles de aplastamiento, profundidades de deformación y dimensiones geométricas distribuidas a lo largo de las zonas impactadas, información que, en general, solo puede obtenerse mediante inspecciones presenciales y procedimientos especializados de levantamiento pericial. Su precisión depende, además, de la disponibilidad de coeficientes de rigidez adecuados y del acceso directo a las áreas deformadas para verificar la extensión real del daño estructural. En consecuencia, cuando la evidencia física es limitada, ha sido alterada por intervenciones posteriores al accidente, como labores de rescate o remoción de vehículos, o únicamente se dispone de registros fotográficos, la aplicación de estos procedimientos resulta significativamente más compleja y sujeta a mayores niveles de incertidumbre \cite{Mrowicki2020,McHenry2001}.
 
-Paralelamente, la digitalización progresiva de expedientes periciales y la expansión de repositorios de accidentes reales han incrementado de manera sustancial la disponibilidad de imágenes postcolisión. Iniciativas como el \textit{Crash Injury Research and Engineering Network} (CIREN), desarrollado por la National Highway Traffic Safety Administration (NHTSA), integran investigaciones multidisciplinarias que incluyen fotografías vehiculares, reconstrucción técnica del accidente, variables biomecánicas y estimaciones de velocidad \cite{NHTSA_CIREN,Digges2005CIREN}. Este tipo de bases de datos constituye una oportunidad relevante para el desarrollo de metodologías automatizadas capaces de inferir variables dinámicas de preimpacto a partir de evidencia visual estructurada.
+Esta situación no es excepcional en la práctica pericial; por el contrario, representa una condición recurrente ampliamente documentada en la literatura especializada. Kerkhoff \cite{Kerkhoff1985} señala que, en la mayoría de los accidentes de transporte terrestre, en el momento en que se solicita una reconstrucción, los únicos datos disponibles consisten en el reporte policial y las fotografías del siniestro. En el mismo sentido, la literatura técnica en el campo de la reconstrucción forense establece que las fotografías constituyen con frecuencia la única evidencia remanente de una colisión, dado que la evidencia de la escena desaparece, los vehículos son reparados o desechados, y los componentes son sometidos a pruebas de falla \cite{Linder2016}. Lo anterior pone de manifiesto la necesidad de desarrollar metodologías capaces de extraer información cuantitativa a partir de evidencia visual obtenida después de la colisión.
 
-En consonancia con esta creciente disponibilidad de evidencia visual, la literatura reciente en visión por computadora aplicada al sector automotriz se ha concentrado principalmente en detección de daños, clasificación de severidad y automatización de reclamaciones aseguradoras. No obstante, la estimación cuantitativa de velocidad de impacto a partir de imágenes posteriores a la colisión continúa siendo un problema relativamente poco explorado en comparación con otras tareas de análisis vehicular. Aunque actualmente existen datasets y enfoques orientados a análisis de daños, numerosos métodos continúan dependiendo de variables físicas adicionales, mediciones manuales o parámetros estructurales difíciles de obtener fuera de entornos controlados \cite{FrickeTrafficCrashReconstruction,BrachBrach2011}. Asimismo, la heterogeneidad visual de los escenarios reales de accidente y la variabilidad en la calidad de la evidencia fotográfica representan desafíos importantes para la generalización de modelos automatizados.
+En paralelo, la creciente digitalización de expedientes periciales y el desarrollo de bases de datos especializadas han ampliado considerablemente la disponibilidad de información asociada a accidentes reales. Entre las más relevantes se encuentra el programa Crash Injury Research and Engineering Network (CIREN), iniciativa de la National Highway Traffic Safety Administration (NHTSA) de los Estados Unidos orientada a la investigación en profundidad de accidentes de alta severidad mediante un enfoque multidisciplinario. Esta base de datos integra imágenes de vehículos siniestrados, información técnica de reconstrucción, registros de daño estructural, variables dinámicas del impacto, datos biomecánicos y antecedentes clínicos de los ocupantes involucrados \cite{NHTSA2024}. Su nivel de detalle y la diversidad de información disponible para cada caso la consolidan como una de las fuentes más relevantes para la investigación en seguridad vehicular, biomecánica del trauma y reconstrucción de accidentes, al tiempo que crean condiciones favorables para el desarrollo de herramientas automatizadas orientadas al análisis forense.
 
-En este contexto, el presente trabajo propone una metodología de reconstrucción de velocidad vehicular preimpacto basada exclusivamente en imágenes de siniestros y técnicas de aprendizaje profundo. Inicialmente, se desarrolla un pipeline reproducible de adquisición, validación y curación de datos utilizando casos provenientes de CIREN, incorporando procesos automatizados de filtrado visual, validación semántica y estructuración de metadatos. A partir de ello, se construye un conjunto de datos estandarizado con imágenes vehiculares y etiquetas de velocidad apto para entrenamiento supervisado de modelos de regresión.
+En este escenario, los avances recientes en aprendizaje profundo han propiciado el desarrollo de sistemas de análisis visual con capacidad de desempeño comparable, y en determinadas tareas superior, al de especialistas humanos en problemas de visión por computadora, reconocimiento de patrones y procesamiento de datos de alta dimensionalidad. En tareas de clasificación visual compleja, se ha documentado que arquitecturas de redes neuronales profundas superan el nivel de precisión alcanzado por expertos humanos \cite{Rahim2021}. En el dominio automotriz, esta capacidad ha encontrado aplicaciones con resultados cuantitativamente relevantes: modelos basados en redes neuronales convolucionales han demostrado un desempeño equivalente al de peritos especializados en la localización y clasificación de daños estructurales vehiculares \cite{vanRuitenbeek2022}; sistemas de segmentación de instancias fundamentados en arquitecturas Mask R-CNN han reportado precisiones superiores al 92\% en la cuantificación automatizada de daños en el contexto de reclamaciones aseguradoras \cite{Jameel2023}; y enfoques de transferencia de aprendizaje aplicados a la clasificación de tipología de daño han alcanzado exactitudes de hasta el 96\% sobre conjuntos de validación independientes \cite{Patil2017}. Revisiones sistemáticas de la literatura reciente confirman la consolidación de estas metodologías como referente técnico en tareas de inspección automatizada, identificación de componentes afectados y estimación de severidad a partir de evidencia fotográfica \cite{Hasan2025}, lo que pone de manifiesto la capacidad inherente de los modelos profundos para aprender representaciones discriminativas de alto nivel directamente desde los datos, prescindiendo de la ingeniería manual de características.
 
-Posteriormente, se plantea un esquema de aprendizaje basado en transferencia de conocimiento mediante arquitecturas convolucionales profundas. Se evalúan estrategias de \textit{Transfer Learning} y \textit{Knowledge Distillation} con el objetivo de mejorar la capacidad de generalización del modelo y reducir simultáneamente los requerimientos computacionales para escenarios de implementación práctica.
+No obstante, la revisión de la literatura especializada revela que la gran mayoría de los trabajos publicados se ha concentrado en tareas de clasificación, detección y segmentación de daños visibles. Una revisión sistemática reciente que analizó más de 55 estudios confirmó que la distribución de la investigación se concentra predominantemente en tareas de clasificación de daño, seguida por detección en más de 15 trabajos y segmentación en más de 20, sin que ninguno de los estudios analizados abordara la estimación cuantitativa de variables dinámicas asociadas al estado previo al impacto \cite{Hasan2025}. La estimación de la velocidad vehicular precolisión a partir de evidencia visual postcolisión ha recibido una atención comparativamente marginal en la literatura de aprendizaje profundo. Los escasos trabajos que han explorado esta dirección han operado bajo restricciones significativas: Argote et al. \cite{Argote2022} limitaron su estudio a vehículos de pasajeros de tamaño pequeño con colisiones frontales y traseras a velocidades inferiores a 96 km/h, empleando datos de la base CIREN; mientras que aproximaciones basadas en redes neuronales profundas para recuperar condiciones iniciales de impacto a partir del estado de deformación final han sido caracterizadas explícitamente como un problema inverso de alta complejidad, señalando que parámetros críticos como la velocidad tangencial de contacto, la posición del centro de impacto y las condiciones precisas de la interacción neumático-calzada resultan frecuentemente inasequibles para los métodos convencionales \cite{Zhao2021}. Paralelamente, trabajos recientes en estimación de velocidad precolisión mediante aprendizaje automático han reconocido de manera explícita que la aplicación de técnicas de aprendizaje en conjunto a este problema constituye un vacío de investigación no explorado hasta la fecha \cite{Czajewski2026}. Esta brecha puede atribuirse, entre otros factores, a la limitada disponibilidad de conjuntos de datos que integren evidencia visual postcolisión con parámetros de reconstrucción técnicamente validados, a la complejidad inherente del problema inverso que supone inferir variables físicas no observables directamente a partir de evidencia obtenida después del evento, y a la alta variabilidad presente en los escenarios reales de colisión en términos de configuraciones estructurales vehiculares, mecanismos de deformación y heterogeneidad de la información disponible \cite{Hasan2025,Zhao2021}. En conjunto, estos factores representan desafíos sustantivos para el desarrollo de modelos con capacidad de generalización robusta en condiciones de operación real.
 
-En síntesis, las contribuciones de este estudio son: (i) la sistematización de un proceso reproducible de preparación de datos forenses vehiculares con velocidades verificadas, (ii) la construcción de un dataset curado de siniestros reales orientado a estimación continua de velocidad y (iii) la propuesta de un modelo de aprendizaje profundo para reconstrucción automatizada de velocidad de impacto a partir de evidencia fotográfica. Estas aportaciones buscan avanzar hacia metodologías periciales más objetivas, escalables y consistentes, fortaleciendo el uso de inteligencia artificial en reconstrucción forense y análisis de colisiones viales.
+Frente a este panorama, el presente trabajo tiene como objetivo investigar la viabilidad de estimar la velocidad vehicular precolisión mediante técnicas de aprendizaje profundo, utilizando información proveniente de accidentes reales documentados en la base de datos CIREN. A diferencia de los enfoques tradicionales de reconstrucción, que requieren inspección presencial y medición directa de perfiles de deformación, la estrategia propuesta explora la posibilidad de inferir esta variable dinámica a partir de evidencia observacional disponible después del siniestro, específicamente a partir de la combinación de registros fotográficos del daño estructural vehicular y variables técnicas de caracterización del accidente en formato tabular. Esta integración de fuentes heterogéneas de información constituye el núcleo de un enfoque multimodal, en el cual los patrones visuales capturados por redes neuronales convolucionales y las relaciones estructuradas entre variables numéricas y categóricas procesadas por modelos de aprendizaje profundo son fusionados para producir una estimación continua de la velocidad de impacto. La hipótesis subyacente es que la deformación estructural residual visible en las imágenes postcolisión, combinada con información contextual del siniestro, contiene información suficiente para aproximar las condiciones cinéticas previas al impacto sin necesidad de acceso físico directo al vehículo ni de instrumentación especializada de levantamiento pericial.
+
+Con este propósito, se analiza de manera sistemática el aporte individual y conjunto de ambas modalidades de información, evaluando en qué medida la incorporación de evidencia visual enriquece la capacidad predictiva de los modelos respecto al uso exclusivo de variables tabulares, y viceversa. En síntesis, las contribuciones de este estudio son: (i) la sistematización de un proceso reproducible de preparación de datos forenses vehiculares con velocidades técnicamente verificadas, (ii) la construcción de un conjunto de datos curado de siniestros reales orientado a la estimación continua de velocidad precolisión, y (iii) la propuesta y evaluación de una arquitectura de aprendizaje profundo multimodal para la reconstrucción automatizada de la velocidad de impacto a partir de evidencia observacional postcolisión. Estas aportaciones buscan avanzar hacia metodologías periciales más objetivas, escalables y consistentes, fortaleciendo el papel de la inteligencia artificial como herramienta de apoyo en la reconstrucción forense de accidentes viales.
 
 \section{TRABAJO RELACIONADO}
+La revisión de la literatura en torno a la estimación automatizada de variables dinámicas de colisión mediante técnicas de aprendizaje automático puede organizarse en cuatro líneas de investigación diferenciadas: (i) métodos de reconstrucción de velocidad precolisión basados en datos tabulares estructurados, (ii) métodos de reconstrucción basados en datos de deformación y el problema inverso, (iii) detección y clasificación de daño vehicular mediante aprendizaje profundo a partir de imágenes, y (iv) enfoques multimodales que integran fuentes heterogéneas de información para la predicción de variables relacionadas con accidentes. A continuación se examinan los trabajos más relevantes en cada una de estas líneas, identificando sus contribuciones, limitaciones y su relación con el problema abordado en el presente estudio.
 
-La estimación automática de velocidad vehicular mediante visión por computadora ha recibido creciente atención en los últimos años debido a su relevancia en sistemas inteligentes de transporte, conducción autónoma y reconstrucción forense de accidentes. Los enfoques recientes se han apoyado principalmente en aprendizaje profundo, análisis geométrico y procesamiento de video monocular para inferir velocidad a partir de imágenes o secuencias visuales.
+\subsection{Estimación de velocidad precolisión mediante aprendizaje automático con datos tabulares}
 
-En el contexto de sistemas ADAS y monitoreo vehicular, García-Aguilar et al. \cite{Garcia2024Speed} propusieron un framework de estimación de velocidad en tiempo real basado en redes neuronales convolucionales y cámaras monoculares. Su metodología combina detección de vehículos, estimación de profundidad y seguimiento visual para calcular la velocidad relativa de vehículos circundantes en entornos urbanos simulados mediante CARLA. Los autores reportaron errores promedio inferiores a 3 km/h en múltiples escenarios de tráfico, demostrando que arquitecturas profundas pueden inferir variables dinámicas relevantes únicamente a partir de información visual.
+Los primeros trabajos que introdujeron técnicas de aprendizaje automático en la estimación de velocidad precolisión se fundamentaron en datos tabulares derivados de bases de pruebas de choque controladas, prescindiendo de cualquier componente visual. Cioroianu et al. \cite{Cioroianu2020} propusieron la aplicación de un perceptrón multicapa (MLP) entrenado con registros de la base de datos de pruebas frontales de la NHTSA, utilizando como variables de entrada la masa del vehículo, la anchura de la zona de deformación y los coeficientes de deformación C1 a C6, con el objetivo de estimar la Velocidad Equivalente de Energía (EES). El modelo alcanzó un error relativo medio aproximado del 9\%, representando una mejora respecto a las regresiones lineales empleadas por las metodologías convencionales como CRASH3. No obstante, el alcance del estudio se restringió explícitamente a colisiones frontales contra barrera rígida en la clase de vehículo intermedio, lo que limita considerablemente su aplicabilidad a escenarios reales de mayor variabilidad.
 
-De forma complementaria, Macko et al. \cite{Macko2025Speed} desarrollaron un enfoque eficiente de estimación de velocidad basado en video monocular y geometría de perspectiva. Su propuesta integra detección profunda de vehículos con calibración automática de cámara y análisis tridimensional de trayectorias, alcanzando errores relativos menores al 5\% en escenarios reales de tráfico urbano. El trabajo resulta relevante debido a que demuestra la viabilidad de inferir velocidad utilizando únicamente información visual sin necesidad de sensores especializados adicionales.
+En esa misma dirección, Czajewski et al. \cite{Czajewski2026} desarrollaron un modelo de regresión basado en bosques aleatorios (Random Forest) para la estimación de velocidad precolisión en vehículos compactos involucrados en impactos frontales de ancho completo contra barrera rígida, empleando 399 registros de la base de datos NHTSA. Los autores compararon el desempeño de su modelo frente a regresión lineal, MLP y métodos de Gradient Boosting, obteniendo resultados superiores en términos de error relativo, y aplicaron valores SHAP para analizar la importancia de las variables. Una contribución relevante del trabajo es el reconocimiento explícito de que la aplicación de técnicas de aprendizaje en conjunto a la estimación de velocidad precolisión constituía, hasta la fecha de su publicación, un vacío de investigación no explorado. Sin embargo, al igual que en el trabajo anterior, el estudio opera exclusivamente sobre datos tabulares de pruebas controladas, sin incorporar información visual del daño, y su generalización a accidentes reales de campo permanece sin validar.
 
-En el ámbito específico de reconstrucción forense, Silver et al. \cite{Silver2022CrashCharacteristics} presentaron uno de los primeros trabajos orientados a estimar características de colisión a partir de imágenes de vehículos accidentados utilizando aprendizaje profundo. Su estudio empleó redes neuronales convolucionales para predecir variables asociadas al impacto, incluyendo Delta-V y severidad de colisión, utilizando fotografías postcolisión provenientes de accidentes reales. Los resultados mostraron correlaciones significativas entre patrones visuales de deformación y parámetros dinámicos del accidente, sugiriendo que la evidencia fotográfica contiene información suficiente para inferir características físicas relevantes del impacto.
+\subsection{Recuperación de condiciones de impacto mediante el enfoque de problema inverso}
 
-A pesar de estos avances, persisten desafíos importantes asociados a la heterogeneidad visual de los escenarios reales de accidente, variaciones de iluminación, ángulos de captura y calidad de evidencia fotográfica. Además, una parte importante de los trabajos recientes depende de secuencias de video, calibración geométrica o información contextual adicional, mientras que la estimación de velocidad exclusivamente a partir de imágenes postcolisión continúa siendo un área relativamente poco explorada.
+Una línea conceptualmente más ambiciosa corresponde a los trabajos que formulan la estimación de parámetros precolisión como un problema inverso, en el que el estado de deformación postcolisión constituye la señal de entrada y las condiciones iniciales del impacto son el objetivo a recuperar. Zhao et al. \cite{Zhao2021} desarrollaron un marco de aprendizaje profundo basado en redes neuronales densas entrenadas con datos de simulación de elementos finitos generados mediante LS-DYNA, con el fin de recuperar condiciones iniciales de impacto a partir de la distribución de deformación plástica residual de la carrocería vehicular. Los autores demostraron que el algoritmo es capaz de identificar de manera aproximadamente única la velocidad de contacto relativa y el ángulo de impacto a partir del estado final de deformación, constituyendo uno de los primeros trabajos en demostrar la viabilidad del enfoque inverso para reconstrucción forense mediante aprendizaje profundo.
+
+No obstante, este trabajo presenta limitaciones sustanciales que reducen su aplicabilidad directa en contextos periciales reales. En primer lugar, los datos de entrenamiento provienen íntegramente de simulaciones numéricas de elementos finitos, lo que implica que el modelo aprende representaciones de deformación idealizadas que pueden diferir significativamente de los patrones observados en colisiones reales de campo, donde intervienen factores como irregularidades geométricas, condiciones de la calzada, deformaciones secundarias y variabilidad en las propiedades de los materiales. En segundo lugar, la señal de entrada utilizada corresponde a campos de deformación tridimensionales obtenidos de simulación, no a fotografías convencionales del vehículo, lo que hace que la metodología propuesta sea inaplicable directamente cuando la única evidencia disponible es documentación fotográfica postaccidente. El presente trabajo se diferencia fundamentalmente en que opera sobre imágenes fotográficas reales de accidentes de campo documentados en CIREN, prescindiendo de simulación numérica y de medición directa de perfiles de deformación.
+
+\subsection{Estimación de velocidad y características de colisión a partir de imágenes mediante aprendizaje profundo}
+
+El trabajo más directamente relacionado con el presente estudio es el de Argote et al. \cite{Argote2022}, quienes propusieron un enfoque de aprendizaje profundo multiobjetivo para estimar el Delta-V y clasificar la localización de colisión (LOC) a partir de imágenes fotográficas de vehículos siniestrados, utilizando datos de la base CIREN. Empleando arquitecturas CNN con aprendizaje multitarea, los autores reportaron un MAE de 4.19 km/h (MAPE de 16.2\%) para la estimación del Delta-V sobre 310 imágenes reales de colisión, y una exactitud del 92\% en la clasificación de la localización del impacto. El estudio también desarrolló y refinó las arquitecturas utilizando imágenes generadas mediante software de simulación de colisiones, logrando un MAE de 3.41 km/h sobre imágenes simuladas. Este trabajo constituye el precedente más cercano al problema abordado en el presente artículo; sin embargo, presenta restricciones importantes: el estudio se limitó a vehículos de pasajeros de tamaño pequeño y a colisiones frontales y traseras con velocidades inferiores a 96 km/h, el tamaño del conjunto de imágenes reales empleado fue reducido (310 imágenes), y no se exploró la integración de información tabular contextual del siniestro como modalidad complementaria a las imágenes.
+
+En el ámbito de la clasificación y segmentación de daños vehiculares a partir de imágenes, la literatura reporta un desarrollo considerable que establece las capacidades de los modelos profundos sobre este tipo de evidencia visual. Patil et al. \cite{Patil2017} propusieron un sistema de clasificación de daño basado en CNN con transferencia de aprendizaje desde ImageNet, alcanzando una exactitud del 89.5\% sobre categorías de daño relevantes para el procesamiento de reclamaciones aseguradoras. Kyu y Woraratpanya \cite{Kyu2020} emplearon modelos VGG16 y VGG19 con regularización para detección, localización y estimación de severidad de daño vehicular, reportando exactitudes de 95.2\% y 94.6\% en detección, 76.5\% y 74.4\% en localización, y 57.9\% y 54.8\% en clasificación de severidad, respectivamente, evidenciando que la tarea de severidad resulta significativamente más difícil que la de detección. Jameel et al. \cite{Jameel2023} extendieron este enfoque mediante una arquitectura Mask R-CNN con Inception ResNetV2 preentrenado, logrando una precisión del 89.13\% y una exactitud global del 92\% en la localización y clasificación simultánea de la severidad del daño. Van Ruitenbeek y Bhulai \cite{vanRuitenbeek2022} desarrollaron un detector de daños vehiculares entrenado sobre más de 10,000 imágenes en 12 categorías de daño para servicios de movilidad compartida, demostrando que el modelo alcanza un desempeño comparable al de expertos del dominio en la evaluación de daños, lo que representa un hito relevante en términos de validación frente a criterio humano especializado.
+
+Estos trabajos establecen colectivamente que los modelos profundos son capaces de extraer información discriminativa de alto nivel a partir de imágenes de daño vehicular. Sin embargo, como señala la revisión sistemática de Hasan et al. \cite{Hasan2025}, ninguno de los más de 55 estudios analizados abordó la estimación cuantitativa de variables dinámicas precolisión, como la velocidad de impacto, confirmando el vacío que el presente trabajo busca abordar.
+
+\subsection{Enfoques multimodales en análisis de accidentes}
+
+La integración de múltiples modalidades de información ha emergido como una línea de investigación relevante dentro de la aplicación del aprendizaje profundo al análisis de accidentes de tránsito. Sin embargo, la mayor parte de los trabajos reportados en la literatura se ha concentrado en tareas de clasificación, detección o predicción de severidad, mientras que la estimación de variables físicas asociadas a la reconstrucción del accidente continúa siendo un problema relativamente poco explorado.
+
+Bhowmik y Rateria \cite{Bhowmik2023} propusieron una arquitectura multimodal para detección automática de colisiones que combina información visual proveniente de imágenes con variables tabulares relacionadas con el contexto del accidente. Su enfoque integra una red convolucional VGG16 para el procesamiento de imágenes y una red neuronal recurrente para el análisis de variables estructuradas, utilizando una estrategia de fusión profunda de características. Los autores reportaron un desempeño superior respecto a los modelos unimodales, alcanzando un ROC-AUC de 1.00 sobre el conjunto de prueba frente a los resultados obtenidos utilizando únicamente información visual. Asimismo, identificaron que los modelos basados exclusivamente en datos tabulares presentan dificultades para capturar relaciones complejas asociadas al contexto visual del accidente, mientras que los modelos fundamentados únicamente en imágenes carecen de información contextual suficiente para describir adecuadamente el fenómeno analizado. No obstante, el estudio se limita a una tarea de clasificación binaria de colisiones y no aborda la estimación de variables continuas asociadas a la dinámica del impacto.
+
+De manera complementaria, Liu et al. \cite{Liu2025} desarrollaron un marco multimodal para la predicción de severidad de accidentes integrando registros estructurados de siniestros, características geométricas de la infraestructura vial y descripciones textuales de los eventos. Su propuesta incorpora mecanismos de atención adaptativa y arquitecturas tipo Mixture-of-Experts para modelar las contribuciones específicas de cada modalidad. Los resultados obtenidos mostraron un desempeño superior respecto a diversos enfoques tradicionales y redes neuronales convencionales, alcanzando una exactitud de 86.5\%, un recall de 86.8\% y un F1-score de 0.712. Adicionalmente, el modelo logró tasas de identificación superiores al 94\% para las categorías de accidentes más severos, evidenciando una capacidad robusta para el manejo de clases desbalanceadas. Los análisis de ablación demostraron que la incorporación conjunta de mecanismos de atención, expertos especializados e interacciones cruzadas entre modalidades contribuye significativamente al rendimiento global del sistema. Estos hallazgos refuerzan la hipótesis de que la integración de múltiples fuentes de información permite capturar características complementarias del fenómeno estudiado y superar las limitaciones inherentes a los enfoques unimodales. No obstante, al igual que en trabajos previos, el objetivo principal estuvo orientado a la clasificación de severidad y no a la estimación de parámetros físicos asociados a la reconstrucción del accidente.
+
+La relevancia de los enfoques multimodales también ha sido respaldada por evidencia agregada a gran escala. En una revisión sistemática y metaanálisis que analizó 74 estudios y más de 2.1 millones de registros de accidentes, Somvanshi et al. \cite{Somvanshi2026} reportaron que los modelos de aprendizaje profundo superan de manera significativa a los métodos convencionales de aprendizaje automático en tareas de predicción relacionadas con accidentes de tránsito, obteniendo una diferencia promedio de 7.7 puntos porcentuales en desempeño. Los autores identificaron además que las arquitecturas híbridas basadas en la combinación de múltiples modalidades alcanzan niveles de desempeño superiores a los modelos unimodales, destacando particularmente los enfoques basados en transferencia de aprendizaje y arquitecturas híbridas CNN-RNN. Asimismo, concluyen que los enfoques multimodales representan una de las direcciones más prometedoras para investigaciones futuras debido a su capacidad para integrar fuentes de información complementarias y mejorar la capacidad predictiva de los modelos.
+
+El presente trabajo se inscribe precisamente en esta dirección, pero con un objetivo y una variable objetivo cualitativamente distintos: no se trata de clasificar la severidad de las lesiones o detectar la ocurrencia de un accidente, sino de estimar de forma continua la velocidad vehicular precolisión a partir de la fusión de imágenes fotográficas del daño estructural y variables tabulares de caracterización del siniestro, empleando accidentes reales de campo documentados en CIREN con velocidades técnicamente reconstruidas y validadas. Esta combinación de objetivo, tipo de datos, fuente y enfoque multimodal no tiene precedente directo en la literatura revisada, lo que subraya la originalidad y pertinencia de la contribución propuesta.
+
 
 \section{METODOLOGÍA}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.
-
-Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor.
-
-Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa.
 
 \subsection{Datos y preprocesamiento}
 \subsubsection{Fuente de datos y criterios de construcción de la base de datos utilizada para el entrenamiento de los modelos predictivos de regresión}
@@ -109,7 +132,7 @@ La serie de componentes que han sido elaborados sobre la base de datos denominad
 
 El proceso se diseñó bajo tres principios: trazabilidad, reanudación y utilidad analítica. Primeramente, la trazabilidad garantiza que cada imagen final conserve su vínculo con el caso de origen y con el vehículo al que pertenece. Por otro lado, la reanudación permite continuar ejecuciones incompletas sin repetir el procesamiento ya realizado y, finalmente, la utilidad analítica asegura que el resultado no sea solo una galería visual, sino un conjunto estructurado de ejemplos listos para ser explorados y posteriormente consumidos por los modelos predictivos seleccionados.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{Diagrams/Diagrama1.pdf}
     \caption{Diagrama de flujo general del pipeline para el tratamiento y persistencia de la base de datos de CIREN}
@@ -123,7 +146,7 @@ Una vez identificado un caso particular desde la base de datos de \texttt{CIREN}
 
 Dado que un mismo caso puede contener múltiples vehículos o varias vistas de interés involucradas, se implementó una etapa de conciliación para identificar al vehículo principal que será estudiado. Esta decisión adquiere especial relevancia al permitir evitar la inadecuada mezcla de  imágenes pertenecientes a actores distintos dentro de un mismo siniestro, al igual que mejorar la coherencia entre la evidencia visual y los metadatos asociados. De esta forma, la unidad efectiva de análisis queda definida como el par compuesto por caso y vehículo principal, sobre el cual se organiza el resto del preprocesamiento.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{Diagrams/Diagrama2.pdf}
     \caption{Diagrama de flujo que muestra la lógica de consolidación de un caso reportado en CIREN}
@@ -136,7 +159,7 @@ La colección fotográfica asociada a cada caso no se incorpora de manera direct
 
 Metodológicamente, esta fase cumple dos funciones, la primera es separar el descubrimiento de contenido de la validación visual, lo cual reduce reprocesamiento en ejecuciones sucesivas y la segunda es imponer una preselección semántica: se descartan categorías de imágenes que típicamente aportan poco a la reconstrucción del daño estructural como lo pueden ser: tomas irrelevantes que no pertenezcan directamente a los vehículos involucrados, vistas no exteriores del automóvil o material complementario de baja utilidad para análisis forense del vehículo. Consecuentemente, el conjunto candidato se concentra en fotografías con mayor probabilidad de contener evidencia visual de interés.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{Diagrams/Diagrama3.pdf}
     \caption{Diagrama de estados que muestra la transición de una imagen candidata a persistida o descartada}
@@ -147,7 +170,7 @@ Metodológicamente, esta fase cumple dos funciones, la primera es separar el des
 
 Después de la catalogación, cada candidato se somete a una etapa de validación visual artificial orientada a confirmar que la fotografía contiene evidencia utilizable de daño vehicular. La lógica de esta etapa se centra en evitar que la base de datos final contenga imágenes sin daño apreciable o con contenido visual poco representativo del fenómeno de interés. Dicho de otro modo, no toda imagen asociada a un caso CIREN es útil para modelar severidad de colisión o estimar velocidad preimpacto. Por ello, fue necesario incorporar un filtro automatizado que priorice señales visibles de deformación estructural para reducir la probabilidad de ocurrencia de esta serie de casos innecesarios.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{Diagrams/Diagrama4.pdf}
     \caption{Diagrama de flujo donde se muestra el proceso de validación visual de una imagen extraída de un caso en CIREN}
@@ -159,33 +182,559 @@ Después de la catalogación, cada candidato se somete a una etapa de validació
 
 El resultado del preprocesamiento de imágenes y características extraídas desde CIREN es organizado en dos niveles complementarios: caso e imagen. El primero se concentra en la caracterización del siniestro y del vehículo, mientras que el segundo tiene el objetivo de conservar la evidencia visual validada con su referencia al caso correspondiente. Esta separación permite analizar la información desde una perspectiva estadística o computacional sin perder la granularidad particular de cada fotografía.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{Diagrams/Diagrama7.pdf}
     \caption{Diagrama de entidad relación del conjunto resultante del preprocesamiento y extracción de datos de CIREN}
     \label{fig:diagrama1}
 \end{figure}
 
-\subsection{Preprocesamiento de la base de datos alojada en HuggingFace para el entrenamiento de los modelos}
-El preprocesamiento del dataset se realizó mediante un flujo estructurado basado en scikit-learn, diseñado para limpiar las observaciones, separar la variable objetivo (totalDeltaVKph) y transformar cada tipo de atributo de acuerdo con su naturaleza. En una primera etapa, se eliminaron los registros con valores nulos en la variable objetivo y se excluyeron columnas no informativas para el modelado. Posteriormente, se aplicó un ColumnTransformer con transformaciones específicas: las variables numéricas relacionadas con peso fueron imputadas con la mediana y estandarizadas; las variables categóricas nominales se imputaron con una categoría genérica y se codificaron mediante one-hot encoding; la severidad se trató como variable ordinal respetando un orden predefinido; el valor mais se procesó extrayendo su componente numérico antes de imputar y escalar; y las direcciones angulares (forceDirection y clockDirection) se convirtieron a representaciones cíclicas mediante seno y coseno para preservar su periodicidad. Finalmente, el estado de volcadura se binarizó en una variable indicadora. Este procedimiento permitió obtener una matriz de características numérica, consistente y apta para el entrenamiento de modelos de regresión orientados a estimar la velocidad de impacto.
+\subsection{Diseño Experimental}
 
-\subsection{Arquitectura propuesta}
-Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet.
+Con el propósito de analizar la viabilidad de estimar la velocidad vehicular precolisión a partir de información disponible después de un siniestro, se definió un diseño experimental compuesto por tres enfoques complementarios basados en distintas modalidades de datos. Esta estrategia permitió evaluar de manera independiente la contribución de la evidencia visual, la información estructurada y la combinación de ambas fuentes dentro de un mismo marco de predicción.
+
+\subsubsection{Enfoque basado en imágenes}
+
+La primera hipótesis plantea que las deformaciones estructurales observables en imágenes postcolisión contienen información suficiente para inferir la velocidad vehicular precolisión. Bajo este supuesto, se desarrolló un modelo de aprendizaje profundo basado exclusivamente en imágenes, orientado a identificar patrones visuales asociados con distintos niveles de severidad de impacto y utilizarlos para realizar una estimación continua de velocidad.
+
+\subsubsection{Enfoque basado en variables tabulares}
+
+La segunda hipótesis establece que las variables técnicas registradas durante los procesos de reconstrucción de accidentes contienen información predictiva suficiente para estimar la velocidad precolisión sin necesidad de evidencia visual. Para evaluar esta hipótesis se desarrolló un modelo basado exclusivamente en variables tabulares provenientes de la base de datos CIREN, incluyendo características relacionadas con el vehículo, la dinámica del impacto y la descripción estructural del daño.
+
+\subsubsection{Enfoque multimodal}
+
+La tercera hipótesis propone que la integración de evidencia visual e información estructurada permite construir una representación más completa del accidente que cualquiera de las modalidades por separado. Con base en este planteamiento, se diseñó una arquitectura multimodal capaz de combinar simultáneamente características extraídas de imágenes postcolisión y variables tabulares asociadas al siniestro, con el objetivo de determinar si la fusión de ambas fuentes de información mejora la precisión de las estimaciones de velocidad.
+
+La evaluación conjunta de estos tres enfoques permite cuantificar el aporte individual de cada modalidad y analizar el beneficio potencial derivado de su integración dentro de un esquema multimodal de aprendizaje profundo orientado a la reconstrucción forense de accidentes.
+
+\subsection{Modelo Basado en Variables Tabulares}
+
+Con el objetivo de evaluar la capacidad predictiva de la información estructurada disponible en procesos de reconstrucción de accidentes de tránsito, se formuló la hipótesis de que la velocidad vehicular precolisión puede estimarse a partir de variables tabulares derivadas exclusivamente de investigaciones forenses, prescindiendo del análisis de imágenes postcolisión. Para validar esta hipótesis se diseñaron tres estrategias de preprocesamiento y se evaluaron distintos modelos supervisados de regresión.
+
+\subsubsection{Pipelines de Preprocesamiento}
+
+\paragraph{Pipeline de Preprocesamiento 1 - } 
+
+La primera estrategia de preprocesamiento tuvo como objetivo conservar la totalidad de la información disponible mediante un conjunto de transformaciones estándar de preparación de datos, implementadas mediante un flujo estructurado basado en \textit{scikit-learn} que aplicó transformaciones diferenciadas a cada tipo de atributo a través de un \texttt{ColumnTransformer}. Como paso inicial, se eliminaron todos aquellos registros que no contenían una medición válida de velocidad asociada al impacto, dado que la ausencia de la variable objetivo imposibilita el entrenamiento supervisado, y se excluyeron adicionalmente aquellas columnas consideradas no informativas para el modelado. Tras este filtrado, el conjunto de datos quedó compuesto por 240 registros únicos y 23 características predictoras.
+
+Las variables numéricas continuas incluidas en este pipeline fueron el peso base del vehículo en vacío (\texttt{curbWeightKg}), expresado en kilogramos, y el peso adicional transportado por el vehículo (\texttt{cargoWeightKg}), también en kilogramos. Estas variables se imputaron mediante la mediana de cada atributo, estrategia robusta ante la presencia de valores atípicos, y posteriormente fueron normalizadas aplicando estandarización Z-score, de modo que cada variable resultante presentara media cero y desviación estándar unitaria, condición requerida para garantizar la estabilidad numérica del proceso de optimización en modelos basados en gradiente.
+
+Las variables categóricas nominales fueron imputadas en primera instancia mediante una categoría genérica para gestionar la presencia de valores faltantes, y posteriormente codificadas mediante \textit{One-Hot Encoding}, técnica que genera una representación binaria independiente para cada categoría y evita la introducción artificiosa de relaciones de orden entre clases. Las dos variables nominales consideradas fueron la clase vehicular (\texttt{vehicleClass}) y el plano principal de daño (\texttt{damagePlaneDescription}). La clase vehicular se definió en función de la distancia entre ejes (\textit{wheelbase}) del vehículo, diferenciando cinco categorías: \textit{Subcompact/mini} para vehículos con wheelbase inferior a 254~cm, \textit{Compact} para wheelbase entre 254~cm y 265~cm, \textit{Intermediate} para wheelbase entre 265~cm y 278~cm, \textit{Full-size} para wheelbase entre 278~cm y 291~cm, y \textit{Compact Utility Vehicle} como categoría independiente de los segmentos anteriores. El plano principal de daño identificó la región del vehículo con mayor afectación estructural, distinguiendo seis categorías: frontal (\textit{Front}), trasero (\textit{Back}), lateral izquierdo (\textit{Left side}), lateral derecho (\textit{Right side}), techo (\textit{Top}) y parte inferior (\textit{Undercarriage}).
+
+Dado que ciertas variables de naturaleza angular exhiben una propiedad de circularidad que no puede ser preservada mediante codificaciones lineales convencionales, se aplicó una transformación trigonométrica basada en funciones seno y coseno. Bajo este esquema, cada ángulo $\theta$ fue descompuesto en un par de componentes ortogonales---$\sin(\theta)$ y $\cos(\theta)$---que capturan la continuidad del espacio angular y evitan la discontinuidad artificial que introduciría una representación escalar en los extremos del intervalo. Las variables resultantes de esta codificación fueron \texttt{forceDirection\_sin}, \texttt{forceDirection\_cos}, \texttt{clockDirection\_sin} y \texttt{clockDirection\_cos}, representando respectivamente la dirección de la fuerza de impacto y la dirección horaria asociada al vector de colisión.
+
+Las variables con orden inherente fueron codificadas preservando explícitamente su jerarquía mediante asignación ordinal. La descripción de severidad del accidente (\texttt{severityDescription}) fue tratada como variable ordinal respetando un orden de gravedad predefinido, lo que permite al modelo reconocer y explotar la relación de orden entre niveles. El índice máximo de escala abreviada de lesiones (\texttt{mais}, \textit{Maximum Abbreviated Injury Scale}) requirió un tratamiento previo adicional consistente en la extracción de su componente numérico antes de proceder a la imputación y escalado, dado que su representación original en el conjunto de datos incorporaba información de formato no estrictamente numérico; una vez extraído dicho componente, la variable fue procesada de manera análoga a \texttt{severityDescription}. La variable binaria \texttt{rolloverStatus}, indicadora de si el vehículo experimentó un vuelco durante el accidente, fue originalmente registrada como una variable categórica nominal con dos posibles valores: \textit{No rollover}, denotando la ausencia de volcadura, y \textit{Rollover~--- Longitudinal axis}, denotando la ocurrencia de volcadura sobre el eje longitudinal del vehículo. Esta variable fue transformada mediante binarización, asignando el valor~0 a la categoría de ausencia de volcadura y el valor~1 a la presencia de la misma, obteniendo así una variable indicadora de naturaleza discreta apta para su incorporación directa al proceso de entrenamiento.
+
+La variable objetivo utilizada en todos los experimentos correspondió a la velocidad de cambio total (\textit{total delta-V}), representada en kilómetros por hora mediante la variable \texttt{totalDeltaVKph}. El delta-V es la magnitud cinemática de referencia en reconstrucción de accidentes y cuantifica el cambio en el vector velocidad del vehículo como consecuencia directa del impacto, constituyendo el indicador más empleado para caracterizar la severidad biomecánica del evento.
+
+\begin{table}[H]
+\captionof{table}{Variables del Pipeline de Preprocesamiento 1 (240 registros, 23 características)}
+\label{tab:pipeline1}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.05}
+
+\begin{tabularx}{\columnwidth}{|p{2.2cm}|p{2.4cm}|X|}
+\hline
+\textbf{Variable} &
+\textbf{Tipo / Original} &
+\textbf{Transformación} \\
+\hline
+
+curbWeightKg &
+Numérica continua &
+Imputación mediana + Z-score \\
+\hline
+
+cargoWeightKg &
+Numérica continua &
+Imputación mediana + Z-score \\
+\hline
+
+vehicleClass &
+Categórica nominal &
+Imputación categórica + One-Hot \\
+\hline
+
+damagePlaneDes &
+Categórica nominal &
+Imputación categórica + One-Hot \\
+\hline
+
+forceDirection\_sin &
+Cíclica &
+sin(\(\theta\)) \\
+\hline
+
+forceDirection\_cos &
+Cíclica &
+cos(\(\theta\)) \\
+\hline
+
+clockDirection\_sin &
+Cíclica &
+sin(\(\theta\)) \\
+\hline
+
+clockDirection\_cos &
+Cíclica &
+cos(\(\theta\)) \\
+\hline
+
+severityDescription &
+Ordinal &
+Codificación ordinal \\
+\hline
+
+mais &
+Ordinal &
+Extracción numérica + codificación ordinal \\
+\hline
+
+rolloverStatus &
+Categórica nominal &
+Binarización (0~=~no volcadura, 1~=~volcadura) \\
+\hline
+
+\end{tabularx}
+\end{table}
+
+\paragraph{Pipeline de Preprocesamiento 2 -}
+
+El segundo pipeline conservó íntegramente las transformaciones aplicadas en el pipeline anterior a las variables numéricas continuas, ordinales, binarias y cíclicas, pero sustituyó la codificación One-Hot por una estrategia de \textit{Target Encoding} para las variables categóricas nominales. Bajo este esquema, cada categoría fue reemplazada por un valor numérico derivado de la media condicional de la variable objetivo correspondiente a dicha categoría, calculada exclusivamente sobre el conjunto de entrenamiento para evitar fuga de información hacia los conjuntos de validación y prueba. Esta sustitución redujo significativamente la dimensionalidad del espacio de entrada al eliminar la expansión binaria característica del \textit{One-Hot Encoding}, lo que resulta particularmente relevante en conjuntos de datos de tamaño moderado donde el incremento de dimensiones puede derivar en problemas de sobreajuste.
+
+Como resultado de estas transformaciones, el conjunto final quedó compuesto por 288 registros únicos y 11 características predictoras. El incremento en el número de registros respecto al pipeline anterior se explica por la estrategia de enriquecimiento de la variable objetivo descrita a continuación.
+
+Con el propósito de incrementar el número de observaciones disponibles para entrenamiento sin alterar la naturaleza física de la variable objetivo, se integraron dos fuentes de información cinemática presentes en la base de datos CIREN: la medición reconstruida del delta-V total (\texttt{totalDeltaV}) y la estimación de velocidad equivalente a barrera obtenida mediante simulación computacional (\texttt{dvBarrierEquivalentSpeedDescription}). Cuando ambas mediciones estaban disponibles para un mismo registro, se priorizó el valor reconstruido por su mayor fidelidad a las condiciones reales del accidente. En ausencia de esta medición, se utilizó la estimación derivada de simulación como aproximación cinemática. Esta estrategia de fusión permitió ampliar la cobertura del conjunto de datos, incorporando registros que de otro modo habrían sido descartados por carecer de la medición primaria.
+
+\begin{table}[H]
+\caption{Variables del Pipeline de Preprocesamiento 2 (288 registros, 11 características)}
+\label{tab:pipeline2}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.05}
+
+\begin{tabularx}{\columnwidth}{|p{2.2cm}|p{2.4cm}|X|}
+\hline
+\textbf{Variable} & \textbf{Tipo / Original} & \textbf{Transformación} \\
+\hline
+
+curbWeightKg &
+Numérica continua &
+Imputación mediana + Z-score \\
+\hline
+
+cargoWeightKg &
+Numérica continua &
+Imputación mediana + Z-score \\
+\hline
+
+vehicleClass &
+Categórica nominal&
+Imputación categórica + Target Encoding \\
+\hline
+
+damagePlaneDes &
+Categórica nominal &
+Imputación categórica + Target Encoding \\
+\hline
+
+forceDirection\_sin &
+Cíclica &
+sin($\theta$) \\
+\hline
+
+forceDirection\_cos &
+Cíclica &
+cos($\theta$) \\
+\hline
+
+clockDirection\_sin &
+Cíclica &
+sin($\theta$) \\
+\hline
+
+clockDirection\_cos &
+Cíclica &
+cos($\theta$) \\
+\hline
+
+severityDescription &
+Ordinal &
+Codificación ordinal \\
+\hline
+
+mais &
+Ordinal &
+Extracción numérica + codificación ordinal \\
+\hline
+
+rolloverStatus &
+Categórica nominal &
+Binarización (0~=~no volcadura, 1~=~volcadura) \\
+\hline
+
+\end{tabularx}
+\end{table}
+
+\paragraph{Pipeline de Preprocesamiento 3 - }
+
+La tercera estrategia de preprocesamiento se construyó sobre las transformaciones del Pipeline 2 e incorporó una etapa adicional de selección de características orientada a eliminar predictores redundantes o irrelevantes, con el fin de reducir el ruido en el espacio de entrada y mejorar la capacidad de generalización de los modelos.
+
+El proceso de selección se desarrolló en tres fases sucesivas. En primer lugar, se identificaron y eliminaron variables constantes o cuasi-constantes, es decir, aquellas cuya varianza era inferior a un umbral mínimo, dado que carecen de capacidad discriminatoria respecto a la variable objetivo.
+
+En segundo lugar, se calculó la \textit{Información Mutua} (\textit{Mutual Information}, MI) entre cada predictor y la velocidad objetivo. Esta métrica no paramétrica cuantifica la dependencia estadística entre dos variables, independientemente de la forma funcional de dicha relación. Las variables cuyo valor de MI fue inferior a $0.001$ fueron descartadas por no aportar información relevante sobre la variabilidad de la velocidad de impacto.
+
+En tercer lugar, se realizó un análisis de correlación de Pearson entre los predictores restantes. Cuando dos variables presentaban una correlación superior a $0.90$, indicativa de multicolinealidad severa, se conservó únicamente aquella con mayor valor de Información Mutua, eliminando la variable redundante.
+
+Como resultado de este proceso de selección, el conjunto final quedó compuesto por 288 registros y 7 características predictoras. Las variables seleccionadas fueron: el peso en vacío del vehículo (\textit{curbWeightKg}), la clase vehicular (\textit{vehicleClass}), el plano principal de daño (\textit{damagePlaneDescription}), las componentes seno y coseno de la dirección de la fuerza de impacto (\textit{forceDirection\_sin} y \textit{forceDirection\_cos}), la descripción de severidad del accidente (\textit{severityDescription}) y el índice máximo de lesión abreviada (\textit{mais}). 
+
+Este subconjunto representa las variables con mayor capacidad predictiva individual y menor redundancia mutua respecto a la velocidad vehicular precolisión dentro del conjunto de datos analizado.
+
+\begin{table}[H]
+\caption{Variables seleccionadas por el Pipeline de Preprocesamiento 3 (288 registros, 7 características)}
+\label{tab:pipeline3}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.05}
+
+\begin{tabular}{|p{2.4cm}|p{2.4cm}|p{2.6cm}|}
+\hline
+\textbf{Variable} &
+\textbf{Tipo Original} &
+\textbf{Transformación} \\
+\hline
+
+curbWeightKg &
+Numérica continua &
+Imputación mediana + Z-score \\
+\hline
+
+vehicleClass &
+Categórica nominal &
+Imputación categórica + Target Encoding \\
+\hline
+
+damagePlaneDes &
+Categórica nominal &
+Imputación categórica + Target Encoding \\
+\hline
+
+forceDirection\_sin &
+Cíclica &
+sin($\theta$) \\
+\hline
+
+forceDirection\_cos &
+Cíclica &
+cos($\theta$) \\
+\hline
+
+severityDescription &
+Ordinal &
+Codificación ordinal \\
+\hline
+
+mais &
+Ordinal &
+Extracción numérica + codificación ordinal \\
+\hline
+
+\end{tabular}
+\end{table}
+
+\subsubsection{Modelos Evaluados}
+
+Con el propósito de analizar de manera sistemática la influencia del preprocesamiento sobre el desempeño predictivo, se evaluaron cuatro configuraciones experimentales que combinan distintas estrategias de transformación de datos con dos familias de modelos de regresión supervisada. Los tres primeros experimentos emplearon una Red Neuronal Multicapa (Multilayer Perceptron, MLP), mientras que el cuarto utilizó un modelo de potenciación de gradiente basado en árboles de decisión (XGBoost). La partición de datos fue idéntica en todos los casos, asignando el 64\% de los registros al conjunto de entrenamiento, el 16\% al conjunto de validación y el 20\% restante al conjunto de prueba, garantizando así la comparabilidad de los resultados entre configuraciones.
+
+\paragraph{Red Neuronal Multicapa (MLP) - }
+
+Se implementó una arquitectura completamente conectada (fully connected) compuesta por tres capas ocultas con 64, 32 y 16 neuronas respectivamente, siguiendo una estructura de tipo embudo que condensa progresivamente la representación aprendida a lo largo de las capas. Todas las unidades ocultas emplearon la función de activación ReLU (Rectified Linear Unit), y la capa de salida consistió en una única neurona lineal acorde con la naturaleza continua de la variable objetivo.
+
+Para mitigar el sobreajuste se incorporó regularización mediante Dropout con una tasa del 5\%, aplicada tras cada capa oculta, técnica que durante el entrenamiento desactiva aleatoriamente una fracción de las neuronas, forzando al modelo a aprender representaciones más robustas y distribuidas. El entrenamiento se realizó con un tamaño de batch de 16 muestras y una tasa de aprendizaje de 0.0003, utilizando el Error Cuadrático Medio (MSE) como función de pérdida. Se estableció un máximo de 100 épocas de entrenamiento con un criterio de parada anticipada (Early Stopping) de 10 épocas consecutivas sin mejora en la pérdida de validación, con el fin de evitar el sobreajuste y reducir el tiempo de cómputo. Los tres experimentos realizados con esta arquitectura se denominaron MLP-P1, MLP-P2 y MLP-P3, correspondiendo cada uno al pipeline de preprocesamiento homónimo.
+
+\begin{table}[H]
+\caption{Arquitectura e hiperparámetros de la Red Neuronal Multicapa (MLP)}
+\label{tab:mlp}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.05}
+
+\begin{tabularx}{\columnwidth}{|p{3.2cm}|p{2.2cm}|X|}
+\hline
+\textbf{Parámetro} &
+\textbf{Valor} &
+\textbf{Descripción} \\
+\hline
+
+Tipo de arquitectura &
+Fully connected (MLP) &
+Red neuronal completamente conectada \\
+\hline
+
+Número de capas ocultas &
+3 &
+Estructura tipo embudo \\
+\hline
+
+Neuronas — Capa 1 &
+64 &
+Primera capa oculta \\
+\hline
+
+Neuronas — Capa 2 &
+32 &
+Segunda capa oculta \\
+\hline
+
+Neuronas — Capa 3 &
+16 &
+Tercera capa oculta \\
+\hline
+
+Función de activación &
+ReLU &
+Rectified Linear Unit en capas ocultas \\
+\hline
+
+Capa de salida &
+1 neurona lineal &
+Regresión de variable continua \\
+\hline
+
+Regularización &
+Dropout 5\% &
+Aplicado tras cada capa oculta \\
+\hline
+
+Tamaño de batch &
+16 &
+Muestras por iteración de gradiente \\
+\hline
+
+Tasa de aprendizaje &
+0.0003 &
+Learning rate del optimizador \\
+\hline
+
+Épocas máximas &
+100 &
+Límite superior de iteraciones de entrenamiento \\
+\hline
+
+Early Stopping &
+10 épocas &
+Paciencia sin mejora en pérdida de validación \\
+\hline
+
+Función de pérdida &
+MSE &
+Error Cuadrático Medio \\
+\hline
+
+Métrica de evaluación &
+MAE &
+Error Absoluto Medio (km/h) \\
+\hline
+
+\end{tabularx}
+\end{table}
+
+\paragraph{XGBoost para Regresión - }
+
+Como alternativa al paradigma neuronal, se implementó un modelo XGBoost (eXtreme Gradient Boosting) para regresión, familia de métodos que construye un ensamble de árboles de decisión de manera secuencial, donde cada árbol sucesivo corrige los errores residuales del conjunto previamente entrenado mediante descenso de gradiente sobre una función de pérdida diferenciable. Este modelo fue entrenado utilizando el conjunto de características seleccionadas por el Pipeline 3.
+
+Los hiperparámetros del modelo fueron configurados de la siguiente manera: el número máximo de estimadores (árboles) se fijó en 1000, la profundidad máxima de cada árbol en 5 niveles, la tasa de aprendizaje (shrinkage) en 0.05 para controlar la contribución de cada árbol individual al ensamble, y las tasas de submuestreo de instancias y características en 0.80 para ambos casos, lo que introduce variabilidad estocástica en cada iteración y reduce la correlación entre árboles. Se aplicó un criterio de parada anticipada de 50 rondas consecutivas sin mejora en la pérdida de validación. La función objetivo minimizada durante el entrenamiento fue el Error Cuadrático Medio, mientras que la métrica empleada para la evaluación comparativa entre modelos fue el Error Absoluto Medio (MAE), dada su interpretabilidad directa en unidades físicas de velocidad (km/h) y su menor sensibilidad a valores atípicos respecto al RMSE.
+
+\begin{table}[H]
+\caption{Hiperparámetros del modelo XGBoost para regresión}
+\label{tab:xgboost}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.05}
+
+\begin{tabularx}{\columnwidth}{|p{3.2cm}|p{2.2cm}|X|}
+\hline
+\textbf{Hiperparámetro} &
+\textbf{Valor} &
+\textbf{Descripción} \\
+\hline
+
+n\_estimators &
+1000 &
+Número máximo de árboles en el ensamble \\
+\hline
+
+max\_depth &
+5 &
+Profundidad máxima de cada árbol individual \\
+\hline
+
+learning\_rate &
+0.05 &
+Tasa de contracción (shrinkage) por árbol \\
+\hline
+
+subsample &
+0.80 &
+Fracción de instancias muestreadas por árbol \\
+\hline
+
+colsample\_bytree &
+0.80 &
+Fracción de características muestreadas por árbol \\
+\hline
+
+early\_stopping\_rounds &
+50 &
+Rondas consecutivas sin mejora para detención anticipada \\
+\hline
+
+Función objetivo &
+MSE &
+Error Cuadrático Medio (entrenamiento) \\
+\hline
+
+Métrica de evaluación &
+MAE &
+Error Absoluto Medio (km/h) \\
+\hline
+
+\end{tabularx}
+\end{table}
+
 
 \section{RESULTADOS}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa.
 
-Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra.
+\subsection{Resultados del Modelo Basado en Variables Tabulares}
 
-Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet.
+Esta sección presenta los resultados obtenidos por cada una de las cuatro configuraciones experimentales evaluadas. El desempeño de los modelos se reporta en términos del Error Absoluto Medio (MAE) calculado sobre los conjuntos de validación y prueba, métrica seleccionada por su interpretabilidad directa en unidades físicas de velocidad (km/h) y su robustez ante valores atípicos. Los resultados se complementan con las curvas de aprendizaje del MAE a lo largo del entrenamiento y con diagramas de dispersión entre velocidades predichas y velocidades reales, que permiten evaluar cualitativamente el comportamiento del modelo a lo largo del rango dinámico de la variable objetivo.
 
-Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in justo eu magna luctus suscipit. Sed lectus. Integer euismod lacus luctus magna. Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem.
+\subsubsection{MLP con Pipeline de Preprocesamiento 1 (MLP-P1)}
 
-\subsection{Metricas cuantitativas}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+El primer experimento evaluó el desempeño de la red neuronal multicapa entrenada sobre el conjunto de 240 registros y 23 características resultantes del Pipeline 1. La representación de variables categóricas mediante One-Hot Encoding preservó la totalidad de las categorías nominales en forma binaria, lo que derivó en un espacio de entrada de dimensionalidad relativamente elevada en relación con el volumen de datos disponible.
 
-\subsection{Analisis cualitativo}
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+El modelo alcanzó un MAE de validación de 7.1 km/h y un MAE de prueba de 8.4 km/h. La divergencia de 1.3 km/h entre ambas métricas es consistente con la variabilidad estadística esperada en particiones de tamaño moderado y no constituye evidencia de sobreajuste severo; no obstante, refleja la sensibilidad del modelo a la distribución específica de las muestras asignadas a cada subconjunto.
+
+El análisis del diagrama de dispersión entre velocidades predichas y velocidades reales revela un comportamiento sistemático del modelo en el rango dinámico superior de la variable objetivo. Para valores de delta-V inferiores a 70 km/h, las predicciones exhiben una dispersión razonablemente acotada alrededor de la línea de identidad. Sin embargo, a partir de los 70 km/h el modelo manifiesta una tendencia de subestimación pronunciada y consistente: velocidades reales comprendidas en el intervalo de 70 a 110 km/h son proyectadas sistemáticamente hacia el rango de 50 a 70 km/h, lo que indica que la arquitectura no logra capturar adecuadamente la dinámica de los eventos de alta severidad. Este comportamiento puede atribuirse a la escasa representación de observaciones en el extremo superior de la distribución de velocidades dentro del conjunto de entrenamiento, lo que limita la capacidad del modelo para generalizar sobre colisiones de alta energía. Las curvas de aprendizaje y el diagrama de dispersión correspondientes se presentan en las Figura~\ref{fig:figura1V1} y Figura~\ref{fig:figura2V1} respectivamente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{Figures/mae_curves_TabularModelV1.png}
+    \caption{Curvas de aprendizaje del Error Absoluto Medio (MAE) para el modelo MLP entrenado con el Pipeline de Preprocesamiento 1}
+    \label{fig:figura1V1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{Figures/scatter_plot_TabularModelV1.png}
+    \caption{Diagrama de dispersión entre velocidades predichas y velocidades reales para el modelo MLP entrenado con el Pipeline de Preprocesamiento 1}
+    \label{fig:figura2V1}
+\end{figure}
+
+\subsubsection{MLP con Pipeline de Preprocesamiento 2 (MLP-P2)}
+
+El segundo experimento empleó la misma arquitectura neuronal entrenada sobre un conjunto ampliado de 288 registros y 11 características, resultado de dos modificaciones sustanciales respecto al pipeline anterior: la sustitución de One-Hot Encoding por Target Encoding para las variables categóricas nominales, y la integración de mediciones reconstruidas con estimaciones de simulación como estrategia de enriquecimiento de la variable objetivo. Ambas modificaciones operaron de manera conjunta, reduciendo la dimensionalidad del espacio de entrada al tiempo que incrementaban el volumen de observaciones disponibles para entrenamiento.
+
+El modelo obtuvo un MAE de validación de 11.6 km/h y un MAE de prueba de 8.5 km/h. La inversión en la relación entre ambas métricas —donde el error sobre el conjunto de prueba resulta inferior al registrado en validación— no indica una mejora artificial del desempeño, sino que refleja la variabilidad estadística inherente a la partición de datos en conjuntos de tamaño moderado, particularmente cuando la distribución de velocidades no es uniforme entre subconjuntos. En términos de error de prueba, MLP-P2 presenta un resultado prácticamente equivalente al de MLP-P1 (8.5 km/h frente a 8.4 km/h), lo que evidencia que la reducción dimensional asociada al Target Encoding no comprometió la capacidad predictiva global del modelo pese a operar con una representación de entrada considerablemente más compacta.
+
+El análisis del diagrama de dispersión permite caracterizar con mayor precisión la distribución de los errores a lo largo del rango de velocidades. Las predicciones de mayor fidelidad se concentran en el segmento de velocidades bajas y medias, donde la densidad de observaciones en el conjunto de entrenamiento es más elevada y la variabilidad de la variable objetivo es más acotada. No obstante, se identifican valores atípicos de relevancia diagnóstica en el extremo inferior del espectro: un subconjunto de eventos con velocidades reales comprendidas entre 30 y 40 km/h fue estimado en el rango de 60 a 70 km/h, lo que sugiere que la representación codificada mediante Target Encoding de ciertas categorías de baja frecuencia puede inducir sesgo de sobreestimación en colisiones de baja energía. En el rango intermedio-alto, comprendido entre 70 y 80 km/h, MLP-P2 exhibe una mejora observable respecto a MLP-P1, lo que indica que el enriquecimiento de la variable objetivo mediante la incorporación de estimaciones de simulación aportó información adicional que benefició la caracterización de eventos en ese intervalo de severidad. Finalmente, para velocidades superiores a 100 km/h, el modelo presenta los errores de mayor magnitud, perpetuando la limitación estructural identificada en el experimento anterior asociada a la escasa representación de colisiones de alta energía en los datos de entrenamiento. Las curvas de aprendizaje y el diagrama de dispersión correspondientes se presentan en las Figuras~\ref{fig:figura1V2} y ~\ref{fig:figura2V2} respectivamente.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{Figures/mae_curves_TabularModelV2.png}
+    \caption{Curvas de aprendizaje del Error Absoluto Medio (MAE) para el modelo MLP entrenado con el Pipeline de Preprocesamiento 2}
+    \label{fig:figura1V2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{Figures/scatter_plot_TabularModelV2.png}
+    \caption{Diagrama de dispersión entre velocidades predichas y velocidades reales para el modelo MLP entrenado con el Pipeline de Preprocesamiento 2}
+    \label{fig:figura2V2}
+\end{figure}
+
+\subsubsection{MLP con Pipeline de Preprocesamiento 3 (MLP-P3)}
+
+El tercer experimento corresponde a la configuración que incorporó una etapa adicional de selección de características mediante Información Mutua y análisis de correlación, reduciendo el espacio de entrada de 11 a 7 variables de alta relevancia predictiva. Esta reducción implicó descartar aquellos predictores cuya contribución estadística a la estimación del delta-V resultó marginal o redundante respecto a variables de mayor capacidad discriminatoria, permitiendo al modelo concentrar su capacidad representacional en el subconjunto de características más informativo. El modelo fue entrenado sobre los 288 registros disponibles y obtuvo un MAE de validación de 11.9 km/h y un MAE de prueba de 7.3 km/h, constituyendo este último el mejor resultado registrado entre las tres configuraciones de red neuronal evaluadas.
+
+La brecha observada entre el MAE de validación y el MAE de prueba, de 4.6 km/h, es atribuible a la variabilidad estadística de la partición en conjuntos de tamaño moderado y no constituye evidencia concluyente de sobreajuste al conjunto de prueba. Más relevante es el hecho de que la mejora en el error de prueba respecto a MLP-P1 y MLP-P2 —de 8.4 y 8.5 km/h respectivamente a 7.3 km/h— se produce precisamente al reducir la dimensionalidad del espacio de entrada, lo que respalda empíricamente la hipótesis de que la eliminación de variables redundantes y de baja relevancia contribuye positivamente a la capacidad de generalización del modelo sobre datos no observados.
+
+El análisis del diagrama de dispersión revela una mejora cualitativa sustancial respecto a las configuraciones anteriores, particularmente en la franja de velocidades bajas y medias. En el intervalo comprendido entre 15 y 60 km/h, las predicciones exhiben la mayor fidelidad del experimento, con una dispersión acotada alrededor de la línea de identidad y una ausencia notable de los valores atípicos de sobreestimación que afectaron al rango de 30 a 40 km/h en MLP-P2. Esta mejora sugiere que la eliminación de predictores de baja relevancia redujo el ruido en la representación de eventos de baja energía, favoreciendo estimaciones más precisas en dicho segmento. Para velocidades comprendidas entre 60 y 70 km/h, las predicciones presentan una dispersión algo mayor, aunque mantienen una concentración razonable alrededor de la tendencia real, sin evidenciar el colapso predictivo observado en configuraciones anteriores. A partir de los 70 km/h, el modelo manifiesta una tendencia sistemática de subestimación que se intensifica progresivamente con la velocidad: los errores son de magnitud moderada hasta aproximadamente 100 km/h, pero se incrementan de forma marcada para eventos de velocidad superior, donde la escasa densidad de observaciones en el conjunto de entrenamiento limita estructuralmente la capacidad de generalización del modelo sobre colisiones de alta energía. Las curvas de aprendizaje y el diagrama de dispersión correspondientes se presentan en las Figura~\ref{fig:figura1V3} y Figura~\ref{fig:figura2V3} respectivamente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{Figures/mae_curves_TabularModelV3.png}
+    \caption{Curvas de aprendizaje del Error Absoluto Medio (MAE) para el modelo MLP entrenado con el Pipeline de Preprocesamiento 3}
+    \label{fig:figura1V3}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{Figures/scatter_plot_TabularModelV3.png}
+    \caption{Diagrama de dispersión entre velocidades predichas y velocidades reales para el modelo MLP entrenado con el Pipeline de Preprocesamiento 3}
+    \label{fig:figura2V3}
+\end{figure}
+
+\subsubsection{XGBoost con Pipeline de Preprocesamiento 3}
+
+El cuarto experimento evaluó un modelo de potenciación de gradiente basado en árboles de decisión (XGBoost) entrenado sobre el mismo conjunto de 7 características seleccionadas por el Pipeline 3, con el propósito de contrastar el desempeño de un paradigma fundamentalmente distinto al neuronal sobre un espacio de entrada idéntico. El modelo alcanzó un MAE de prueba de 7.8 km/h, resultado que se sitúa a 0.5 km/h del obtenido por MLP-P3, configurando una diferencia de desempeño estadísticamente marginal entre ambas arquitecturas.
+
+Este resultado tiene implicaciones de doble relevancia para la interpretación global de los experimentos. En primer lugar, la convergencia de dos familias de modelos estructuralmente distintas —redes neuronales completamente conectadas y ensambles de árboles potenciados mediante gradiente— hacia un error de prueba en el intervalo de 7 a 8 km/h sobre el mismo subconjunto de 7 características constituye evidencia robusta de que dicho conjunto de predictores captura efectivamente la información cinemática relevante para la estimación del delta-V precolisión. La consistencia del resultado con independencia del paradigma de aprendizaje refuerza la validez del proceso de selección de características implementado en el Pipeline 3. En segundo lugar, la ausencia de una ventaja decisiva de cualquiera de los dos modelos sugiere que el límite de desempeño alcanzable con la información tabular disponible se encuentra estructuralmente acotado en torno a los 7--8 km/h de error absoluto medio para este conjunto de datos, independientemente de la complejidad o la naturaleza del algoritmo empleado.
+
+El análisis del diagrama de dispersión permite caracterizar con precisión la distribución espacial de los errores a lo largo del rango de velocidades. Para eventos con delta-V de hasta 80 km/h, las predicciones exhiben la mayor fidelidad del modelo, con puntos concentrados en la proximidad de la línea de identidad y una dispersión acotada que refleja una estimación consistente en el segmento de mayor densidad de observaciones. A partir de los 90 km/h, la dispersión de las predicciones se incrementa de forma progresiva, evidenciando la degradación gradual de la capacidad generalizadora del modelo conforme la velocidad se aleja del rango modal de entrenamiento. El caso de mayor error identificado en el conjunto de prueba corresponde a un evento con una velocidad real superior a 140 km/h, para el cual el modelo produjo una subestimación de aproximadamente 60 km/h, constituyendo el valor atípico de mayor magnitud registrado en los cuatro experimentos. Este caso extremo ilustra la limitación común a todas las configuraciones evaluadas: la escasa representación de colisiones de muy alta energía en el conjunto de datos impone un techo estructural a la capacidad predictiva del modelo en el extremo superior del espectro de severidad. El diagrama de dispersión correspondiente se presenta en la Fig.~\ref{fig:figura1V4}.
+
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.6\columnwidth]{Figures/scatter_plot_TabularModelV4.png}
+    \caption{Diagrama de dispersión entre velocidades predichas y velocidades reales para el modelo XGBoost entrenado con el Pipeline de Preprocesamiento 3}
+    \label{fig:figura1V4}
+\end{figure}
+
+\subsubsection{Análisis Comparativo}
+
+La Tabla~\ref{tab:mae_comparison} resume los resultados de las cuatro configuraciones experimentales en términos del MAE sobre los conjuntos de validación y prueba. El conjunto de resultados permite extraer tres observaciones principales. Primero, la selección de características implementada en el Pipeline 3 produjo el mejor desempeño de prueba entre las configuraciones de red neuronal, con un MAE de 7.3 km/h, lo que valida la utilidad de la etapa de filtrado por Información Mutua y correlación. Segundo, el modelo XGBoost entrenado con las mismas características obtuvo un desempeño de prueba de 7.8 km/h, confirmando la robustez del subconjunto de variables seleccionadas con independencia de la arquitectura del modelo. Tercero, las configuraciones MLP-P1 y MLP-P2 presentan errores de prueba similares (8.4 y 8.5 km/h respectivamente), lo que indica que la sustitución de One-Hot Encoding por Target Encoding, en ausencia de selección de características, no produce mejoras sustanciales en el desempeño predictivo final.
+
+En conjunto, los resultados demuestran que es posible estimar la velocidad vehicular precolisión con un error absoluto medio inferior a 8.5 km/h utilizando exclusivamente variables tabulares derivadas de investigaciones forenses, sin recurrir al análisis de imágenes postcolisión, validando así la hipótesis central planteada en esta sección de la metodología.
+
+
+\begin{table}[!htbp]
+\caption{Comparación de MAE (km/h) por configuración experimental}
+\label{tab:mae_comparison}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.05}
+
+\begin{tabular}{|p{1.8cm}|p{1.6cm}|p{2.0cm}|p{1.8cm}|}
+\hline
+\textbf{Config.} &
+\textbf{Pipeline} &
+\textbf{MAE Val.} &
+\textbf{MAE Test} \\
+\hline
+
+MLP-P1 & P1 & 7.1 & 8.4 \\
+\hline
+
+MLP-P2 & P2 & 11.6 & 8.5 \\
+\hline
+
+MLP-P3 & P3 & 11.9 & 7.3 \\
+\hline
+
+XGBoost & P3 & 8.0 & 7.8 \\
+\hline
+
+\end{tabular}
+\end{table}
 
 \section{DISCUSIÓN}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
