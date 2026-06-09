@@ -22,6 +22,25 @@ utils/Preprocessing/NHTSADatabaseExtraction/__pycache__/*.pyc
 utils/__pycache__/*.pyc
 utils/Preprocessing/ImagesExtractionClassification/__pycache__/*.pyc
 
+# ==== Model
+# Data Manifest and csv
+model/data/CSV/*.csv
+model/data/CSV/
+
+# Training Logs
+model/src/TrainingLogs/*/
+
+# Serialized Objs
+*.pkl
+*.pt
+*.pth
+
+# Model Checkpoint
+*.ckpt
+
+# ====
+
+
 utils/Preprocessing/HuggingFaceAugmentation/__pycache__/*.pyc
 utils/Preprocessing/HuggingFaceAugmentation/originalImages/*/*
 utils/Preprocessing/HuggingFaceAugmentation/transformedImages/*/*
@@ -63,3 +82,6 @@ next-env.d.ts
 
 __pycache__/
 *.pyc
+*.vscode
+
+# ML experiments

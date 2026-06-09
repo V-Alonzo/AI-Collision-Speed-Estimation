@@ -184,6 +184,10 @@ def _build_ciren_case_payload(case_entry: Dict[str, Any], cached_case: Dict[str,
             "validatedImageRecords": _normalize_validated_image_records(cached_case.get("validatedImageRecords")),
         }
     )
+    
+    if len(case_payload["errors"])  > 0 and len(case_payload["candidateImages"]) == len(case_payload["revisedImages"]):
+        case_payload["errors"] = []
+        
     case_payload["validImages"] = _normalize_valid_ciren_object_ids(case_payload, cached_case)
     case_payload.pop("candidateImagesCataloged", None)
     _prune_unconfigured_ciren_metadata(case_payload)
@@ -450,6 +454,9 @@ def _update_ciren_case_metadata(
         "modelYear": summary.get("modelYear"),
     }
 
+    if available_metadata["dvBarrierEquivalentSpeedDescription"] == "Unknown" and available_metadata["totalDeltaV"] == "Unknown":
+        return "INVALID CASE"
+
     missing_supported_mappings = [
         metadata_key
         for metadata_key in _CIREN_CONFIGURABLE_METADATA_KEYS
@@ -530,6 +537,7 @@ def refresh_ciren_case_metadata(
         general_vehicle = extract_case_general_vehicle(detail_payload)
         crash_summary_vehicle = extract_case_crash_summary_vehicle(detail_payload)
         _update_ciren_case_metadata(cached_case, detail_payload, summary, general_vehicle, crash_summary_vehicle)
+
         cached_cases[cache_key] = cached_case
         write_cached_results(cache_path, cached_cases)
 
@@ -650,7 +658,12 @@ def extract_ciren_case_candidates(
             general_vehicle = extract_case_general_vehicle(detail_payload)
             crash_summary_vehicle = extract_case_crash_summary_vehicle(detail_payload)
 
-            _update_ciren_case_metadata(case_payload, detail_payload, summary, general_vehicle, crash_summary_vehicle)
+            result =_update_ciren_case_metadata(case_payload, detail_payload, summary, general_vehicle, crash_summary_vehicle)
+
+            if result == "INVALID CASE":
+                print(f"CIREN case {ciren_id} is invalid due to missing target variables")
+                continue
+            
             case_payload["candidateImages"] = [
                 _build_ciren_candidate_record(image_candidate)
                 for image_candidate in iter_vehicle_image_candidates(ciren_id, detail_payload)
