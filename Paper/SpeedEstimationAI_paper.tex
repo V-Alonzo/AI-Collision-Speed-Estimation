@@ -252,7 +252,7 @@ La etapa final de regresión fue implementada mediante una arquitectura \textit{
 
 Durante el entrenamiento se utilizó un conjunto de datos aumentado compuesto por 15,513 imágenes, generado mediante técnicas de \textit{Data Augmentation} orientadas a incrementar la variabilidad visual observada por la red neuronal. Todas las imágenes fueron normalizadas utilizando estadísticas calculadas sobre el conjunto de entrenamiento y posteriormente redimensionadas a una resolución de $224 \times 224$ píxeles, compatible con la arquitectura ResNet50.
 
-La optimización se realizó durante un máximo de 60 épocas utilizando un tamaño de lote de 128 muestras y una tasa de aprendizaje inicial de $1\times10^{-4}$. Adicionalmente, se incorporó un mecanismo de \textit{Early Stopping} con una paciencia de 20 épocas para prevenir sobreajuste y detener automáticamente el entrenamiento cuando no se observaran mejoras significativas en el desempeño de validación. El entrenamiento fue ejecutado sobre una GPU (NVIDIA GeForce RTX 4060 8Gb vRAM) utilizando precisión mixta (\textit{bf16-mixed}) con el objetivo de reducir el consumo de memoria y acelerar el proceso de optimización.
+La optimización se realizó durante un máximo de 60 épocas utilizando un tamaño de lote de 128 muestras y una tasa de aprendizaje inicial de $1\times10^{-4}$. Adicionalmente, se incorporó un mecanismo de \textit{Early Stopping} con una paciencia de 20 épocas para prevenir sobreajuste y detener automáticamente el entrenamiento cuando no se observaran mejoras significativas en el desempeño de validación.
 
 Una de las modificaciones más relevantes respecto a experimentos anteriores consistió en sustituir la función de pérdida \textit{Smooth L1 Loss} por \textit{L1 Loss} (Error Absoluto Medio). Esta decisión permitió alinear directamente el proceso de optimización con la métrica principal utilizada durante la evaluación del modelo, favoreciendo una reducción más consistente del error absoluto medio observado sobre los conjuntos de validación y prueba.
 
@@ -338,6 +338,8 @@ La Tabla~\ref{tab:imagevelocity_best_config} resume los principales hiperparáme
 	\end{tabularx}
 \end{table}
 
+
+Todos los experimentos correspondientes a ImageVelocityEstimator fueron ejecutados sobre una estación de trabajo portátil equipada con un procesador Intel Core i9-14900HX de 24 núcleos (32 hilos de ejecución), una unidad de procesamiento gráfico NVIDIA GeForce RTX 4060 Laptop GPU y 16 GB de memoria RAM. El entorno de ejecución estuvo basado en Debian GNU/Linux 12 (Bookworm), utilizando aceleración por GPU mediante CUDA y entrenamiento en precisión mixta (\textit{bf16-mixed}). Esta configuración permitió completar el proceso de entrenamiento y evaluación del modelo seleccionado en aproximadamente 1281.4 segundos (21.36 minutos), proporcionando recursos computacionales suficientes para el entrenamiento eficiente de las arquitecturas multimodales propuestas.
 
 \subsubsection{Análisis del Espacio Latente}
 
@@ -815,6 +817,132 @@ Una vez definida la arquitectura, se llevó a cabo una etapa extensa de experime
 La evaluación sistemática de estas configuraciones permitió identificar la combinación de parámetros con mejor desempeño sobre los conjuntos de validación y prueba. Durante esta etapa se observó un comportamiento particularmente estable de las curvas de entrenamiento, caracterizado por una convergencia consistente y por la ausencia de divergencias significativas entre las métricas de entrenamiento y validación.
 
 Este comportamiento constituye un indicio de que la arquitectura fue capaz de aprovechar la información adicional proporcionada por ambas modalidades para construir representaciones más robustas y generalizables que las obtenidas por los enfoques unimodales.
+
+\subsubsection{Configuración Experimental Seleccionada}
+
+Como resultado del proceso iterativo de experimentación realizado sobre la arquitectura multimodal propuesta, se identificó una configuración que obtuvo el mejor desempeño global entre todas las variantes evaluadas para HybridVelocityEstimator. Esta configuración fue seleccionada como modelo final debido a su capacidad para integrar eficazmente la información visual proveniente del encoder ImageVelocityEstimator con las variables tabulares derivadas del proceso de reconstrucción forense.
+
+La arquitectura fue entrenada utilizando un conjunto de datos multimodal compuesto por 5\,202 muestras, cada una formada por una imagen postcolisión y un conjunto de variables estructuradas previamente seleccionadas mediante los procesos de preprocesamiento y análisis descritos en secciones anteriores. El conjunto de datos fue particionado en subconjuntos de entrenamiento, validación y prueba siguiendo una estrategia estratificada, obteniéndose 3\,329 muestras para entrenamiento, 832 para validación y 1\,041 para evaluación final.
+
+Para la modalidad visual se reutilizó el encoder previamente entrenado mediante ImageVelocityEstimator, empleando los pesos correspondientes al experimento visual de mejor desempeño. Este encoder genera una representación latente de 512 dimensiones que resume la información visual relevante asociada con la severidad y características estructurales del daño vehicular.
+
+La modalidad tabular estuvo compuesta por las siete variables seleccionadas durante el desarrollo del modelo TabularVelocityEstimator. Estas variables fueron procesadas mediante una red neuronal especializada encargada de proyectarlas a un espacio de representación compatible con los embeddings visuales.
+
+La fusión multimodal se realizó mediante concatenación de ambas representaciones latentes, generando un vector conjunto utilizado como entrada para una red de regresión completamente conectada responsable de producir la estimación final de velocidad precolisión.
+
+Durante el entrenamiento se empleó un tamaño de lote de 128 muestras, una tasa de aprendizaje inicial de $1\times10^{-4}$ y un máximo de 80 épocas. Adicionalmente, se incorporó un mecanismo de \textit{Early Stopping} con una paciencia de 10 épocas para prevenir sobreajuste y detener automáticamente el entrenamiento cuando el desempeño sobre el conjunto de validación dejara de mejorar.
+
+La evaluación sobre el conjunto de prueba produjo un Error Absoluto Medio (MAE) de 4.45 km/h, constituyendo el mejor resultado obtenido durante el desarrollo del proyecto y superando significativamente el desempeño alcanzado por los enfoques unimodales basados exclusivamente en imágenes o variables tabulares.
+
+La Tabla~\ref{tab:hybrid_best_config} resume los principales hiperparámetros y características de la configuración experimental seleccionada para HybridVelocityEstimator.
+
+\begin{table}[H]
+	\caption{Configuración experimental seleccionada para HybridVelocityEstimator}
+	\label{tab:hybrid_best_config}
+	\centering
+	\footnotesize
+	\setlength{\tabcolsep}{2pt}
+	\renewcommand{\arraystretch}{1.05}
+	
+	\begin{tabularx}{\columnwidth}{|p{3.2cm}|X|}
+		\hline
+		\textbf{Parámetro} & \textbf{Valor} \\
+		\hline
+		
+		\multicolumn{2}{|c|}{\textbf{Arquitectura}} \\
+		\hline
+		
+		Encoder visual &
+		ImageVelocityEstimator preentrenado \\
+		\hline
+		
+		Dimensión de embedding visual &
+		512 características \\
+		\hline
+		
+		Modalidad tabular &
+		7 variables seleccionadas mediante Pipeline 3 \\
+		\hline
+		
+		Método de fusión &
+		Concatenación de embeddings visuales y tabulares \\
+		\hline
+		
+		Tarea &
+		Regresión de velocidad precolisión \\
+		\hline
+		
+		\multicolumn{2}{|c|}{\textbf{Entrenamiento}} \\
+		\hline
+		
+		Batch Size &
+		128 \\
+		\hline
+		
+		Learning Rate &
+		$1\times10^{-4}$ \\
+		\hline
+		
+		Épocas máximas &
+		80 \\
+		\hline
+		
+		Early Stopping &
+		Paciencia de 10 épocas \\
+		\hline
+		
+		Precisión &
+		bf16-mixed \\
+		\hline
+		
+		Acelerador &
+		GPU (CUDA) \\
+		\hline
+		
+		Semilla aleatoria &
+		42 \\
+		\hline
+		
+		\multicolumn{2}{|c|}{\textbf{Datos}} \\
+		\hline
+		
+		Número total de muestras &
+		5\,202 \\
+		\hline
+		
+		Entrenamiento &
+		3\,329 muestras \\
+		\hline
+		
+		Validación &
+		832 muestras \\
+		\hline
+		
+		Prueba &
+		1\,041 muestras \\
+		\hline
+		
+		Resolución de imágenes &
+		$224 \times 224$ píxeles \\
+		\hline
+		
+		\multicolumn{2}{|c|}{\textbf{Resultados}} \\
+		\hline
+		
+		MAE de prueba &
+		4.45 km/h \\
+		\hline
+		
+		Tiempo total de ejecución &
+		2\,219 s (36.98 min) \\
+		\hline
+		
+	\end{tabularx}
+	
+\end{table}
+
+Todos los experimentos correspondientes a HybridVelocityEstimator fueron ejecutados sobre una estación de trabajo portátil equipada con un procesador Intel Core i9-14900HX de 24 núcleos (32 hilos de ejecución), una unidad de procesamiento gráfico NVIDIA GeForce RTX 4060 Laptop GPU y 16 GB de memoria RAM. El entorno de ejecución estuvo basado en Debian GNU/Linux 12 (Bookworm), utilizando aceleración por GPU mediante CUDA y entrenamiento en precisión mixta (\textit{bf16-mixed}). Esta configuración permitió completar el proceso de entrenamiento y evaluación del modelo seleccionado en aproximadamente 2,219 segundos (36.98 minutos), proporcionando recursos computacionales suficientes para el entrenamiento eficiente de las arquitecturas multimodales propuestas.
+
 
 \subsubsection{Diseño Modular y Reutilización del Encoder Visual}
 
