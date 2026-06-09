@@ -240,6 +240,105 @@ Las técnicas de aumento de datos fueron incorporadas con el propósito de incre
 
 La selección de la configuración final se realizó mediante evaluación sistemática sobre los conjuntos de entrenamiento y validación, considerando principalmente métricas de error absoluto medio (MAE) y la estabilidad observada durante el proceso de convergencia.
 
+\subsubsection{Configuración Experimental Seleccionada}
+
+Como resultado del proceso iterativo de experimentación descrito anteriormente, se identificó una configuración que obtuvo el mejor desempeño global entre las distintas variantes evaluadas para ImageVelocityEstimator. Esta configuración fue posteriormente adoptada como la versión definitiva del modelo visual y utilizada como encoder dentro de la arquitectura multimodal HybridVelocityEstimator.
+
+El experimento seleccionado se construyó sobre una arquitectura ResNet50 preentrenada sobre ImageNet utilizando una estrategia de \textit{Transfer Learning} con ajuste fino parcial (\textit{Fine-Tuning}) de las capas más profundas del backbone. Específicamente, se habilitó el entrenamiento de los bloques correspondientes a \texttt{resnet.layer4}, permitiendo especializar las representaciones visuales de alto nivel para la identificación de patrones asociados con daños vehiculares y severidad de impacto, mientras que las capas anteriores conservaron los pesos adquiridos durante el preentrenamiento.
+
+Con el propósito de incrementar la capacidad de representación de la arquitectura, se incorporó un bloque personalizado de generación de embeddings compuesto por una capa completamente conectada que proyecta las características extraídas por ResNet50 desde 2048 dimensiones hacia un espacio latente compacto de 512 dimensiones. Este bloque incluye Batch Normalization, función de activación GELU y una capa Dropout con probabilidad de 0.3, favoreciendo la estabilidad del entrenamiento y reduciendo el riesgo de sobreajuste.
+
+La etapa final de regresión fue implementada mediante una arquitectura \textit{Fully Connected} compuesta por una capa oculta de 128 neuronas seguida de Batch Normalization, activación GELU y Dropout con probabilidad de 0.2. Finalmente, una neurona lineal de salida genera la estimación continua de velocidad precolisión. Esta configuración fue seleccionada tras evaluar distintas alternativas para la dimensionalidad de los embeddings y la complejidad del regresor, observándose un equilibrio favorable entre capacidad de representación y generalización.
+
+Durante el entrenamiento se utilizó un conjunto de datos aumentado compuesto por 15,513 imágenes, generado mediante técnicas de \textit{Data Augmentation} orientadas a incrementar la variabilidad visual observada por la red neuronal. Todas las imágenes fueron normalizadas utilizando estadísticas calculadas sobre el conjunto de entrenamiento y posteriormente redimensionadas a una resolución de $224 \times 224$ píxeles, compatible con la arquitectura ResNet50.
+
+La optimización se realizó durante un máximo de 60 épocas utilizando un tamaño de lote de 128 muestras y una tasa de aprendizaje inicial de $1\times10^{-4}$. Adicionalmente, se incorporó un mecanismo de \textit{Early Stopping} con una paciencia de 20 épocas para prevenir sobreajuste y detener automáticamente el entrenamiento cuando no se observaran mejoras significativas en el desempeño de validación. El entrenamiento fue ejecutado sobre una GPU (NVIDIA GeForce RTX 4060 8Gb vRAM) utilizando precisión mixta (\textit{bf16-mixed}) con el objetivo de reducir el consumo de memoria y acelerar el proceso de optimización.
+
+Una de las modificaciones más relevantes respecto a experimentos anteriores consistió en sustituir la función de pérdida \textit{Smooth L1 Loss} por \textit{L1 Loss} (Error Absoluto Medio). Esta decisión permitió alinear directamente el proceso de optimización con la métrica principal utilizada durante la evaluación del modelo, favoreciendo una reducción más consistente del error absoluto medio observado sobre los conjuntos de validación y prueba.
+
+La Tabla~\ref{tab:imagevelocity_best_config} resume los principales hiperparámetros y características de la configuración seleccionada.
+
+\begin{table}[H]
+	\caption{Configuración experimental seleccionada para ImageVelocityEstimator}
+	\label{tab:imagevelocity_best_config}
+	\centering
+	\footnotesize
+	\setlength{\tabcolsep}{2pt}
+	\renewcommand{\arraystretch}{1.05}
+	
+	\begin{tabularx}{\columnwidth}{|p{3.2cm}|X|}
+		\hline
+		\textbf{Parámetro} & \textbf{Valor} \\
+		\hline
+		
+		Backbone &
+		ResNet50 preentrenada en ImageNet \\
+		\hline
+		
+		Fine-Tuning &
+		Descongelamiento de \texttt{layer4} \\
+		\hline
+		
+		Resolución de entrada &
+		$224 \times 224$ píxeles \\
+		\hline
+		
+		Dataset de entrenamiento &
+		15\,513 imágenes aumentadas mediante Data Augmentation \\
+		\hline
+		
+		Embedding visual &
+		512 dimensiones \\
+		\hline
+		
+		Función de activación &
+		GELU \\
+		\hline
+		
+		Dropout (Embedding Layer) &
+		0.3 \\
+		\hline
+		
+		Dropout (Regressor) &
+		0.2 \\
+		\hline
+		
+		Batch Size &
+		128 \\
+		\hline
+		
+		Learning Rate &
+		$1\times10^{-4}$ \\
+		\hline
+		
+		Épocas máximas &
+		60 \\
+		\hline
+		
+		Early Stopping &
+		Paciencia de 20 épocas \\
+		\hline
+		
+		Función de pérdida &
+		L1 Loss (MAE) \\
+		\hline
+		
+		Optimizador &
+		AdamW \\
+		\hline
+		
+		Precisión de entrenamiento &
+		bf16-mixed \\
+		\hline
+		
+		Semilla aleatoria &
+		42 \\
+		\hline
+		
+	\end{tabularx}
+\end{table}
+
+
 \subsubsection{Análisis del Espacio Latente}
 
 Además de la evaluación tradicional basada en métricas de regresión, se realizó un análisis exploratorio orientado a comprender la calidad de las representaciones internas aprendidas por la red neuronal.
