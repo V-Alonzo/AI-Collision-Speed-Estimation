@@ -1,0 +1,60 @@
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# Logs / OS
+*.log
+.DS_Store
+Thumbs.db1
+
+
+# Backend
+BackEnd/web/vendor/
+BackEnd/web/.env
+BackEnd/web/.env.local
+BackEnd/web/storage/
+BackEnd/web/bootstrap/cache/
+BackEnd/web/logs/
+
+# Frontend
+FrontEnd/node_modules/
+FrontEnd/dist/
+FrontEnd/.env.local
+FrontEnd/build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+
+# Archivos temporales
+*.zip
+*.rar
+tree_proyecto_actual.txt
