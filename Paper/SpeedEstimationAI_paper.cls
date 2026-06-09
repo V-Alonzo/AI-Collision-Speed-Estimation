@@ -104,12 +104,12 @@
 
 % Metadata macros and safe defaults
 \def\thisvolume#1{\gdef\@thevolume{1}}
-\def\thisnumber#1{\gdef\@thenumber{1}}
+\def\thisnumber#1{\gdef\@thenumber{9}}
 \def\thismonth#1{\gdef\@themonth{Junio}}
 \def\thisyear#1{\gdef\@theyear{2026}}
-\def\receptiondate#1{\gdef\@receptiondate{#1}}
-\def\acceptancedate#1{\gdef\@acceptancedate{#1}}
-\def\publicationdate#1{\gdef\@publicationdate{#1}}
+\def\receptiondate#1{\gdef\@receptiondate{09/06/2026}}
+\def\acceptancedate#1{\gdef\@acceptancedate{}}
+\def\publicationdate#1{\gdef\@publicationdate{}}
 \def\abstract#1{\gdef\@englishabstract{#1}}
 \def\keywords#1{\gdef\@englishkeywords{#1}}
 \def\resumen#1{\gdef\@spanishabstract{#1}}
