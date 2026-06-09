@@ -5,7 +5,7 @@
 \raggedbottom
 %
 % Publication Title
-\title{Reconstrucción Forense de Velocidad Vehicular Preimpacto mediante Redes Neuronales Convolucionales y Modelado de Deformación Estructural Postcolisión}
+\title{Estimación de la Velocidad Vehicular Precolisión mediante Aprendizaje Profundo Multimodal Integrando Evidencia Visual Postcolisión y Datos Estructurados de Reconstrucción de Accidentes}
 
 % Short title for the header (copy the main title if it is not too long)
 \shorttitle{Reconstrucción de Velocidad Vehicular}
@@ -491,6 +491,8 @@ Extracción numérica + codificación ordinal \\
 \subsubsection{Modelos Evaluados}
 
 Con el propósito de analizar de manera sistemática la influencia del preprocesamiento sobre el desempeño predictivo, se evaluaron cuatro configuraciones experimentales que combinan distintas estrategias de transformación de datos con dos familias de modelos de regresión supervisada. Los tres primeros experimentos emplearon una Red Neuronal Multicapa (Multilayer Perceptron, MLP), mientras que el cuarto utilizó un modelo de potenciación de gradiente basado en árboles de decisión (XGBoost). La partición de datos fue idéntica en todos los casos, asignando el 64\% de los registros al conjunto de entrenamiento, el 16\% al conjunto de validación y el 20\% restante al conjunto de prueba, garantizando así la comparabilidad de los resultados entre configuraciones.
+
+Los experimentos fueron ejecutados en una estación de trabajo equipada con un procesador Intel® Core™ i9-14900HX (2.20 GHz), 32 GB de memoria RAM y una unidad de procesamiento gráfico NVIDIA GeForce RTX 4070 con 8 GB de memoria VRAM. El sistema operativo utilizado fue de 64 bits con arquitectura x64.
 
 \paragraph{Red Neuronal Multicapa (MLP) - }
 
