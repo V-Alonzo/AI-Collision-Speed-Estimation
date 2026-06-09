@@ -1,0 +1,2682 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2025.9.19)  8 JUN 2026 21:12
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**SpeedEstimationAI_paper.tex
+(./SpeedEstimationAI_paper.tex
+LaTeX2e <2022-11-01> patch level 1
+L3 programming layer <2023-01-16> (./SpeedEstimationAI_paper.cls
+Document Class: SpeedEstimationAI_paper 2026-05-20 paper class
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2022/07/02 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2022/07/02 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count185
+\c@section=\count186
+\c@subsection=\count187
+\c@subsubsection=\count188
+\c@paragraph=\count189
+\c@subparagraph=\count190
+\c@figure=\count191
+\c@table=\count192
+\abovecaptionskip=\skip48
+\belowcaptionskip=\skip49
+\bibindent=\dimen140
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2021/02/14 v1.3d Input encoding file
+\inpenc@prehook=\toks16
+\inpenc@posthook=\toks17
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2022/12/26 3.84 The Babel package
+\babel@savecnt=\count193
+\U@D=\dimen141
+\l@unhyphenated=\language6
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/txtbabel.def)
+\bbl@readstream=\read2
+\bbl@dirlevel=\count194
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel-spanish/spanish.ldf
+Language: spanish.ldf 2021/05/27 v5.0q Spanish support from the babel system
+\es@quottoks=\toks18
+\es@quotdepth=\count195
+Package babel Info: Making " an active character on input line 570.
+Package babel Info: Making . an active character on input line 675.
+Package babel Info: Making < an active character on input line 722.
+Package babel Info: Making > an active character on input line 722.
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel-english/english.ldf
+Language: english 2017/06/06 v3.3r English support from the babel system
+Package babel Info: Hyphen rules for 'british' set to \l@english
+(babel)             (\language0). Reported on input line 82.
+Package babel Info: Hyphen rules for 'UKenglish' set to \l@english
+(babel)             (\language0). Reported on input line 83.
+Package babel Info: Hyphen rules for 'canadian' set to \l@english
+(babel)             (\language0). Reported on input line 102.
+Package babel Info: Hyphen rules for 'australian' set to \l@english
+(babel)             (\language0). Reported on input line 105.
+Package babel Info: Hyphen rules for 'newzealand' set to \l@english
+(babel)             (\language0). Reported on input line 108.
+))
+(/usr/share/texlive/texmf-dist/tex/generic/babel/locale/en/babel-english.tex
+Package babel Info: Importing font and identification data for english
+(babel)             from babel-en.ini. Reported on input line 11.
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel/locale/es/babel-spanish.tex
+Package babel Info: Importing font and identification data for spanish
+(babel)             from babel-es.ini. Reported on input line 11.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+)
+(/usr/share/texlive/texmf-dist/tex/latex/ae/ae.sty
+Package: ae 2001/02/12 1.3 Almost European Computer Modern
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+))
+(/usr/share/texlive/texmf-dist/tex/latex/ae/aecompl.sty
+Package: aecompl 1998/07/23 0.9 T1 Complements for AE fonts (D. Roegel)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/pslatex/pslatex.sty
+Package: pslatex 2021/01/13 v1.3 pslatex emulation (DPC)
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 66.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT1/ptmcm/m/n on input line 66.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/ptmcm/m/n on input line 66.
+LaTeX Font Info:    Redeclaring symbol font `letters' on input line 67.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/ptmcm/m/it on input line 67.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/ptmcm/m/it on input line 67.
+LaTeX Font Info:    Redeclaring symbol font `symbols' on input line 68.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/pzccm/m/n on input line 68.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/pzccm/m/n on input line 68.
+LaTeX Font Info:    Redeclaring symbol font `largesymbols' on input line 69.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/psycm/m/n on input line 69.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/psycm/m/n on input line 69.
+\symbold=\mathgroup4
+\symitalic=\mathgroup5
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 75.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT1/ptm/bx/n on input line 75.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/ptm/bx/n on input line 75.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 76.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT1/ptm/m/it on input line 76.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT1/ptm/m/it on input line 76.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/cancel/cancel.sty
+Package: cancel 2013/04/12 v2.2 Cancel math terms
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks19
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2022/03/10 v1.4e Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 107.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2022/09/22 v1.2b Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen142
+\Gin@req@width=\dimen143
+)
+(/usr/share/texlive/texmf-dist/tex/latex/setspace/setspace.sty
+Package: setspace 2022/12/04 v6.7b set line spacing
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2022/04/08 v2.17n AMS math features
+\@mathmargin=\skip50
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2021/08/26 v2.01 AMS text
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks20
+\ex@=\dimen144
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen145
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count196
+LaTeX Info: Redefining \frac on input line 234.
+\uproot@=\count197
+\leftroot@=\count198
+LaTeX Info: Redefining \overline on input line 399.
+LaTeX Info: Redefining \colon on input line 410.
+\classnum@=\count199
+\DOTSCASE@=\count266
+LaTeX Info: Redefining \ldots on input line 496.
+LaTeX Info: Redefining \dots on input line 499.
+LaTeX Info: Redefining \cdots on input line 620.
+\Mathstrutbox@=\box51
+\strutbox@=\box52
+LaTeX Info: Redefining \big on input line 722.
+LaTeX Info: Redefining \Big on input line 723.
+LaTeX Info: Redefining \bigg on input line 724.
+LaTeX Info: Redefining \Bigg on input line 725.
+\big@size=\dimen146
+LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
+\macc@depth=\count267
+LaTeX Info: Redefining \bmod on input line 905.
+LaTeX Info: Redefining \pmod on input line 910.
+LaTeX Info: Redefining \smash on input line 940.
+LaTeX Info: Redefining \relbar on input line 970.
+LaTeX Info: Redefining \Relbar on input line 971.
+\c@MaxMatrixCols=\count268
+\dotsspace@=\muskip16
+\c@parentequation=\count269
+\dspbrk@lvl=\count270
+\tag@help=\toks21
+\row@=\count271
+\column@=\count272
+\maxfields@=\count273
+\andhelp@=\toks22
+\eqnshift@=\dimen147
+\alignsep@=\dimen148
+\tagshift@=\dimen149
+\tagwidth@=\dimen150
+\totwidth@=\dimen151
+\lineht@=\dimen152
+\@envbody=\toks23
+\multlinegap=\skip51
+\multlinetaggap=\skip52
+\mathdisplay@stack=\toks24
+LaTeX Info: Redefining \[ on input line 2953.
+LaTeX Info: Redefining \] on input line 2954.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup6
+\symAMSb=\mathgroup7
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+)
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count274
+\float@exts=\toks25
+\float@box=\box53
+\@float@everytoks=\toks26
+\@floatcapt=\box54
+)
+(/usr/share/texlive/texmf-dist/tex/latex/makecell/makecell.sty
+Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
+
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
+Package: array 2022/09/04 v2.5g Tabular extension package (FMi)
+\col@sep=\dimen153
+\ar@mcellbox=\box55
+\extrarowheight=\dimen154
+\NC@list=\toks27
+\extratabsurround=\skip53
+\backup@length=\skip54
+\ar@cellbox=\box56
+)
+\rotheadsize=\dimen155
+\c@nlinenum=\count275
+\TeXr@lab=\toks28
+)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count276
+\calc@Bcount=\count277
+\calc@Adimen=\dimen156
+\calc@Bdimen=\dimen157
+\calc@Askip=\skip55
+\calc@Bskip=\skip56
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count278
+\calc@Cskip=\skip57
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tabto-ltx/tabto.sty
+Package: tabto 2018/12/28  v 1.4  Another tabbing mechanism
+\CurrentLineWidth=\dimen158
+\TabPrevPos=\dimen159
+)
+(/usr/share/texlive/texmf-dist/tex/latex/lettrine/lettrine.sty
+File: lettrine.sty 2022-09-25 v2.30 (Daniel Flipo)
+
+(/usr/share/texlive/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+Package: xkeyval 2022/06/16 v2.9 package option processing (HA)
+
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+\XKV@toks=\toks29
+\XKV@tempa@toks=\toks30
+)
+\XKV@depth=\count279
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+))
+(/usr/share/texlive/texmf-dist/tex/generic/minifp/minifp.sty
+Package: minifp 2013/12/30 v0.96. Macros for real number operations and a stack
+-based programing language.
+\MFP@loopctr=\count280
+)
+\c@DefaultLines=\count281
+\c@DefaultDepth=\count282
+\DefaultFindent=\dimen160
+\DefaultNindent=\dimen161
+\DefaultSlope=\dimen162
+\DiscardVskip=\dimen163
+
+Loading lettrine.cfg
+(/usr/share/texlive/texmf-dist/tex/latex/lettrine/lettrine.cfg)
+\L@lbox=\box57
+\L@tbox=\box58
+\c@L@lines=\count283
+\c@L@depth=\count284
+\L@Pindent=\dimen164
+\L@Findent=\dimen165
+\L@Nindent=\dimen166
+\L@lraise=\dimen167
+\L@first=\dimen168
+\L@next=\dimen169
+\L@slope=\dimen170
+\L@height=\dimen171
+\L@novskip=\dimen172
+\L@target@ht=\dimen173
+\L@target@dp=\dimen174
+\L@target@tht=\dimen175
+\LettrineWidth=\dimen176
+\LettrineHeight=\dimen177
+\LettrineDepth=\dimen178
+\Llist@everypar=\toks31
+)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2022-11-13 v7.00u Hypertext links for LaTeX
+
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2022/02/03 v1.0f TeX engine tests
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/letltxmacro/letltxmacro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2022-05-17 v2.50 Cross-referencing by name of section
+
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+))
+\c@section@level=\count285
+)
+\@linkdim=\dimen179
+\Hy@linkcounter=\count286
+\Hy@pagecounter=\count287
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2022-11-13 v7.00u Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)
+\Hy@SavedSpaceFactor=\count288
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def
+File: puenc.def 2022-11-13 v7.00u Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Option `bookmarks' set `true' on input line 4045.
+Package hyperref Info: Option `bookmarksopen' set `true' on input line 4045.
+Package hyperref Info: Option `bookmarksnumbered' set `true' on input line 4045
+.
+Package hyperref Info: Option `breaklinks' set `true' on input line 4045.
+Package hyperref Info: Option `colorlinks' set `true' on input line 4045.
+Package hyperref Info: Option `hyperindex' set `true' on input line 4045.
+Package hyperref Info: Option `hyperfigures' set `true' on input line 4045.
+Package hyperref Info: Hyper figures ON on input line 4160.
+Package hyperref Info: Link nesting OFF on input line 4167.
+Package hyperref Info: Hyper index ON on input line 4170.
+Package hyperref Info: Plain pages OFF on input line 4177.
+Package hyperref Info: Backreferencing OFF on input line 4182.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4410.
+\c@Hy@tempcnt=\count289
+LaTeX Info: Redefining \url on input line 4748.
+\XeTeXLinkMargin=\dimen180
+
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count290
+\Field@Width=\dimen181
+\Fld@charsize=\dimen182
+Package hyperref Info: Hyper figures ON on input line 6025.
+Package hyperref Info: Link nesting OFF on input line 6032.
+Package hyperref Info: Hyper index ON on input line 6035.
+Package hyperref Info: backreferencing OFF on input line 6042.
+Package hyperref Info: Link coloring ON on input line 6045.
+Package hyperref Info: Link coloring with OCG OFF on input line 6052.
+Package hyperref Info: PDF/A mode OFF on input line 6057.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/atbegshi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count291
+\c@Item=\count292
+\c@Hfootnote=\count293
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2022-11-13 v7.00u Hyperref driver for pdfTeX
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
+kage
+with kernel methods
+)
+\Fld@listcount=\count294
+\c@bookmark@seq@number=\count295
+
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+Package: rerunfilecheck 2022-07-10 v1.10 Rerun checks for auxiliary files (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+85.
+)
+\Hy@SectionHShift=\skip58
+)
+(/usr/share/texlive/texmf-dist/tex/latex/preprint/authblk.sty
+Package: authblk 2001/02/27 1.3 (PWD)
+\affilsep=\skip59
+\@affilsep=\skip60
+\c@Maxaffil=\count296
+\c@authors=\count297
+\c@affil=\count298
+)
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2022/03/01 v3.6b Customizing captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2022/03/17 v2.3b caption3 kernel (AR)
+\caption@tempdima=\dimen183
+\captionmargin=\dimen184
+\caption@leftmargin=\dimen185
+\caption@rightmargin=\dimen186
+\caption@width=\dimen187
+\caption@indent=\dimen188
+\caption@parindent=\dimen189
+\caption@hangindent=\dimen190
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count299
+\c@continuedfloat=\count300
+Package caption Info: float package is loaded.
+Package caption Info: hyperref package is loaded.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2022/11/09 v4.1 Extensive control of page headers and footers
+
+\f@nch@headwidth=\skip61
+\f@nch@O@elh=\skip62
+\f@nch@O@erh=\skip63
+\f@nch@O@olh=\skip64
+\f@nch@O@orh=\skip65
+\f@nch@O@elf=\skip66
+\f@nch@O@erf=\skip67
+\f@nch@O@olf=\skip68
+\f@nch@O@orf=\skip69
+))
+(/usr/share/texlive/texmf-dist/tex/latex/tools/tabularx.sty
+Package: tabularx 2020/01/15 v2.11c `tabularx' package (DPC)
+\TX@col@width=\dimen191
+\TX@old@table=\dimen192
+\TX@old@col=\dimen193
+\TX@target=\dimen194
+\TX@delta=\dimen195
+\TX@cols=\count301
+\TX@ftn=\toks32
+)
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2023-01-16 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count302
+\l__pdf_internal_box=\box59
+)
+(./SpeedEstimationAI_paper.aux
+
+LaTeX Warning: Label `fig:diagrama1' multiply defined.
+
+
+LaTeX Warning: Label `fig:diagrama1' multiply defined.
+
+
+LaTeX Warning: Label `fig:diagrama1' multiply defined.
+
+
+LaTeX Warning: Label `fig:diagrama1' multiply defined.
+
+)
+\openout1 = `SpeedEstimationAI_paper.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for OMS/pzccm/m/n on input line 63.
+LaTeX Font Info:    Trying to load font information for OMS+pzccm on input line
+ 63.
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omspzccm.fd
+File: omspzccm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/pzccm.
+)
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count303
+\scratchdimen=\dimen196
+\scratchbox=\box60
+\nofMPsegments=\count304
+\nofMParguments=\count305
+\everyMPshowfont=\toks33
+\MPscratchCnt=\count306
+\MPscratchDim=\dimen197
+\MPnumerator=\count307
+\makeMPintoPDFobject=\count308
+\everyMPtoPDFconversion=\toks34
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2022/01/06 v1.3d Standard LaTeX Color (DPC)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: pdftex.def on input line 149.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+Package hyperref Info: Link coloring ON on input line 63.
+
+(./SpeedEstimationAI_paper.out) (./SpeedEstimationAI_paper.out)
+\@outlinefile=\write3
+\openout3 = `SpeedEstimationAI_paper.out'.
+
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
+LaTeX Font Info:    Trying to load font information for OT1+ptmcm on input line
+ 66.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptmcm.fd
+File: ot1ptmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ptmcm.
+)
+LaTeX Font Info:    Trying to load font information for OML+ptmcm on input line
+ 66.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omlptmcm.fd
+File: omlptmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ptmcm.
+)
+LaTeX Font Info:    Trying to load font information for OMX+psycm on input line
+ 66.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omxpsycm.fd
+File: omxpsycm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/psycm.
+)
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 66.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 66.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 66.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 66.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 66.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 66.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 6
+6.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+)
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 68.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 68.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 68.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 68.
+Package lettrine.sty Info: Targeted height = 17.14496pt
+(lettrine.sty)             (for loversize=0, accent excluded),
+(lettrine.sty)             Lettrine height = 18.14601pt (\textbf {L});
+(lettrine.sty)             reported on input line 72.
+
+
+LaTeX Warning: Citation `WHO2023' on page 1 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Brach2011' on page 1 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Brach2011' on page 1 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Fricke1990' on page 1 undefined on input line 72.
+
+
+Underfull \hbox (badness 2418) in paragraph at lines 72--73
+\T1/ptm/m/n/10 de la ev-i-den-cia ma-te-rial, per-mite de-ter-mi-nar vari-ables
+
+ []
+
+
+LaTeX Warning: Citation `Fricke1990' on page 1 undefined on input line 74.
+
+
+LaTeX Warning: Citation `Struble2014' on page 1 undefined on input line 74.
+
+
+Underfull \hbox (badness 4940) in paragraph at lines 74--75
+[]\T1/ptm/m/n/10 Entre las vari-ables anal-izadas en los pro-ce-sos de
+ []
+
+
+Underfull \hbox (badness 1142) in paragraph at lines 74--75
+\T1/ptm/m/n/10 ve-hic-u-lar pre-via al im-pacto re-viste par-tic-u-lar rel-e-va
+n-cia
+ []
+
+
+Underfull \hbox (badness 1077) in paragraph at lines 74--75
+\T1/ptm/m/n/10 téc-nica. Dado que la en-ergía cinética es pro-por-cional
+ []
+
+
+Underfull \hbox (badness 1337) in paragraph at lines 74--75
+\T1/ptm/m/n/10 al cuadrado de la ve-loci-dad, in-cre-men-tos rel-a-ti-va-mente
+ []
+
+
+Underfull \hbox (badness 3098) in paragraph at lines 74--75
+\T1/ptm/m/n/10 mod-er-a-dos en esta vari-able se tra-ducen en au-men-tos
+ []
+
+
+Underfull \hbox (badness 1137) in paragraph at lines 74--75
+\T1/ptm/m/n/10 trans-mi-ti-das a los ocu-pantes. La ve-loci-dad de-ter-mina,
+ []
+
+<tec_logo.png, id=189, 439.6425pt x 115.43124pt>
+File: tec_logo.png Graphic file (type png)
+<use tec_logo.png>
+Package pdftex.def Info: tec_logo.png  used on input line 76.
+(pdftex.def)             Requested size: 130.04224pt x 34.14322pt.
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+
+
+
+
+ <./tec_logo.png>]
+
+LaTeX Warning: Citation `Fricke1990' on page 2 undefined on input line 76.
+
+
+LaTeX Warning: Citation `Mrowicki2020' on page 2 undefined on input line 76.
+
+
+LaTeX Warning: Citation `Mrowicki2020' on page 2 undefined on input line 76.
+
+
+LaTeX Warning: Citation `McHenry2001' on page 2 undefined on input line 76.
+
+
+LaTeX Warning: Citation `Mrowicki2020' on page 2 undefined on input line 76.
+
+
+LaTeX Warning: Citation `McHenry2001' on page 2 undefined on input line 76.
+
+
+Underfull \hbox (badness 1132) in paragraph at lines 76--77
+[]\T1/ptm/m/n/10 Las metodologías tradi-cionales para la es-ti-mación de
+ []
+
+
+Underfull \hbox (badness 1622) in paragraph at lines 76--77
+\T1/ptm/m/n/10 McHenry, pos-te-ri-or-mente for-mal-iza-dos en metodologías
+ []
+
+
+LaTeX Warning: Citation `Kerkhoff1985' on page 2 undefined on input line 78.
+
+
+LaTeX Warning: Citation `Linder2016' on page 2 undefined on input line 78.
+
+
+Underfull \hbox (badness 4048) in paragraph at lines 78--79
+\T1/ptm/m/n/10 por el con-trario, rep-re-senta una condi-ción re-cur-rente
+ []
+
+
+Underfull \hbox (badness 2351) in paragraph at lines 78--79
+\T1/ptm/m/n/10 la re-con-struc-ción forense es-tablece que las fo-tografías
+ []
+
+
+LaTeX Warning: Citation `NHTSA2024' on page 2 undefined on input line 80.
+
+
+Underfull \hbox (badness 2293) in paragraph at lines 80--81
+\T1/ptm/m/n/10 peri-ciales y el de-sar-rollo de bases de datos es-pe-cial-
+ []
+
+
+Underfull \hbox (badness 1831) in paragraph at lines 80--81
+\T1/ptm/m/n/10 más rel-e-vantes se en-cuen-tra el pro-grama Crash In-jury
+ []
+
+
+Underfull \hbox (badness 1515) in paragraph at lines 80--81
+\T1/ptm/m/n/10 de los Es-ta-dos Unidos ori-en-tada a la in-ves-ti-gación en
+ []
+
+
+Underfull \hbox (badness 1168) in paragraph at lines 80--81
+\T1/ptm/m/n/10 en-foque mul-ti-dis-ci-plinario. Esta base de datos in-te-gra
+ []
+
+
+Underfull \hbox (badness 1009) in paragraph at lines 80--81
+\T1/ptm/m/n/10 imá-genes de ve-hícu-los siniestra-dos, in-for-ma-ción téc-nica
+ []
+
+
+LaTeX Warning: Citation `Rahim2021' on page 2 undefined on input line 82.
+
+
+LaTeX Warning: Citation `vanRuitenbeek2022' on page 2 undefined on input line 8
+2.
+
+
+LaTeX Warning: Citation `Jameel2023' on page 2 undefined on input line 82.
+
+
+LaTeX Warning: Citation `Patil2017' on page 2 undefined on input line 82.
+
+
+LaTeX Warning: Citation `Hasan2025' on page 2 undefined on input line 82.
+
+
+Underfull \hbox (badness 1708) in paragraph at lines 82--83
+\T1/ptm/m/n/10 vi-sual con ca-paci-dad de de-sem-peño com-pa-ra-ble, y en
+ []
+
+
+Underfull \hbox (badness 1270) in paragraph at lines 82--83
+\T1/ptm/m/n/10 apli-ca-ciones con re-sul-ta-dos cuan-ti-ta-ti-va-mente rel-e-va
+ntes:
+ []
+
+
+Underfull \hbox (badness 3942) in paragraph at lines 82--83
+\T1/ptm/m/n/10 mod-e-los basa-dos en re-des neu-ronales con-volu-cionales
+ []
+
+
+Underfull \hbox (badness 2293) in paragraph at lines 82--83
+\T1/ptm/m/n/10 apli-ca-dos a la clasi-fi-cación de tipología de daño han
+ []
+
+
+Underfull \hbox (badness 1496) in paragraph at lines 82--83
+\T1/ptm/m/n/10 [[]], lo que pone de man-i-fiesto la ca-paci-dad in-her-ente
+ []
+
+
+LaTeX Warning: Citation `Hasan2025' on page 2 undefined on input line 84.
+
+
+LaTeX Warning: Citation `Argote2022' on page 2 undefined on input line 84.
+
+
+LaTeX Warning: Citation `Zhao2021' on page 2 undefined on input line 84.
+
+
+LaTeX Warning: Citation `Czajewski2026' on page 2 undefined on input line 84.
+
+
+LaTeX Warning: Citation `Hasan2025' on page 2 undefined on input line 84.
+
+
+LaTeX Warning: Citation `Zhao2021' on page 2 undefined on input line 84.
+
+
+Underfull \hbox (badness 1484) in paragraph at lines 84--85
+\T1/ptm/m/n/10 rev-ela que la gran may-oría de los tra-ba-jos pub-li-ca-dos
+ []
+
+
+Underfull \hbox (badness 1082) in paragraph at lines 84--85
+\T1/ptm/m/n/10 al es-tado pre-vio al im-pacto [[]]. La es-ti-mación de la
+ []
+
+
+Underfull \hbox (badness 1184) in paragraph at lines 84--85
+\T1/ptm/m/n/10 post-col-isión ha recibido una aten-ción com-par-a-ti-va-mente
+ []
+
+
+Underfull \hbox (badness 1655) in paragraph at lines 84--85
+\T1/ptm/m/n/10 es-ca-sos tra-ba-jos que han ex-plo-rado esta di-rec-ción han
+ []
+
+
+Underfull \hbox (badness 3209) in paragraph at lines 84--85
+\T1/ptm/m/n/10 re-sul-tan fre-cuente-mente inase-quibles para los méto-dos
+ []
+
+
+Underfull \hbox (badness 1552) in paragraph at lines 84--85
+\T1/ptm/m/n/10 au-tomático han re-cono-cido de man-era ex-plícita que la
+ []
+
+
+Underfull \hbox (badness 2486) in paragraph at lines 84--85
+\T1/ptm/m/n/10 obtenida de-spués del evento, y a la alta vari-abil-i-dad
+ []
+
+[2]
+Underfull \hbox (badness 3049) in paragraph at lines 86--87
+\T1/ptm/m/n/10 ve-hic-u-lar pre-col-isión me-di-ante téc-ni-cas de apren-dizaje
+
+ []
+
+
+Underfull \hbox (badness 2707) in paragraph at lines 86--87
+\T1/ptm/m/n/10 reales doc-u-men-ta-dos en la base de datos CIREN. A
+ []
+
+
+Underfull \hbox (badness 2781) in paragraph at lines 86--87
+\T1/ptm/m/n/10 fo-tográ-fi-cos del daño es-truc-tural ve-hic-u-lar y vari-ables
+
+ []
+
+
+Underfull \hbox (badness 1412) in paragraph at lines 86--87
+\T1/ptm/m/n/10 con-sti-tuye el nú-cleo de un en-foque mul-ti-modal, en el
+ []
+
+
+Underfull \hbox (badness 1331) in paragraph at lines 86--87
+\T1/ptm/m/n/10 apren-dizaje pro-fundo son fu-sion-a-dos para pro-ducir una
+ []
+
+
+Underfull \hbox (badness 1221) in paragraph at lines 86--87
+\T1/ptm/m/n/10 con-tex-tual del sinie-stro, con-tiene in-for-ma-ción su-fi-cien
+te
+ []
+
+
+Underfull \hbox (badness 1127) in paragraph at lines 88--89
+\T1/ptm/m/n/10 eval-u-ación de una ar-qui-tec-tura de apren-dizaje pro-fundo
+ []
+
+
+Underfull \hbox (badness 2828) in paragraph at lines 88--89
+\T1/ptm/m/n/10 mul-ti-modal para la re-con-struc-ción au-tom-a-ti-zada de la
+ []
+
+
+Underfull \hbox (badness 1688) in paragraph at lines 88--89
+\T1/ptm/m/n/10 post-col-isión. Es-tas aporta-ciones bus-can avan-zar ha-cia
+ []
+
+
+Underfull \hbox (badness 2318) in paragraph at lines 91--92
+\T1/ptm/m/n/10 La re-visión de la lit-er-atura en torno a la es-ti-mación
+ []
+
+
+Underfull \hbox (badness 2096) in paragraph at lines 91--92
+\T1/ptm/m/n/10 de re-con-struc-ción de ve-loci-dad pre-col-isión basa-dos en
+ []
+
+
+Underfull \hbox (badness 4699) in paragraph at lines 93--93
+[][]\T1/ptm/b/it/11 Estimación de ve-loci-dad pre-col-isión me-di-ante
+ []
+
+
+LaTeX Warning: Citation `Cioroianu2020' on page 3 undefined on input line 95.
+
+
+Underfull \hbox (badness 1107) in paragraph at lines 95--96
+\T1/ptm/m/n/10 del ve-hículo, la an-chura de la zona de de-for-ma-ción y
+ []
+
+
+Underfull \hbox (badness 1194) in paragraph at lines 95--96
+\T1/ptm/m/n/10 lin-eales em-pleadas por las metodologías con-ven-cionales
+ []
+
+
+LaTeX Warning: Citation `Czajewski2026' on page 3 undefined on input line 97.
+
+
+Underfull \hbox (badness 2221) in paragraph at lines 97--98
+\T1/ptm/m/n/10 un mod-elo de re-gre-sión basado en bosques aleato-rios
+ []
+
+
+Underfull \hbox (badness 4467) in paragraph at lines 97--98
+\T1/ptm/m/n/10 de an-cho com-pleto con-tra bar-rera rígida, em-ple-ando
+ []
+
+
+Underfull \hbox (badness 2495) in paragraph at lines 97--98
+\T1/ptm/m/n/10 re-sul-ta-dos su-pe-ri-ores en tér-mi-nos de er-ror rel-a-tivo, 
+y
+ []
+
+
+LaTeX Warning: Citation `Zhao2021' on page 3 undefined on input line 101.
+
+
+Underfull \hbox (badness 1430) in paragraph at lines 101--102
+\T1/ptm/m/n/10 los tra-ba-jos que for-mu-lan la es-ti-mación de parámet-ros
+ []
+
+
+Underfull \hbox (badness 1122) in paragraph at lines 101--102
+\T1/ptm/m/n/10 Los au-tores de-mostraron que el al-go-ritmo es ca-paz de
+ []
+
+File: tec_logo.png Graphic file (type png)
+<use tec_logo.png>
+Package pdftex.def Info: tec_logo.png  used on input line 102.
+(pdftex.def)             Requested size: 130.04224pt x 34.14322pt.
+[3]
+Underfull \hbox (badness 3803) in paragraph at lines 103--104
+\T1/ptm/m/n/10 provienen ín-te-gra-mente de sim-u-la-ciones numéri-cas de
+ []
+
+
+Underfull \hbox (badness 1072) in paragraph at lines 103--104
+\T1/ptm/m/n/10 diferir sig-ni-fica-ti-va-mente de los pa-trones ob-ser-va-dos e
+n
+ []
+
+
+Underfull \hbox (badness 1728) in paragraph at lines 103--104
+\T1/ptm/m/n/10 cor-re-sponde a cam-pos de de-for-ma-ción tridi-men-sion-ales
+ []
+
+
+Underfull \hbox (badness 1603) in paragraph at lines 103--104
+\T1/ptm/m/n/10 sea in-apli-ca-ble di-rec-ta-mente cuando la única ev-i-den-cia
+ []
+
+
+Underfull \hbox (badness 1796) in paragraph at lines 103--104
+\T1/ptm/m/n/10 opera so-bre imá-genes fo-tográ-fi-cas reales de ac-ci-dentes
+ []
+
+
+Underfull \hbox (badness 2269) in paragraph at lines 103--104
+\T1/ptm/m/n/10 de campo doc-u-men-ta-dos en CIREN, pre-scin-di-endo de
+ []
+
+
+LaTeX Warning: Citation `Argote2022' on page 4 undefined on input line 107.
+
+
+Underfull \hbox (badness 2310) in paragraph at lines 107--108
+\T1/ptm/m/n/10 del im-pacto. El es-tu-dio tam-bién de-sar-rolló y re-finó
+ []
+
+
+Underfull \hbox (badness 1024) in paragraph at lines 107--108
+\T1/ptm/m/n/10 de 3.41 km/h so-bre imá-genes sim-u-ladas. Este tra-bajo
+ []
+
+
+Underfull \hbox (badness 1584) in paragraph at lines 107--108
+\T1/ptm/m/n/10 y no se ex-ploró la in-te-gración de in-for-ma-ción tab-u-lar
+ []
+
+
+LaTeX Warning: Citation `Patil2017' on page 4 undefined on input line 109.
+
+
+LaTeX Warning: Citation `Kyu2020' on page 4 undefined on input line 109.
+
+
+LaTeX Warning: Citation `Jameel2023' on page 4 undefined on input line 109.
+
+
+LaTeX Warning: Citation `vanRuitenbeek2022' on page 4 undefined on input line 1
+09.
+
+
+Underfull \hbox (badness 1527) in paragraph at lines 109--110
+[]\T1/ptm/m/n/10 En el ám-bito de la clasi-fi-cación y seg-mentación de
+ []
+
+
+Underfull \hbox (badness 1019) in paragraph at lines 109--110
+\T1/ptm/m/n/10 de los mod-e-los pro-fun-dos so-bre este tipo de ev-i-den-cia
+ []
+
+
+Underfull \hbox (badness 2173) in paragraph at lines 109--110
+\T1/ptm/m/n/10 vi-sual. Patil et al. [[]] pro-pusieron un sis-tema de
+ []
+
+
+Underfull \hbox (badness 1320) in paragraph at lines 109--110
+\T1/ptm/m/n/10 del 89.5% so-bre cat-e-gorías de daño rel-e-vantes para el
+ []
+
+
+Underfull \hbox (badness 1748) in paragraph at lines 109--110
+\T1/ptm/m/n/10 proce-samiento de recla-ma-ciones ase-gu-rado-ras. Kyu y
+ []
+
+
+Underfull \hbox (badness 1527) in paragraph at lines 109--110
+\T1/ptm/m/n/10 de sev-eri-dad de daño ve-hic-u-lar, re-por-tando ex-ac-ti-tudes
+
+ []
+
+
+Underfull \hbox (badness 1874) in paragraph at lines 109--110
+\T1/ptm/m/n/10 de 95.2% y 94.6% en de-tec-ción, 76.5% y 74.4% en
+ []
+
+
+Underfull \hbox (badness 1874) in paragraph at lines 109--110
+\T1/ptm/m/n/10 Jameel et al. [[]] ex-tendieron este en-foque me-di-ante
+ []
+
+
+LaTeX Warning: Citation `Hasan2025' on page 4 undefined on input line 111.
+
+
+LaTeX Warning: Citation `Bhowmik2023' on page 4 undefined on input line 117.
+
+
+Underfull \hbox (badness 1394) in paragraph at lines 117--118
+\T1/ptm/m/n/10 en-foque in-te-gra una red con-volu-cional VGG16 para el
+ []
+
+
+Underfull \hbox (badness 2261) in paragraph at lines 117--118
+\T1/ptm/m/n/10 es-trate-gia de fusión pro-funda de car-ac-terís-ti-cas. Los
+ []
+
+
+Underfull \hbox (badness 2478) in paragraph at lines 117--118
+\T1/ptm/m/n/10 uti-lizando úni-ca-mente in-for-ma-ción vi-sual. Asimismo,
+ []
+
+
+Underfull \hbox (badness 2790) in paragraph at lines 117--118
+\T1/ptm/m/n/10 de-scribir ade-cuada-mente el fenó-meno anal-izado. No
+ []
+
+[4]
+
+LaTeX Warning: Citation `Liu2025' on page 5 undefined on input line 119.
+
+
+Underfull \hbox (badness 2671) in paragraph at lines 119--120
+\T1/ptm/m/n/10 car-ac-terís-ti-cas ge-ométri-cas de la in-fraestruc-tura vial y
+
+ []
+
+
+Underfull \hbox (badness 2119) in paragraph at lines 119--120
+\T1/ptm/m/n/10 de-scrip-ciones tex-tuales de los even-tos. Su prop-uesta
+ []
+
+
+Underfull \hbox (badness 1014) in paragraph at lines 119--120
+\T1/ptm/m/n/10 tipo Mixture-of-Experts para mod-e-lar las con-tribu-ciones
+ []
+
+
+Underfull \hbox (badness 2961) in paragraph at lines 119--120
+\T1/ptm/m/n/10 mostraron un de-sem-peño su-pe-rior re-specto a di-ver-sos
+ []
+
+
+Underfull \hbox (badness 1701) in paragraph at lines 119--120
+\T1/ptm/m/n/10 y un F1-score de 0.712. Adi-cional-mente, el mod-elo
+ []
+
+
+Underfull \hbox (badness 1577) in paragraph at lines 119--120
+\T1/ptm/m/n/10 ob-stante, al igual que en tra-ba-jos pre-vios, el ob-je-tivo
+ []
+
+
+LaTeX Warning: Citation `Somvanshi2026' on page 5 undefined on input line 121.
+
+
+Underfull \hbox (badness 1424) in paragraph at lines 121--122
+[]\T1/ptm/m/n/10 La rel-e-van-cia de los en-fo-ques mul-ti-modales tam-bién
+ []
+
+
+Underfull \hbox (badness 1540) in paragraph at lines 121--122
+\T1/ptm/m/n/10 Som-van-shi et al. [[]] re-por-taron que los mod-e-los de
+ []
+
+
+Underfull \hbox (badness 1320) in paragraph at lines 121--122
+\T1/ptm/m/n/10 apren-dizaje pro-fundo su-peran de man-era sig-ni-fica-tiva a
+ []
+
+
+Underfull \hbox (badness 1622) in paragraph at lines 121--122
+\T1/ptm/m/n/10 que los en-fo-ques mul-ti-modales rep-re-sen-tan una de las
+ []
+
+
+Underfull \hbox (badness 1629) in paragraph at lines 123--124
+[]\T1/ptm/m/n/10 El pre-sente tra-bajo se in-scribe pre-cisa-mente en esta
+ []
+
+
+Underfull \hbox (badness 2005) in paragraph at lines 123--124
+\T1/ptm/m/n/10 cual-i-ta-ti-va-mente dis-tin-tos: no se trata de clasi-ficar la
+
+ []
+
+
+Underfull \hbox (badness 4505) in paragraph at lines 123--124
+\T1/ptm/m/n/10 de campo doc-u-men-ta-dos en CIREN con ve-loci-dades
+ []
+
+
+Underfull \hbox (badness 1342) in paragraph at lines 131--132
+\T1/ptm/m/n/10 la base de datos de-nom-i-nada \T1/pcr/m/n/10 Crash Injury Resea
+rch
+ []
+
+
+Underfull \hbox (badness 3039) in paragraph at lines 131--132
+\T1/pcr/m/n/10 Crash Viewer\T1/ptm/m/n/10 , se ori-en-tan a trans-for-mar in-fo
+r-ma-ción
+ []
+
+
+Underfull \hbox (badness 1881) in paragraph at lines 131--132
+\T1/ptm/m/n/10 com-ple-men-tario: metadatos del evento y del ve-hículo
+ []
+
+
+Underfull \hbox (badness 1616) in paragraph at lines 131--132
+\T1/ptm/m/n/10 su-fi-cien-te-mente car-ac-ter-i-zado en tér-mi-nos de sev-eri-d
+ad,
+ []
+
+
+Underfull \hbox (badness 1577) in paragraph at lines 131--132
+\T1/ptm/m/n/10 max-im-i-cen su valor cual-i-ta-tivo para la ex-pli-cación del
+ []
+
+<Diagrams/Diagrama1.pdf, id=214, 2902.845pt x 2902.845pt>
+File: Diagrams/Diagrama1.pdf Graphic file (type pdf)
+<use Diagrams/Diagrama1.pdf>
+Package pdftex.def Info: Diagrams/Diagrama1.pdf  used on input line 137.
+(pdftex.def)             Requested size: 241.84842pt x 241.8441pt.
+File: tec_logo.png Graphic file (type png)
+<use tec_logo.png>
+Package pdftex.def Info: tec_logo.png  used on input line 141.
+(pdftex.def)             Requested size: 130.04224pt x 34.14322pt.
+[5]
+Underfull \hbox (badness 1831) in paragraph at lines 145--146
+\T1/ptm/m/n/10 y categóri-cos rel-e-vantes para el dis-eño, preparación y
+ []
+
+
+Underfull \hbox (badness 1831) in paragraph at lines 147--148
+[]\T1/ptm/m/n/10 Dado que un mismo caso puede con-tener múlti-ples
+ []
+
+
+Underfull \hbox (badness 4036) in paragraph at lines 147--148
+\T1/ptm/m/n/10 ve-hícu-los o varias vis-tas de in-terés in-volu-cradas, se
+ []
+
+<Diagrams/Diagrama2.pdf, id=220, 2902.845pt x 2902.845pt>
+File: Diagrams/Diagrama2.pdf Graphic file (type pdf)
+<use Diagrams/Diagrama2.pdf>
+Package pdftex.def Info: Diagrams/Diagrama2.pdf  used on input line 151.
+(pdftex.def)             Requested size: 241.84842pt x 241.8441pt.
+
+Underfull \hbox (badness 1783) in paragraph at lines 160--161
+[]\T1/ptm/m/n/10 Metodológicamente, esta fase cumple dos fun-ciones,
+ []
+
+
+Underfull \hbox (badness 2582) in paragraph at lines 160--161
+\T1/ptm/m/n/10 la primera es sep-a-rar el de-s-cubrim-iento de con-tenido
+ []
+
+
+Underfull \hbox (badness 1205) in paragraph at lines 160--161
+\T1/ptm/m/n/10 en eje-cu-ciones suce-si-vas y la se-gunda es im-poner una
+ []
+
+<Diagrams/Diagrama3.pdf, id=221, 2902.845pt x 2902.845pt>
+File: Diagrams/Diagrama3.pdf Graphic file (type pdf)
+<use Diagrams/Diagrama3.pdf>
+Package pdftex.def Info: Diagrams/Diagrama3.pdf  used on input line 164.
+(pdftex.def)             Requested size: 241.84842pt x 241.8441pt.
+[6 <./Diagrams/Diagrama1.pdf> <./Diagrams/Diagrama2.pdf>]
+<Diagrams/Diagrama4.pdf, id=372, 2902.845pt x 2902.845pt>
+File: Diagrams/Diagrama4.pdf Graphic file (type pdf)
+<use Diagrams/Diagrama4.pdf>
+Package pdftex.def Info: Diagrams/Diagrama4.pdf  used on input line 175.
+(pdftex.def)             Requested size: 241.84842pt x 241.8441pt.
+
+Underfull \hbox (badness 2351) in paragraph at lines 183--184
+\T1/ptm/m/n/10 Esta sep-a-ración per-mite analizar la in-for-ma-ción desde
+ []
+
+<Diagrams/Diagrama7.pdf, id=373, 2902.845pt x 2902.845pt>
+File: Diagrams/Diagrama7.pdf Graphic file (type pdf)
+<use Diagrams/Diagrama7.pdf>
+Package pdftex.def Info: Diagrams/Diagrama7.pdf  used on input line 187.
+(pdftex.def)             Requested size: 241.84842pt x 241.8441pt.
+
+Underfull \hbox (badness 1496) in paragraph at lines 194--195
+\T1/ptm/m/n/10 ve-loci-dad ve-hic-u-lar pre-col-isión a par-tir de in-for-ma-ci
+ón
+ []
+
+File: tec_logo.png Graphic file (type png)
+<use tec_logo.png>
+Package pdftex.def Info: tec_logo.png  used on input line 195.
+(pdftex.def)             Requested size: 130.04224pt x 34.14322pt.
+[7 <./Diagrams/Diagrama3.pdf> <./Diagrams/Diagrama4.pdf> <./Diagrams/Diagrama7.
+pdf>]
+Underfull \hbox (badness 2057) in paragraph at lines 198--199
+\T1/ptm/m/n/10 ori-en-tado a iden-ti-ficar pa-trones vi-suales aso-ci-a-dos con
+
+ []
+
+
+Underfull \hbox (badness 3439) in paragraph at lines 202--203
+\T1/ptm/m/n/10 reg-istradas du-rante los pro-ce-sos de re-con-struc-ción de
+ []
+
+
+Underfull \hbox (badness 1478) in paragraph at lines 202--203
+\T1/ptm/m/n/10 de la base de datos CIREN, in-cluyendo car-ac-terís-ti-cas
+ []
+
+
+Underfull \hbox (badness 1132) in paragraph at lines 206--207
+\T1/ptm/m/n/10 vi-sual e in-for-ma-ción es-truc-turada per-mite con-struir una
+ []
+
+
+Underfull \hbox (badness 1803) in paragraph at lines 206--207
+\T1/ptm/m/n/10 de las modal-i-dades por sep-a-rado. Con base en este
+ []
+
+
+Underfull \hbox (badness 1742) in paragraph at lines 212--213
+\T1/ptm/m/n/10 Con el ob-je-tivo de eval-uar la ca-paci-dad pre-dic-tiva de
+ []
+
+
+Underfull \hbox (badness 1565) in paragraph at lines 212--213
+\T1/ptm/m/n/10 la ev-i-den-cia vi-sual disponible de-spués de una col-isión
+ []
+
+
+Underfull \hbox (badness 1354) in paragraph at lines 212--213
+\T1/ptm/m/n/10 ve-hic-u-lar, se for-muló la hipóte-sis de que la ve-loci-dad
+ []
+
+
+Underfull \hbox (badness 3579) in paragraph at lines 212--213
+\T1/ptm/m/n/10 es-truc-tural con-sti-tuyen una man-i-festación física de la
+ []
+
+
+Underfull \hbox (badness 1668) in paragraph at lines 218--219
+\T1/ptm/m/n/10 La ar-qui-tec-tura de-sar-rol-lada se con-struyó sigu-iendo un
+ []
+
+
+Underfull \hbox (badness 6157) in paragraph at lines 218--219
+\T1/ptm/m/n/10 pre-vi-a-mente adquirido por mod-e-los en-tre-na-dos so-bre
+ []
+
+
+Underfull \hbox (badness 3291) in paragraph at lines 218--219
+\T1/ptm/m/n/10 grandes volúmenes de datos vi-suales. Para ello se
+ []
+
+
+Underfull \hbox (badness 3271) in paragraph at lines 220--221
+\T1/ptm/m/n/10 lu-gar, la uti-lización de conex-iones resid-uales per-mite
+ []
+
+
+Underfull \hbox (badness 1142) in paragraph at lines 222--223
+\T1/ptm/m/n/10 pro-fun-das apren-den es-truc-turas vi-suales pro-gre-si-va-ment
+e
+ []
+
+
+Underfull \hbox (badness 1454) in paragraph at lines 224--225
+\T1/ptm/m/n/10 apren-di-das para cap-turar pa-trones par-tic-u-lares pre-sentes
+
+ []
+
+
+Underfull \hbox (badness 2582) in paragraph at lines 226--227
+[]\T1/ptm/m/n/10 Posteriormente, las car-ac-terís-ti-cas vi-suales gen-er-adas
+ []
+
+
+Underfull \hbox (badness 2443) in paragraph at lines 226--227
+\T1/ptm/m/n/10 por ResNet50 son proce-sadas me-di-ante un bloque de
+ []
+
+
+Underfull \hbox (badness 2443) in paragraph at lines 226--227
+\T1/ptm/m/n/10 gen-eración de em-bed-dings en-car-gado de proyec-tar las
+ []
+
+
+Underfull \hbox (badness 1189) in paragraph at lines 226--227
+\T1/ptm/m/n/10 re-duciendo re-dun-dan-cias y fa-vore-ciendo la con-struc-ción
+ []
+
+
+Underfull \hbox (badness 1297) in paragraph at lines 228--229
+[]\T1/ptm/m/n/10 Finalmente, los em-bed-dings gen-er-a-dos son uti-liza-dos
+ []
+
+
+Underfull \hbox (badness 1308) in paragraph at lines 228--229
+\T1/ptm/m/n/10 de sal-ida con ac-ti-vación lin-eal. La Figura [][]6[][] mues-tr
+a
+ []
+
+
+Underfull \hbox (badness 4217) in paragraph at lines 228--229
+\T1/ptm/m/n/10 la ar-qui-tec-tura gen-eral im-ple-men-tada para el mod-elo
+ []
+
+[8]
+<Diagrams/ImageVelocityEstimator-arch.pdf, id=653, 1627.58063pt x 462.97969pt>
+File: Diagrams/ImageVelocityEstimator-arch.pdf Graphic file (type pdf)
+<use Diagrams/ImageVelocityEstimator-arch.pdf>
+Package pdftex.def Info: Diagrams/ImageVelocityEstimator-arch.pdf  used on inpu
+t line 230.
+(pdftex.def)             Requested size: 241.84842pt x 68.79402pt.
+
+Underfull \hbox (badness 3029) in paragraph at lines 237--238
+[]\T1/ptm/m/n/10 Las con-fig-u-ra-ciones ex-plo-radas in-cluyeron difer-entes
+ []
+
+
+Underfull \hbox (badness 4072) in paragraph at lines 237--238
+\T1/ptm/m/n/10 es-que-mas de ajuste fino de ResNet50, fun-ciones de
+ []
+
+
+Underfull \hbox (badness 2119) in paragraph at lines 239--240
+\T1/ptm/m/n/10 con el propósito de in-cre-men-tar la vari-abil-i-dad vi-sual
+ []
+
+
+Underfull \hbox (badness 1194) in paragraph at lines 239--240
+\T1/ptm/m/n/10 de gen-er-al-ización del mod-elo frente a cam-bios en ilu-
+ []
+
+
+Underfull \hbox (badness 2772) in paragraph at lines 245--246
+\T1/ptm/m/n/10 ob-tuvo el mejor de-sem-peño global en-tre las dis-tin-tas
+ []
+
+
+Underfull \hbox (badness 1642) in paragraph at lines 245--246
+\T1/ptm/m/n/10 vari-antes eval-u-adas para Im-ageVe-l-oc-i-tyEs-ti-ma-tor. Esta
+
+ []
+
+
+Underfull \hbox (badness 1577) in paragraph at lines 247--248
+[]\T1/ptm/m/n/10 El ex-per-i-mento se-lec-cionado se con-struyó so-bre una
+ []
+
+
+Underfull \hbox (badness 1292) in paragraph at lines 247--248
+\T1/ptm/m/n/10 lizando una es-trate-gia de \T1/ptm/m/it/10 Trans-fer Learn-ing 
+\T1/ptm/m/n/10 con ajuste
+ []
+
+
+Underfull \hbox (badness 2310) in paragraph at lines 247--248
+\T1/ptm/m/n/10 es-pe-cializar las rep-re-senta-ciones vi-suales de alto nivel
+ []
+
+
+Underfull \hbox (badness 1430) in paragraph at lines 247--248
+\T1/ptm/m/n/10 para la iden-ti-fi-cación de pa-trones aso-ci-a-dos con daños
+ []
+
+
+Underfull \hbox (badness 2261) in paragraph at lines 247--248
+\T1/ptm/m/n/10 an-te-ri-ores con-ser-varon los pe-sos adquiri-dos du-rante el
+ []
+
+
+Underfull \hbox (badness 2189) in paragraph at lines 253--254
+[]\T1/ptm/m/n/10 Durante el en-tre-namiento se uti-lizó un con-junto de
+ []
+
+
+Underfull \hbox (badness 2726) in paragraph at lines 253--254
+\T1/ptm/m/n/10 me-di-ante téc-ni-cas de \T1/ptm/m/it/10 Data Aug-men-ta-tion \T
+1/ptm/m/n/10 ori-en-tadas a
+ []
+
+
+Underfull \hbox (badness 1242) in paragraph at lines 253--254
+\T1/ptm/m/n/10 in-cre-men-tar la vari-abil-i-dad vi-sual ob-ser-vada por la red
+
+ []
+
+
+Underfull \hbox (badness 1796) in paragraph at lines 255--256
+\T1/ptm/m/n/10 en-tre-namiento fue eje-cu-tado so-bre una GPU (NVIDIA
+ []
+
+
+Underfull \hbox (badness 1005) in paragraph at lines 257--258
+[]\T1/ptm/m/n/10 Una de las mod-i-fi-ca-ciones más rel-e-vantes re-specto a
+ []
+
+File: tec_logo.png Graphic file (type png)
+<use tec_logo.png>
+Package pdftex.def Info: tec_logo.png  used on input line 340.
+(pdftex.def)             Requested size: 130.04224pt x 34.14322pt.
+[9 <./Diagrams/ImageVelocityEstimator-arch.pdf>]
+Underfull \hbox (badness 2653) in paragraph at lines 346--347
+[]\T1/ptm/m/n/10 Para ello se ex-tra-jeron los em-bed-dings vi-suales de
+ []
+
+
+Underfull \hbox (badness 1132) in paragraph at lines 346--347
+\T1/ptm/m/n/10 512 di-men-siones gen-er-a-dos in-medi-ata-mente antes de la
+ []
+
+
+Underfull \hbox (badness 2384) in paragraph at lines 346--347
+\T1/ptm/m/n/10 es-tos em-bed-dings con-sti-tuyen la rep-re-sentación in-terna
+ []
+
+
+Underfull \hbox (badness 2608) in paragraph at lines 346--347
+\T1/ptm/m/n/10 que con-sid-era rel-e-vantes para in-ferir la ve-loci-dad del
+ []
+
+
+Underfull \hbox (badness 2103) in paragraph at lines 348--349
+\T1/ptm/m/n/10 si las rep-re-senta-ciones apren-di-das por la red ex-hibían
+ []
+
+
+Underfull \hbox (badness 1122) in paragraph at lines 353--354
+\T1/ptm/m/n/10 a par-tir de vari-ables tab-u-lares derivadas ex-clu-si-va-mente
+
+ []
+
+
+Underfull \hbox (badness 2088) in paragraph at lines 353--354
+\T1/ptm/m/n/10 imá-genes post-col-isión. Para val-i-dar esta hipóte-sis se
+ []
+
+
+Underfull \hbox (badness 3118) in paragraph at lines 359--360
+\T1/ptm/m/n/10 de pre-proce-samiento tuvo como ob-je-tivo con-ser-var la
+ []
+
+
+Underfull \hbox (badness 2277) in paragraph at lines 359--360
+\T1/ptm/m/n/10 de trans-for-ma-ciones es-tán-dar de preparación de datos,
+ []
+
+
+Underfull \hbox (badness 1448) in paragraph at lines 359--360
+\T1/ptm/m/it/10 scikit-learn \T1/ptm/m/n/10 que aplicó trans-for-ma-ciones dife
+r-en-ci-adas a
+ []
+
+
+Underfull \hbox (badness 4279) in paragraph at lines 359--360
+\T1/ptm/m/n/10 que no con-tenían una medi-ción vál-ida de ve-loci-dad
+ []
+
+
+Underfull \hbox (badness 2418) in paragraph at lines 361--362
+[]\T1/ptm/m/n/10 Las vari-ables numéri-cas con-tin-uas in-clu-idas en este
+ []
+
+
+Underfull \hbox (badness 4543) in paragraph at lines 361--362
+\T1/ptm/m/n/10 pipeline fueron el peso base del ve-hículo en vacío
+ []
+
+
+Underfull \hbox (badness 2521) in paragraph at lines 361--362
+\T1/ptm/m/n/10 (\T1/pcr/m/n/10 curbWeightKg\T1/ptm/m/n/10 ), ex-pre-sado en kil
+o-gramos, y el peso
+ []
+
+
+Underfull \hbox (badness 1668) in paragraph at lines 361--362
+\T1/ptm/m/n/10 tam-bién en kilo-gramos. Es-tas vari-ables se im-putaron
+ []
+
+
+Underfull \hbox (badness 1371) in paragraph at lines 361--362
+\T1/ptm/m/n/10 ante la pres-en-cia de val-ores atípi-cos, y pos-te-ri-or-mente
+ []
+
+
+Underfull \hbox (badness 2837) in paragraph at lines 361--362
+\T1/ptm/m/n/10 fueron nor-mal-izadas apli-cando es-tandarización Z-score,
+ []
+
+
+Underfull \hbox (badness 1048) in paragraph at lines 361--362
+\T1/ptm/m/n/10 de modo que cada vari-able re-sul-tante pre-sen-tara me-dia
+ []
+
+
+Underfull \hbox (badness 1635) in paragraph at lines 361--362
+\T1/ptm/m/n/10 para garan-ti-zar la es-ta-bil-i-dad numérica del pro-ceso de
+ []
+
+
+Underfull \hbox (badness 7685) in paragraph at lines 365--366
+[]\T1/ptm/m/n/10 Dado que cier-tas vari-ables de nat-u-raleza an-gu-lar
+ []
+
+
+Underfull \hbox (badness 1789) in paragraph at lines 365--366
+\T1/ptm/m/n/10 se aplicó una trans-for-ma-ción trigonométrica basada en
+ []
+
+
+Underfull \hbox (badness 2582) in paragraph at lines 365--366
+\T1/ptm/m/n/10 fun-ciones seno y coseno. Bajo este es-quema, cada
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--366
+\T1/ptm/m/n/10 fueron \T1/pcr/m/n/10 forceDirection_sin\T1/ptm/m/n/10 , \T1/pcr
+/m/n/10 forceDirection_cos\T1/ptm/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--366
+\T1/pcr/m/n/10 clockDirection_sin \T1/ptm/m/n/10 y \T1/pcr/m/n/10 clockDirectio
+n_cos\T1/ptm/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 1127) in paragraph at lines 365--366
+\T1/ptm/m/n/10 rep-re-sen-tando re-spec-ti-va-mente la di-rec-ción de la fuerza
+
+ []
+
+
+Underfull \hbox (badness 1275) in paragraph at lines 367--368
+[]\T1/ptm/m/n/10 Las vari-ables con or-den in-her-ente fueron cod-i-fi-cadas
+ []
+
+
+Underfull \hbox (badness 4108) in paragraph at lines 367--368
+\T1/ptm/m/n/10 or-di-nal. La de-scrip-ción de sev-eri-dad del ac-ci-dente
+ []
+
+
+Underfull \hbox (badness 2600) in paragraph at lines 367--368
+\T1/ptm/m/n/10 re-spetando un or-den de gravedad pre-definido, lo que
+ []
+
+
+Underfull \hbox (badness 1292) in paragraph at lines 367--368
+\T1/ptm/m/n/10 per-mite al mod-elo re-cono-cer y ex-plotar la relación de
+ []
+
+
+Underfull \hbox (badness 1152) in paragraph at lines 367--368
+\T1/ptm/m/n/10 de le-siones (\T1/pcr/m/n/10 mais\T1/ptm/m/n/10 , \T1/ptm/m/it/1
+0 Max-i-mum Ab-bre-vi-ated In-jury Scale\T1/ptm/m/n/10 )
+ []
+
+
+Underfull \hbox (badness 1127) in paragraph at lines 367--368
+\T1/ptm/m/n/10 análoga a \T1/pcr/m/n/10 severityDescription\T1/ptm/m/n/10 . La 
+vari-able bi-na-ria
+ []
+
+[10]
+Underfull \hbox (badness 2744) in paragraph at lines 369--370
+\T1/ptm/m/n/10 el cam-bio en el vec-tor ve-loci-dad del ve-hículo como
+ []
+
+
+Underfull \hbox (badness 4120) in paragraph at lines 441--441
+[]|\T1/ptm/m/n/8 Binarización (0 = no vol-
+ []
+
+
+Underfull \hbox (badness 1112) in paragraph at lines 446--447
+\T1/ptm/m/n/10 al elim-i-nar la ex-pan-sión bi-na-ria car-ac-terís-tica del \T1
+/ptm/m/it/10 One-
+ []
+
+
+Underfull \hbox (badness 1997) in paragraph at lines 448--449
+\T1/ptm/m/n/10 fi-nal quedó com-puesto por 288 reg-istros úni-cos y 11
+ []
+
+
+Underfull \hbox (badness 1968) in paragraph at lines 450--451
+[]\T1/ptm/m/n/10 Con el propósito de in-cre-men-tar el número de ob-
+ []
+
+
+Underfull \hbox (badness 2781) in paragraph at lines 450--451
+\T1/ptm/m/n/10 a bar-rera obtenida me-di-ante sim-u-lación com-puta-cional
+ []
+
+
+Underfull \hbox (badness 2426) in paragraph at lines 450--451
+\T1/ptm/m/n/10 a las condi-ciones reales del ac-ci-dente. En ausen-cia
+ []
+
+
+Underfull \hbox (badness 1325) in paragraph at lines 450--451
+\T1/ptm/m/n/10 de esta medi-ción, se uti-lizó la es-ti-mación derivada de
+ []
+
+
+Underfull \hbox (badness 4120) in paragraph at lines 520--520
+[]|\T1/ptm/m/n/8 Binarización (0 = no vol-
+ []
+
+
+Underfull \hbox (badness 2096) in paragraph at lines 527--528
+[]\T1/ptm/m/n/10 El pro-ceso de se-lec-ción se de-sar-rolló en tres fases
+ []
+
+
+Underfull \hbox (badness 1609) in paragraph at lines 529--530
+[]\T1/ptm/m/n/10 En se-gundo lu-gar, se cal-culó la \T1/ptm/m/it/10 In-for-ma-c
+ión Mu-tua
+ []
+
+File: tec_logo.png Graphic file (type png)
+<use tec_logo.png>
+Package pdftex.def Info: tec_logo.png  used on input line 530.
+(pdftex.def)             Requested size: 130.04224pt x 34.14322pt.
+[11]
+Underfull \hbox (badness 1122) in paragraph at lines 531--532
+\T1/ptm/m/n/10 con mayor valor de In-for-ma-ción Mu-tua, elim-i-nando la
+ []
+
+
+Underfull \hbox (badness 5260) in paragraph at lines 533--534
+[]\T1/ptm/m/n/10 Como re-sul-tado de este pro-ceso de se-lec-ción, el
+ []
+
+
+Underfull \hbox (badness 1360) in paragraph at lines 533--534
+\T1/ptm/m/n/10 con-junto fi-nal quedó com-puesto por 288 reg-istros y 7
+ []
+
+
+Underfull \hbox (badness 1540) in paragraph at lines 533--534
+\T1/ptm/m/n/10 car-ac-terís-ti-cas pre-dic-toras. Las vari-ables se-lec-cionada
+s
+ []
+
+
+Underfull \hbox (badness 2293) in paragraph at lines 533--534
+\T1/ptm/m/n/10 y \T1/ptm/m/it/10 forceDi-rec-tion_cos\T1/ptm/m/n/10 ), la de-sc
+rip-ción de sev-eri-dad del
+ []
+
+
+Underfull \hbox (badness 1603) in paragraph at lines 535--536
+[]\T1/ptm/m/n/10 Este sub-con-junto rep-re-senta las vari-ables con mayor
+ []
+
+
+Underfull \hbox (badness 1248) in paragraph at lines 559--560
+[]|\T1/ptm/m/n/8 Imputación categórica
+ []
+
+
+Underfull \hbox (badness 1248) in paragraph at lines 564--565
+[]|\T1/ptm/m/n/8 Imputación categórica
+ []
+
+
+Underfull \hbox (badness 1342) in paragraph at lines 592--593
+\T1/ptm/m/n/10 Con el propósito de analizar de man-era sis-temática la
+ []
+
+
+Underfull \hbox (badness 2237) in paragraph at lines 596--597
+\T1/ptm/m/n/10 ar-qui-tec-tura com-ple-ta-mente conec-tada (fully con-nected)
+ []
+
+
+Underfull \hbox (badness 2150) in paragraph at lines 598--599
+\T1/ptm/m/n/10 aleato-ri-a-mente una frac-ción de las neu-ronas, forzando
+ []
+
+
+Underfull \hbox (badness 1661) in paragraph at lines 598--599
+\T1/ptm/m/n/10 al mod-elo a apren-der rep-re-senta-ciones más ro-bus-tas y
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 685--685
+[]|\T1/ptm/m/n/8 Fully con-nected
+ []
+
+
+Underfull \hbox (badness 2088) in paragraph at lines 685--685
+[]|\T1/ptm/m/n/8 Rectified Lin-ear Unit
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 685--685
+[]|\T1/ptm/m/n/8 Aplicado tras cada
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 685--685
+[]|\T1/ptm/m/n/8 Límite su-pe-rior
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 685--685
+\T1/ptm/m/n/8 de it-era-ciones de
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 685--685
+[]|\T1/ptm/m/n/8 Error Cuadrático
+ []
+
+
+Underfull \hbox (badness 7907) in paragraph at lines 690--691
+ []\T1/ptm/b/n/10 XGBoost para Re-gre-sión - [] \T1/ptm/m/n/10 Como al-ter-na-t
+iva al
+ []
+
+
+Underfull \hbox (badness 2799) in paragraph at lines 692--693
+\T1/ptm/m/n/10 vari-abil-i-dad es-tocás-tica en cada it-eración y re-duce la
+ []
+
+[12]
+Underfull \hbox (badness 10000) in paragraph at lines 749--749
+[]|\T1/ptm/m/n/8 Profundidad máx-ima
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 749--749
+\T1/ptm/m/n/8 de cada ár-bol
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 749--749
+[]|\T1/ptm/m/n/8 Tasa de con-trac-ción
+ []
+
+
+Underfull \hbox (badness 1360) in paragraph at lines 749--749
+\T1/ptm/m/n/8 ti-cas muestreadas por
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 749--749
+[]|\T1/ptm/m/n/8 Rondas con-sec-u-ti-vas
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 749--749
+\T1/ptm/m/n/8 sin mejora para
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 749--749
+[]|\T1/ptm/m/n/8 Error Cuadrático
+ []
+
+
+Underfull \hbox (badness 2717) in paragraph at lines 755--756
+\T1/ptm/m/n/10 Los re-sul-ta-dos obtenidos du-rante el de-sar-rollo de los
+ []
+
+
+Underfull \hbox (badness 1259) in paragraph at lines 755--756
+\T1/ptm/m/n/10 en-tre atrib-u-tos deriva-dos de pro-ce-sos de re-con-struc-ción
+
+ []
+
+
+Underfull \hbox (badness 2671) in paragraph at lines 757--758
+\T1/ptm/m/n/10 as-pec-tos com-ple-men-tar-ios del mismo fenó-meno físico,
+ []
+
+
+Underfull \hbox (badness 1931) in paragraph at lines 757--758
+\T1/ptm/m/n/10 de rep-re-senta-ciones más com-ple-tas del sinie-stro y, en
+ []
+
+
+Underfull \hbox (badness 1038) in paragraph at lines 759--760
+\T1/ptm/m/n/10 vi-sual prove-niente de imá-genes post-col-isión y vari-ables
+ []
+
+
+Underfull \hbox (badness 4060) in paragraph at lines 759--760
+\T1/ptm/m/n/10 tab-u-lares derivadas de pro-ce-sos de re-con-struc-ción de
+ []
+
+
+Underfull \hbox (badness 2326) in paragraph at lines 761--762
+[]\T1/ptm/m/n/10 Desde una per-spec-tiva con-cep-tual, el mod-elo busca
+ []
+
+
+Underfull \hbox (badness 2384) in paragraph at lines 761--762
+\T1/ptm/m/n/10 aprox-i-mar una fun-ción donde la ve-loci-dad pre-col-isión
+ []
+
+
+Underfull \hbox (badness 1308) in paragraph at lines 761--762
+\T1/ptm/m/n/10 de in-for-ma-ción a ex-plicar com-ple-ta-mente el fenó-meno,
+ []
+
+
+Underfull \hbox (badness 2443) in paragraph at lines 780--781
+[]\T1/ptm/m/n/10 Como re-sul-tado de esta etapa se gen-era un vec-tor
+ []
+
+<Diagrams/HybridVelocityEstimator-arch.pdf, id=784, 1121.69063pt x 494.59781pt>
+
+File: Diagrams/HybridVelocityEstimator-arch.pdf Graphic file (type pdf)
+<use Diagrams/HybridVelocityEstimator-arch.pdf>
+Package pdftex.def Info: Diagrams/HybridVelocityEstimator-arch.pdf  used on inp
+ut line 792.
+(pdftex.def)             Requested size: 241.84842pt x 106.63832pt.
+File: tec_logo.png Graphic file (type png)
+<use tec_logo.png>
+Package pdftex.def Info: tec_logo.png  used on input line 796.
+(pdftex.def)             Requested size: 130.04224pt x 34.14322pt.
+[13]
+Underfull \hbox (badness 1048) in paragraph at lines 799--800
+\T1/ptm/m/n/10 La rep-re-sentación fu-sion-ada es proce-sada me-di-ante una
+ []
+
+
+Underfull \hbox (badness 1142) in paragraph at lines 799--800
+\T1/ptm/m/n/10 ca-mente para apren-der rela-ciones cruzadas en-tre am-bas
+ []
+
+
+Underfull \hbox (badness 2556) in paragraph at lines 803--804
+[]\T1/ptm/m/n/10 La uti-lización de Batch Nor-mal-iza-tion con-tribuye a
+ []
+
+
+Underfull \hbox (badness 1701) in paragraph at lines 803--804
+\T1/ptm/m/n/10 el en-tre-namiento, fa-cil-i-tando la con-ver-gen-cia del mod-
+ []
+
+
+Underfull \hbox (badness 1590) in paragraph at lines 803--804
+\T1/ptm/m/n/10 elo y re-duciendo la sen-si-bil-i-dad a la ini-cial-ización de
+ []
+
+
+Underfull \hbox (badness 1221) in paragraph at lines 803--804
+\T1/ptm/m/n/10 una trans-for-ma-ción no lin-eal suave que ha de-mostrado
+ []
+
+
+Underfull \hbox (badness 1838) in paragraph at lines 803--804
+\T1/ptm/m/n/10 un de-sem-peño su-pe-rior al de fun-ciones clási-cas como
+ []
+
+
+Underfull \hbox (badness 1533) in paragraph at lines 805--806
+\T1/ptm/m/n/10 cada vez más ab-strac-tas a me-dida que la in-for-ma-ción
+ []
+
+
+Underfull \hbox (badness 1635) in paragraph at lines 805--806
+\T1/ptm/m/n/10 avanza a través de la red. Este pro-ceso fa-vorece la
+ []
+
+
+Underfull \hbox (badness 1394) in paragraph at lines 811--812
+\T1/ptm/m/n/10 Una vez definida la ar-qui-tec-tura, se llevó a cabo una
+ []
+
+
+Underfull \hbox (badness 1533) in paragraph at lines 811--812
+\T1/ptm/m/n/10 con hiper-parámet-ros, tasas de apren-dizaje, mecan-is-mos
+ []
+
+
+Underfull \hbox (badness 5970) in paragraph at lines 813--814
+[]\T1/ptm/m/n/10 La eval-u-ación sis-temática de es-tas con-fig-u-ra-ciones
+ []
+
+
+Underfull \hbox (badness 2197) in paragraph at lines 813--814
+\T1/ptm/m/n/10 per-mi-tió iden-ti-ficar la com-bi-nación de parámet-ros con
+ []
+
+
+Underfull \hbox (badness 1881) in paragraph at lines 813--814
+\T1/ptm/m/n/10 mejor de-sem-peño so-bre los con-jun-tos de val-i-dación y
+ []
+
+
+Underfull \hbox (badness 1226) in paragraph at lines 813--814
+\T1/ptm/m/n/10 par-tic-u-lar-mente es-table de las cur-vas de en-tre-namiento,
+ []
+
+
+Underfull \hbox (badness 1715) in paragraph at lines 815--816
+\T1/ptm/m/n/10 rep-re-senta-ciones más ro-bus-tas y gen-er-al-iz-ables que las
+ []
+
+
+Underfull \hbox (badness 1112) in paragraph at lines 821--822
+\T1/ptm/m/n/10 del pro-ceso de apren-dizaje mul-ti-modal. Bajo esta es-
+ []
+
+
+Underfull \hbox (badness 2726) in paragraph at lines 821--822
+\T1/ptm/m/n/10 hasta apren-der un es-pa-cio la-tente es-pe-cial-izado en la
+ []
+
+
+Underfull \hbox (badness 1117) in paragraph at lines 821--822
+\T1/ptm/m/n/10 re-uti-lizado úni-ca-mente como ex-trac-tor de car-ac-terís-ti-c
+as
+ []
+
+
+Underfull \hbox (badness 1292) in paragraph at lines 823--824
+\T1/ptm/m/n/10 lu-gar, per-mite re-ducir sig-ni-fica-ti-va-mente la can-ti-dad 
+de
+ []
+
+
+Underfull \hbox (badness 1286) in paragraph at lines 833--834
+\T1/ptm/m/n/10 además aprovechar con-jun-tos de datos het-erogé-neos de
+ []
+
+
+Underfull \hbox (badness 1960) in paragraph at lines 835--836
+\T1/ptm/m/n/10 ables tab-u-lares y ve-loci-dades re-con-stru-idas, sue-len ser
+ []
+
+
+Underfull \hbox (badness 3525) in paragraph at lines 835--836
+\T1/ptm/m/n/10 úni-ca-mente por imá-genes eti-que-tadas. Gra-cias a la
+ []
+
+
+Underfull \hbox (badness 2799) in paragraph at lines 835--836
+\T1/ptm/m/n/10 mod-u-lar-i-dad del dis-eño, Im-ageVe-l-oc-i-tyEs-ti-ma-tor pued
+e
+ []
+
+
+Underfull \hbox (badness 2894) in paragraph at lines 837--838
+\T1/ptm/m/n/10 más dis-crim-i-na-tivos per-miten pro-por-cionar in-for-ma-ción
+ []
+
+
+Underfull \hbox (badness 4441) in paragraph at lines 837--838
+\T1/ptm/m/n/10 vi-sual más rica al bloque de fusión, in-cre-men-tando
+ []
+
+[14 <./Diagrams/HybridVelocityEstimator-arch.pdf>]
+Underfull \hbox (badness 1418) in paragraph at lines 839--840
+[]\T1/ptm/m/n/10 Desde esta per-spec-tiva, Hy-brid-Ve-loc-i-tyEs-ti-ma-tor con-
+
+ []
+
+
+Underfull \hbox (badness 3579) in paragraph at lines 839--840
+\T1/ptm/m/n/10 fuentes de in-for-ma-ción con-forme es-tas se en-cuen-tren
+ []
+
+
+Underfull \hbox (badness 2865) in paragraph at lines 846--847
+\T1/ptm/m/n/10 Esta sec-ción pre-senta los re-sul-ta-dos obtenidos por el
+ []
+
+
+Underfull \hbox (badness 1048) in paragraph at lines 846--847
+\T1/ptm/m/n/10 El de-sem-peño del mod-elo se evaluó me-di-ante el Er-ror
+ []
+
+
+Underfull \hbox (badness 1668) in paragraph at lines 848--849
+\T1/ptm/m/n/10 obtenidos de-mues-tran que la in-for-ma-ción con-tenida en
+ []
+
+
+Underfull \hbox (badness 1132) in paragraph at lines 848--849
+\T1/ptm/m/n/10 las de-for-ma-ciones es-truc-turales vis-i-bles de-spués de una
+ []
+
+
+Underfull \hbox (badness 2653) in paragraph at lines 850--851
+[]\T1/ptm/m/n/10 Las cur-vas de apren-dizaje mues-tran un pro-ceso de
+ []
+
+
+Underfull \hbox (badness 1112) in paragraph at lines 850--851
+\T1/ptm/m/n/10 con-ver-gen-cia es-table tanto para los con-jun-tos de en-tre-
+ []
+
+<Figures/mae_curves_ImageVelocityEstimator.png, id=873, 608.15205pt x 409.0482p
+t>
+File: Figures/mae_curves_ImageVelocityEstimator.png Graphic file (type png)
+<use Figures/mae_curves_ImageVelocityEstimator.png>
+Package pdftex.def Info: Figures/mae_curves_ImageVelocityEstimator.png  used on
+ input line 854.
+(pdftex.def)             Requested size: 169.29315pt x 113.86485pt.
+
+Underfull \hbox (badness 1365) in paragraph at lines 859--860
+\T1/ptm/m/n/10 predichas y ve-loci-dades reales per-mite car-ac-teri-zar con
+ []
+
+
+Underfull \hbox (badness 1168) in paragraph at lines 859--860
+\T1/ptm/m/n/10 la ve-loci-dad real au-menta, se ob-serva una degradación
+ []
+
+
+Underfull \hbox (badness 1308) in paragraph at lines 861--862
+\T1/ptm/m/n/10 ade-cuada-mente las car-ac-terís-ti-cas vi-suales dis-tin-ti-vas
+ de
+ []
+
+<Figures/predicted_vs_true_ImageVelocityEstimator.png, id=876, 578.16pt x 578.1
+6pt>
+File: Figures/predicted_vs_true_ImageVelocityEstimator.png Graphic file (type p
+ng)
+<use Figures/predicted_vs_true_ImageVelocityEstimator.png>
+Package pdftex.def Info: Figures/predicted_vs_true_ImageVelocityEstimator.png  
+used on input line 865.
+(pdftex.def)             Requested size: 169.29315pt x 169.28535pt.
+
+Underfull \hbox (badness 1092) in paragraph at lines 870--871
+\T1/ptm/m/n/10 senta-ciones in-ter-nas apren-di-das por la red neu-ronal, se
+ []
+
+
+Underfull \hbox (badness 2735) in paragraph at lines 872--873
+\T1/ptm/m/n/10 obtenidos ev-i-den-cian la apari-ción de agru-pamien-tos y
+ []
+
+File: tec_logo.png Graphic file (type png)
+<use tec_logo.png>
+Package pdftex.def Info: tec_logo.png  used on input line 873.
+(pdftex.def)             Requested size: 130.04224pt x 34.14322pt.
+[15 <./Figures/mae_curves_ImageVelocityEstimator.png> <./Figures/predicted_vs_t
+rue_ImageVelocityEstimator.png>]
+Underfull \hbox (badness 2111) in paragraph at lines 874--875
+[]\T1/ptm/m/n/10 Este com-por-tamiento con-sti-tuye ev-i-den-cia di-recta de
+ []
+
+<Figures/umap_true_speed_ImageVelocityEstimator.png, id=886, 867.24pt x 578.16p
+t>
+File: Figures/umap_true_speed_ImageVelocityEstimator.png Graphic file (type png
+)
+<use Figures/umap_true_speed_ImageVelocityEstimator.png>
+Package pdftex.def Info: Figures/umap_true_speed_ImageVelocityEstimator.png  us
+ed on input line 878.
+(pdftex.def)             Requested size: 193.47946pt x 128.98645pt.
+
+Underfull \hbox (badness 1874) in paragraph at lines 886--887
+\T1/ptm/m/n/10 El de-sem-peño de los mod-e-los se re-porta en tér-mi-nos
+ []
+
+
+Underfull \hbox (badness 1838) in paragraph at lines 886--887
+\T1/ptm/m/n/10 del Er-ror Ab-so-luto Medio (MAE) cal-cu-lado so-bre los
+ []
+
+
+Underfull \hbox (badness 1360) in paragraph at lines 890--891
+\T1/ptm/m/n/10 El primer ex-per-i-mento evaluó el de-sem-peño de la red
+ []
+
+
+Underfull \hbox (badness 1009) in paragraph at lines 890--891
+\T1/ptm/m/n/10 neu-ronal mul-t-i-capa en-tre-nada so-bre el con-junto de 240
+ []
+
+
+Underfull \hbox (badness 4303) in paragraph at lines 894--895
+\T1/ptm/m/n/10 a 70 km/h, las predic-ciones ex-hiben una dis-per-sión
+ []
+
+<Figures/mae_curves_TabularModelV1.png, id=889, 608.5134pt x 409.0482pt>
+File: Figures/mae_curves_TabularModelV1.png Graphic file (type png)
+<use Figures/mae_curves_TabularModelV1.png>
+Package pdftex.def Info: Figures/mae_curves_TabularModelV1.png  used on input l
+ine 898.
+(pdftex.def)             Requested size: 169.29315pt x 113.80244pt.
+<Figures/scatter_plot_TabularModelV1.png, id=890, 2409.0pt x 2409.0pt>
+File: Figures/scatter_plot_TabularModelV1.png Graphic file (type png)
+<use Figures/scatter_plot_TabularModelV1.png>
+Package pdftex.def Info: Figures/scatter_plot_TabularModelV1.png  used on input
+ line 905.
+(pdftex.def)             Requested size: 169.29315pt x 169.27213pt.
+
+Underfull \hbox (badness 1859) in paragraph at lines 912--913
+\T1/ptm/m/n/10 El se-gundo ex-per-i-mento em-pleó la misma ar-qui-tec-tura
+ []
+
+
+Underfull \hbox (badness 2221) in paragraph at lines 912--913
+\T1/ptm/m/n/10 categóri-cas nom-i-nales, y la in-te-gración de medi-ciones
+ []
+
+[16 <./Figures/umap_true_speed_ImageVelocityEstimator.png> <./Figures/mae_curve
+s_TabularModelV1.png> <./Figures/scatter_plot_TabularModelV1.png (PNG copy)>]
+Underfull \hbox (badness 1152) in paragraph at lines 914--915
+\T1/ptm/m/n/10 y un MAE de prueba de 8.5 km/h. La in-ver-sión en
+ []
+
+
+Underfull \hbox (badness 1533) in paragraph at lines 914--915
+\T1/ptm/m/n/10 el con-junto de prueba re-sulta in-fe-rior al reg-istrado en
+ []
+
+
+Underfull \hbox (badness 2005) in paragraph at lines 914--915
+\T1/ptm/m/n/10 par-ti-ción de datos en con-jun-tos de tamaño mod-er-ado,
+ []
+
+
+Underfull \hbox (badness 1484) in paragraph at lines 916--917
+\T1/ptm/m/n/10 fi-del-i-dad se con-cen-tran en el seg-mento de ve-loci-dades
+ []
+
+<Figures/mae_curves_TabularModelV2.png, id=902, 608.5134pt x 409.0482pt>
+File: Figures/mae_curves_TabularModelV2.png Graphic file (type png)
+<use Figures/mae_curves_TabularModelV2.png>
+Package pdftex.def Info: Figures/mae_curves_TabularModelV2.png  used on input l
+ine 921.
+(pdftex.def)             Requested size: 169.29315pt x 113.80244pt.
+<Figures/scatter_plot_TabularModelV2.png, id=903, 578.16pt x 578.16pt>
+File: Figures/scatter_plot_TabularModelV2.png Graphic file (type png)
+<use Figures/scatter_plot_TabularModelV2.png>
+Package pdftex.def Info: Figures/scatter_plot_TabularModelV2.png  used on input
+ line 928.
+(pdftex.def)             Requested size: 169.29315pt x 169.28535pt.
+
+Underfull \hbox (badness 1609) in paragraph at lines 935--936
+\T1/ptm/m/n/10 me-di-ante In-for-ma-ción Mu-tua y análi-sis de cor-relación,
+ []
+
+
+Underfull \hbox (badness 4366) in paragraph at lines 939--940
+[]\T1/ptm/m/n/10 El análi-sis del di-a-grama de dis-per-sión rev-ela una
+ []
+
+
+Underfull \hbox (badness 2050) in paragraph at lines 939--940
+\T1/ptm/m/n/10 an-te-ri-ores, par-tic-u-lar-mente en la franja de ve-loci-dades
+
+ []
+
+
+Underfull \hbox (badness 1675) in paragraph at lines 939--940
+\T1/ptm/m/n/10 del ex-per-i-mento, con una dis-per-sión aco-tada alrede-dor
+ []
+
+
+Underfull \hbox (badness 1895) in paragraph at lines 939--940
+\T1/ptm/m/n/10 de 30 a 40 km/h en MLP-P2. Esta mejora sug-iere
+ []
+
+
+Underfull \hbox (badness 3668) in paragraph at lines 939--940
+\T1/ptm/m/n/10 que la elim-i-nación de pre-dic-tores de baja rel-e-van-cia
+ []
+
+File: tec_logo.png Graphic file (type png)
+<use tec_logo.png>
+Package pdftex.def Info: tec_logo.png  used on input line 940.
+(pdftex.def)             Requested size: 130.04224pt x 34.14322pt.
+[17 <./Figures/mae_curves_TabularModelV2.png> <./Figures/scatter_plot_TabularMo
+delV2.png>]
+<Figures/mae_curves_TabularModelV3.png, id=914, 608.5134pt x 409.0482pt>
+File: Figures/mae_curves_TabularModelV3.png Graphic file (type png)
+<use Figures/mae_curves_TabularModelV3.png>
+Package pdftex.def Info: Figures/mae_curves_TabularModelV3.png  used on input l
+ine 943.
+(pdftex.def)             Requested size: 169.29315pt x 113.80244pt.
+<Figures/scatter_plot_TabularModelV3.png, id=915, 578.16pt x 578.16pt>
+File: Figures/scatter_plot_TabularModelV3.png Graphic file (type png)
+<use Figures/scatter_plot_TabularModelV3.png>
+Package pdftex.def Info: Figures/scatter_plot_TabularModelV3.png  used on input
+ line 950.
+(pdftex.def)             Requested size: 169.29315pt x 169.28535pt.
+
+Underfull \hbox (badness 1253) in paragraph at lines 957--958
+\T1/ptm/m/n/10 de gra-di-ente basado en ár-boles de de-cisión (XG-Boost)
+ []
+
+
+Underfull \hbox (badness 1009) in paragraph at lines 957--958
+\T1/ptm/m/n/10 en-tre-nado so-bre el mismo con-junto de 7 car-ac-terís-ti-cas
+ []
+
+
+Underfull \hbox (badness 1320) in paragraph at lines 959--960
+\T1/ptm/m/n/10 en-sam-bles de ár-boles po-ten-ci-a-dos me-di-ante gra-di-ente^^
+V
+ []
+
+
+Underfull \hbox (badness 2495) in paragraph at lines 959--960
+\T1/ptm/m/n/10 ro-busta de que di-cho con-junto de pre-dic-tores cap-tura
+ []
+
+
+Underfull \hbox (badness 1509) in paragraph at lines 959--960
+\T1/ptm/m/n/10 sug-iere que el límite de de-sem-peño al-can-z-able con la
+ []
+
+
+Underfull \hbox (badness 1418) in paragraph at lines 959--960
+\T1/ptm/m/n/10 para este con-junto de datos, in-de-pen-di-en-te-mente de la
+ []
+
+
+Underfull \hbox (badness 1629) in paragraph at lines 961--962
+\T1/ptm/m/n/10 con pre-cisión la dis-tribu-ción es-pa-cial de los er-rores a
+ []
+
+
+Underfull \hbox (badness 1484) in paragraph at lines 961--962
+\T1/ptm/m/n/10 lo largo del rango de ve-loci-dades. Para even-tos con
+ []
+
+
+Underfull \hbox (badness 1210) in paragraph at lines 961--962
+\T1/ptm/m/n/10 delta-V de hasta 80 km/h, las predic-ciones ex-hiben la
+ []
+
+
+Underfull \hbox (badness 1776) in paragraph at lines 961--962
+\T1/ptm/m/n/10 para el cual el mod-elo pro-dujo una subes-ti-mación de
+ []
+
+
+Underfull \hbox (badness 1365) in paragraph at lines 961--962
+\T1/ptm/m/n/10 Este caso ex-tremo ilus-tra la lim-itación común a to-das
+ []
+
+<Figures/scatter_plot_TabularModelV4.png, id=917, 578.16pt x 578.16pt>
+File: Figures/scatter_plot_TabularModelV4.png Graphic file (type png)
+<use Figures/scatter_plot_TabularModelV4.png>
+Package pdftex.def Info: Figures/scatter_plot_TabularModelV4.png  used on input
+ line 966.
+(pdftex.def)             Requested size: 145.11052pt x 145.10425pt.
+
+Underfull \hbox (badness 2126) in paragraph at lines 973--974
+\T1/ptm/m/n/10 La Tabla [][]7[][] re-sume los re-sul-ta-dos de las cu-a-tro con
+-
+ []
+
+
+Underfull \hbox (badness 1087) in paragraph at lines 973--974
+\T1/ptm/m/n/10 un de-sem-peño de prueba de 7.8 km/h, con-fir-mando la
+ []
+
+[18 <./Figures/mae_curves_TabularModelV3.png> <./Figures/scatter_plot_TabularMo
+delV3.png> <./Figures/scatter_plot_TabularModelV4.png>]
+Underfull \hbox (badness 1132) in paragraph at lines 975--976
+\T1/ptm/m/n/10 es-ti-mar la ve-loci-dad ve-hic-u-lar pre-col-isión con un er-ro
+r
+ []
+
+
+Underfull \hbox (badness 2865) in paragraph at lines 1012--1013
+\T1/ptm/m/n/10 Esta sec-ción pre-senta los re-sul-ta-dos obtenidos por la
+ []
+
+
+Underfull \hbox (badness 2521) in paragraph at lines 1012--1013
+\T1/ptm/m/n/10 ar-qui-tec-tura mul-ti-modal \T1/ptm/m/it/10 Hy-brid-Ve-loc-i-ty
+Es-ti-ma-tor\T1/ptm/m/n/10 , de-sar-
+ []
+
+
+Underfull \hbox (badness 3009) in paragraph at lines 1014--1015
+\T1/ptm/m/n/10 com-para-dos con aque-l-los al-can-za-dos por los mod-e-los
+ []
+
+
+Underfull \hbox (badness 4819) in paragraph at lines 1016--1017
+[]\T1/ptm/m/n/10 Los ex-per-i-men-tos re-al-iza-dos mostraron una mejora
+ []
+
+
+Underfull \hbox (badness 1072) in paragraph at lines 1018--1019
+\T1/ptm/m/n/10 Es-tas mejo-ras con-sti-tuyen ev-i-den-cia cuan-ti-ta-tiva de qu
+e
+ []
+
+
+Underfull \hbox (badness 1048) in paragraph at lines 1020--1021
+\T1/ptm/m/n/10 en-tre am-bas cur-vas. Este com-por-tamiento sug-iere que
+ []
+
+
+Underfull \hbox (badness 1394) in paragraph at lines 1020--1021
+\T1/ptm/m/n/10 la ar-qui-tec-tura fue ca-paz de aprovechar efi-caz-mente la
+ []
+
+<Figures/mae_curves_HybridModel.png, id=931, 608.15205pt x 409.0482pt>
+File: Figures/mae_curves_HybridModel.png Graphic file (type png)
+<use Figures/mae_curves_HybridModel.png>
+Package pdftex.def Info: Figures/mae_curves_HybridModel.png  used on input line
+ 1026.
+(pdftex.def)             Requested size: 169.29315pt x 113.86485pt.
+
+Underfull \hbox (badness 1377) in paragraph at lines 1031--1032
+[]\T1/ptm/m/n/10 El análi-sis de las predic-ciones per-mite ob-ser-var con
+ []
+
+<Figures/predicted_vs_true_HybridModel.png, id=933, 578.16pt x 578.16pt>
+File: Figures/predicted_vs_true_HybridModel.png Graphic file (type png)
+<use Figures/predicted_vs_true_HybridModel.png>
+Package pdftex.def Info: Figures/predicted_vs_true_HybridModel.png  used on inp
+ut line 1035.
+(pdftex.def)             Requested size: 169.29315pt x 169.28535pt.
+File: tec_logo.png Graphic file (type png)
+<use tec_logo.png>
+Package pdftex.def Info: tec_logo.png  used on input line 1049.
+(pdftex.def)             Requested size: 130.04224pt x 34.14322pt.
+[19 <./Figures/mae_curves_HybridModel.png> <./Figures/predicted_vs_true_HybridM
+odel.png>]
+Underfull \hbox (badness 1515) in paragraph at lines 1050--1051
+[]\T1/ptm/m/n/10 Uno de los hal-laz-gos más rel-e-vantes cor-re-sponde al
+ []
+
+
+Underfull \hbox (badness 1253) in paragraph at lines 1050--1051
+\T1/ptm/m/n/10 su-fi-ciente para que una red neu-ronal pro-funda aprenda
+ []
+
+
+Underfull \hbox (badness 1776) in paragraph at lines 1050--1051
+\T1/ptm/m/n/10 Este re-sul-tado respalda la hipóte-sis ini-cial de que los
+ []
+
+
+Underfull \hbox (badness 1314) in paragraph at lines 1052--1053
+\T1/ptm/m/n/10 de los em-bed-dings mostraron agru-pamien-tos co-her-entes
+ []
+
+
+Underfull \hbox (badness 2556) in paragraph at lines 1052--1053
+\T1/ptm/m/n/10 con difer-entes ran-gos de ve-loci-dad, in-di-cando que el
+ []
+
+
+Underfull \hbox (badness 1303) in paragraph at lines 1052--1053
+\T1/ptm/m/n/10 mod-elo lo-gró con-struir rep-re-senta-ciones semán-ti-ca-mente
+ []
+
+
+Underfull \hbox (badness 1221) in paragraph at lines 1052--1053
+\T1/ptm/m/n/10 car-ac-terís-ti-cas vi-suales rel-e-vantes para la es-ti-mación 
+de
+ []
+
+
+Underfull \hbox (badness 3872) in paragraph at lines 1054--1055
+\T1/ptm/m/n/10 pre-dic-tiva para la es-ti-mación del delta-V pre-col-isión.
+ []
+
+
+Underfull \hbox (badness 2189) in paragraph at lines 1060--1061
+\T1/ptm/m/n/10 su-fi-ciente por sí sola para de-scribir com-ple-ta-mente la
+ []
+
+
+Underfull \hbox (badness 1472) in paragraph at lines 1060--1061
+\T1/ptm/m/n/10 pre-sente en cada modal-i-dad in-di-vid-ual y mejo-rando la
+ []
+
+
+Underfull \hbox (badness 3364) in paragraph at lines 1062--1063
+[]\T1/ptm/m/n/10 Adicionalmente, los re-sul-ta-dos obtenidos val-i-dan la
+ []
+
+
+Underfull \hbox (badness 1484) in paragraph at lines 1062--1063
+\T1/ptm/m/n/10 dis-crim-i-na-tiva valiosa so-bre la sev-eri-dad de los daños,
+ []
+
+
+Underfull \hbox (badness 3492) in paragraph at lines 1064--1065
+\T1/ptm/m/n/10 vi-sual como la in-for-ma-ción derivada de pro-ce-sos de
+ []
+
+
+Underfull \hbox (badness 1527) in paragraph at lines 1064--1065
+\T1/ptm/m/n/10 per-mite al-can-zar nive-les de pre-cisión sig-ni-fica-ti-va-men
+te
+ []
+
+
+Underfull \hbox (badness 2762) in paragraph at lines 1068--1069
+\T1/ptm/m/n/10 in-ter-pre-tar los hal-laz-gos y al eval-uar el po-ten-cial de
+ []
+
+
+Underfull \hbox (badness 1418) in paragraph at lines 1070--1071
+\T1/ptm/m/n/10 el dataset con-stru-ido per-mi-tió de-sar-rol-lar y eval-uar las
+
+ []
+
+
+Underfull \hbox (badness 2452) in paragraph at lines 1070--1071
+\T1/ptm/m/n/10 de mod-e-los de apren-dizaje pro-fundo. Esta situación
+ []
+
+
+Underfull \hbox (badness 1342) in paragraph at lines 1072--1073
+\T1/ptm/m/n/10 una ten-den-cia con-sis-tente a in-cre-men-tar sus er-rores de
+ []
+
+[20]
+Underfull \hbox (badness 3148) in paragraph at lines 1074--1075
+\T1/ptm/m/n/10 al valor real, siguen es-tando su-je-tos a in-cer-tidum-bre
+ []
+
+
+Underfull \hbox (badness 1092) in paragraph at lines 1076--1077
+\T1/ptm/m/n/10 pobla-ciones ve-hic-u-lares difer-entes o so-bre con-tex-tos de
+ []
+
+
+Underfull \hbox (badness 2269) in paragraph at lines 1087--1088
+\T1/ptm/m/n/10 téc-ni-cas de in-teligen-cia ar-ti-fi-cial apli-cadas a ev-i-den
+-cia
+ []
+
+
+Underfull \hbox (badness 3646) in paragraph at lines 1087--1088
+\T1/ptm/m/n/10 tab-u-lares derivadas de in-ves-ti-ga-ciones forenses y una
+ []
+
+
+Underfull \hbox (badness 1590) in paragraph at lines 1089--1090
+[]\T1/ptm/m/n/10 Los re-sul-ta-dos obtenidos de-mostraron que las de-for-
+ []
+
+
+Underfull \hbox (badness 3895) in paragraph at lines 1089--1090
+\T1/ptm/m/n/10 con-tienen in-for-ma-ción sig-ni-fica-tiva rela-cionada con la
+ []
+
+
+Underfull \hbox (badness 4303) in paragraph at lines 1091--1092
+\T1/ptm/m/n/10 re-specto a to-dos los en-fo-ques uni-modales eval-u-a-dos,
+ []
+
+
+Underfull \hbox (badness 3679) in paragraph at lines 1091--1092
+\T1/ptm/m/n/10 in-for-ma-ción com-ple-men-taria so-bre el fenó-meno físico
+ []
+
+
+Underfull \hbox (badness 4205) in paragraph at lines 1093--1094
+\T1/ptm/m/n/10 in-her-ente-mente mul-ti-modal y que la com-bi-nación de
+ []
+
+
+Underfull \hbox (badness 1033) in paragraph at lines 1095--1096
+\T1/ptm/m/n/10 in-cor-po-rar in-for-ma-ción prove-niente de múlti-ples fuentes
+ []
+
+
+Underfull \hbox (badness 2726) in paragraph at lines 1101--1102
+[]\T1/ptm/m/n/10 La di-rec-ción más in-medi-ata con-siste en am-pliar el
+ []
+
+
+Underfull \hbox (badness 4303) in paragraph at lines 1103--1104
+\T1/ptm/m/n/10 mul-ti-modales. Es-tos en-fo-ques po-drían per-mi-tir una
+ []
+
+
+Underfull \hbox (badness 2452) in paragraph at lines 1105--1106
+\T1/ptm/m/n/10 la gen-eración de em-bed-dings vi-suales del pro-ceso de
+ []
+
+
+Underfull \hbox (badness 3503) in paragraph at lines 1105--1106
+\T1/ptm/m/n/10 apren-dizaje mul-ti-modal, cualquier mejora obtenida en
+ []
+
+
+Underfull \hbox (badness 2065) in paragraph at lines 1105--1106
+\T1/ptm/m/n/10 la cal-i-dad de es-tas rep-re-senta-ciones po-dría trans-ferirse
+
+ []
+
+
+Underfull \hbox (badness 2512) in paragraph at lines 1107--1108
+\T1/ptm/m/n/10 de in-for-ma-ción al pro-ceso de es-ti-mación, tales como
+ []
+
+
+Underfull \hbox (badness 2772) in paragraph at lines 1107--1108
+\T1/ptm/m/n/10 datos de telemetría ve-hic-u-lar, in-for-ma-ción prove-niente
+ []
+
+
+Underfull \hbox (badness 1990) in paragraph at lines 1107--1108
+\T1/ptm/m/n/10 de reg-istradores de even-tos, car-ac-terís-ti-cas ge-ométri-cas
+
+ []
+
+File: tec_logo.png Graphic file (type png)
+<use tec_logo.png>
+Package pdftex.def Info: tec_logo.png  used on input line 1108.
+(pdftex.def)             Requested size: 130.04224pt x 34.14322pt.
+[21]
+Underfull \hbox (badness 1152) in paragraph at lines 1109--1110
+\T1/ptm/m/n/10 Este pro-ceso per-mi-tiría val-i-dar la ro-bustez del en-foque
+ []
+
+
+Underfull \hbox (badness 1430) in paragraph at lines 1109--1110
+\T1/ptm/m/n/10 de asi-s-tir de man-era con-fi-able en es-ce-nar-ios reales de
+ []
+
+No file SpeedEstimationAI_paper.bbl.
+[22
+
+] (./SpeedEstimationAI_paper.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package rerunfilecheck Info: File `SpeedEstimationAI_paper.out' has not changed
+.
+(rerunfilecheck)             Checksum: 8C1E97053B35D1ED2B8485C7BD74605D;12087.
+ ) 
+Here is how much of TeX's memory you used:
+ 14655 strings out of 477989
+ 236843 string characters out of 5839005
+ 1883330 words of memory out of 5000000
+ 34388 multiletter control sequences out of 15000+600000
+ 625348 words of font info for 166 fonts, out of 8000000 for 9000
+ 40 hyphenation exceptions out of 8191
+ 90i,17n,131p,2777b,518s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/sym
+bol/usyr.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/urw/times/utmri8a.pfb>
+Output written on SpeedEstimationAI_paper.pdf (22 pages, 8811953 bytes).
+PDF statistics:
+ 1020 PDF objects out of 1200 (max. 8388607)
+ 532 compressed objects within 6 object streams
+ 101 named destinations out of 1000 (max. 500000)
+ 469 words of extra memory for PDF output out of 10000 (max. 10000000)
+
