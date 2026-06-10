@@ -9,7 +9,7 @@ export function Layout() {
       <Sidebar />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Topbar />
-        <main className="flex-1 overflow-y-auto bg-gray-100">
+        <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>
         <Footer />

@@ -9,6 +9,8 @@ const PAGE_TITLES = {
   "/expedientes/nuevo": "Nuevo Expediente",
   "/configuracion/catalogos": "Configuración / Catálogos",
   "/perfil": "Mi Perfil",
+  "/estimacion-velocidad": "Estimación de Velocidad",
+  "/estimacion-velocidad/nuevo": "Nuevo Caso de Estimación de Velocidad",
 };
 
 function getTitle(pathname) {
