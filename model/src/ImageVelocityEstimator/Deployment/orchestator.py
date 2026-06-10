@@ -43,6 +43,23 @@ _CACHED_MODEL_DATA: dict[str, Any] | None = None
 _S3_CLIENT = boto3.client("s3")
 
 
+ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN", "*")
+
+CORS_HEADERS = {
+    "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+    "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
+    "Access-Control-Allow-Methods": "OPTIONS,GET,POST,PUT",
+}
+
+
+def build_response(status_code: int, body: dict[str, Any]):
+    return {
+        "statusCode": status_code,
+        "headers": CORS_HEADERS,
+        "body": json.dumps(body),
+    }
+
+
 class VelocityNetworkV1(nn.Module):
     def __init__(self, backbone: nn.Module):
         super().__init__()
@@ -407,47 +424,55 @@ def get_or_create_model_data(device: str = DEFAULT_DEVICE):
 
 def lambda_handler(event, context):
     print("Received event:", json.dumps(event))
-    
-    try:
 
+    try:
+        # CORS preflight request from browser
+        if isinstance(event, dict):
+            request_method = (
+                event.get("requestContext", {})
+                .get("http", {})
+                .get("method")
+            ) or event.get("httpMethod")
+
+            if request_method == "OPTIONS":
+                return {
+                    "statusCode": 200,
+                    "headers": CORS_HEADERS,
+                    "body": json.dumps({"message": "CORS preflight OK"}),
+                }
+
+        # Simple Lambda/API test
         if isinstance(event, dict) and event.get("test") == "test":
-            return {
-                "statusCode": 200,
-                "body": json.dumps({
-                    "message": "OK"
-                })
-            }
-        
+            return build_response(200, {"message": "OK"})
+
         model_data = get_or_create_model_data(device=DEFAULT_DEVICE)
         image_url = extract_image_url_from_event(event)
         image = download_image_from_s3(image_url)
+
         velocity_kph = run_inference_from_pil_image(
             model_data["model"],
             image,
             device=model_data["device"],
         )
 
-        if "AIVELTEST" not in image_url.split("/")[-1] :
+        if "AIVELTEST" not in image_url.split("/")[-1]:
             delete_image_from_s3(image_url)
-            
-        return {
-                "statusCode": 200,
-                "body": json.dumps({
-                    "velocity_kph": velocity_kph
-                })
-            }
+
+        return build_response(200, {
+            "velocity_kph": velocity_kph
+        })
+
     except (FileNotFoundError, ValueError) as error:
-        return {
-            "statusCode": 400,
-            "body": json.dumps({"error": str(error)}),
-        }
+        return build_response(400, {
+            "error": str(error)
+        })
+
     except RuntimeError as error:
-        return {
-            "statusCode": 500,
-            "body": json.dumps({"error": str(error)}),
-        }
+        return build_response(500, {
+            "error": str(error)
+        })
+
     except Exception as error:
-        return {
-            "statusCode": 500,
-            "body": json.dumps({"error": str(error)}),
-        }
+        return build_response(500, {
+            "error": str(error)
+        })
