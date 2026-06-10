@@ -221,7 +221,13 @@ class VelocityEstimator:
             return predictions.squeeze(1).cpu()
 
     # Method for loading pretrained VelocityEstimator model from serialized file
-    def load_model(self, serialized_object_path=CONFIG.MODEL_SERIALIZED_DIR_PATH):
+    def load_model(
+        self, 
+        serialized_object_path=CONFIG.MODEL_SERIALIZED_DIR_PATH, 
+        map_location = CONFIG.DEVICE, 
+        device = CONFIG.DEVICE,
+        learning_rate = CONFIG.LEARNING_RATE
+        ):
 
         # Create base resnet
         resnet50_model = self.build_backbone_model(weights=None)
@@ -232,14 +238,14 @@ class VelocityEstimator:
         # Create lightning module
         velocityEstimatorModel = VelocityEstimatorModel(
             model=model_arq,
-            learning_rate=self.learning_rate
+            learning_rate= learning_rate
         )
 
         # Load weights
         velocityEstimatorModel.load_state_dict(
             torch.load(
                 serialized_object_path,
-                map_location=CONFIG.DEVICE
+                map_location=map_location
             )
         )
 
@@ -247,7 +253,7 @@ class VelocityEstimator:
         self.lightningModel = velocityEstimatorModel
 
         # Move to device
-        self.lightningModel.to(CONFIG.DEVICE)
+        self.lightningModel.to(device)
 
         print(f"Model loaded from: {serialized_object_path}")
 

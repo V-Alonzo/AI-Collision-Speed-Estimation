@@ -61,7 +61,7 @@ def test_inference():
         embedding, prediction = velocityEstimator.inference(path, return_embedding=True)
 
         print(f"\n    [Inference] Predicted speed: {prediction:.2f} km/h  for image: {path}")
-        print(embedding)
+        #print(embedding)
 
 
 # Main file for VelocityEstimator model training execution

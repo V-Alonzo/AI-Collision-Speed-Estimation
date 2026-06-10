@@ -77,35 +77,47 @@ def feature_selection_pipeline(X, y, feature_names, corr_threshold=0.90, mi_thre
     return df, final_scores
 
 
-X = pd.read_csv(CONFIG.TABULAR_FEATURES_PATH)
-y = pd.read_csv(CONFIG.TABULAR_TARGET_PATH)
-
-# si y es dataframe con 1 columna
-y = y.iloc[:, 0]
-
-X_selected, feature_ranking = feature_selection_pipeline(
-    X.values,
-    y.values,
-    X.columns
-)
-
-print(feature_ranking)
-
 
 def main():
 
     # Load data
     X = pd.read_csv(CONFIG.TABULAR_FEATURES_PATH)
-    y = pd.read_csv(CONFIG.TABULAR_TARGET_PATH)
+    y_df = pd.read_csv(CONFIG.TABULAR_TARGET_PATH)
+
+    # Preserve image path column
+    image_relpath = None
+
+    if "image_relpath" in X.columns:
+        image_relpath = X["image_relpath"].copy()
+        X_features = X.drop(columns=["image_relpath"])
+    else:
+        X_features = X
 
     # If y is a dataframe with one column
-    y = y.iloc[:, 0]
+    y = y_df.iloc[:, 0]
 
     # Feature selection
     X_selected, feature_ranking = feature_selection_pipeline(
-        X.values,
+        X_features.values,
         y.values,
-        X.columns
+        X_features.columns
+    )
+
+    # Reattach image_relpath as first column
+    if image_relpath is not None:
+        X_selected.insert(
+            0,
+            "image_relpath",
+            image_relpath.loc[X_selected.index]
+        )
+
+    # Append target column(s) at the end
+    final_df = pd.concat(
+        [
+            X_selected.reset_index(drop=True),
+            y_df.reset_index(drop=True)
+        ],
+        axis=1
     )
 
     # Print ranking
@@ -121,7 +133,7 @@ def main():
         "_selected.csv"
     )
 
-    X_selected.to_csv(output_path, index=False)
+    final_df.to_csv(output_path, index=False)
 
     print(f"\nSaved selected dataset to: {output_path}")
 

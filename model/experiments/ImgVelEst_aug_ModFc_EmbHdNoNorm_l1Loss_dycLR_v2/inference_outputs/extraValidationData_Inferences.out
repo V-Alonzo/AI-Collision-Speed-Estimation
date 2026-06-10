@@ -2,7 +2,7 @@
 
 [Loading Model...]
 
-Using cache found in /home/mapa/.cache/torch/hub/pytorch_vision_main
+Using cache found in /.cache/torch/hub/pytorch_vision_main
 Model loaded from: model/experiments/ImgVelEst_aug_ModFc_EmbHdNoNorm_l1Loss_dycLR_v2/serialized/ImgVelEst_aug_ModFc_EmbHdNoNorm_l1Loss_dycLR_v2_weights.pth
 [Starting Inference Execution...]
 

@@ -1,0 +1,11 @@
+{
+    "ImageURL": "https://ai-vel-bucket.s3.us-east-2.amazonaws.com/Images/43-kmph-27-mph_4-Severe_019_Vehicle4_AIVELTEST.jpg",
+    "mais": "4 - Severe",
+    "forceDirection": "350 degrees",
+    "rolloverStatus": "No rollover (no overturning)",
+    "damagePlaneDescription": "Front",
+    "severityDescription": "Severe",
+    "vehicleClass": "Intermediate (wheelbase >=265 but < 278 cm)",
+    "curbWeightKg": 1495,
+    "cargoWeightKg": 0
+}

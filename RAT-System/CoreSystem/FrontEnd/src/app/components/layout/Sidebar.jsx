@@ -10,6 +10,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { useAuth } from "../../../hooks/useAuth";
+import AiOperatorIcon from '@iconify-react/eos-icons/ai-operator';
 
 const BRAND_COLOR = "#00ADCF";
 
@@ -27,6 +28,7 @@ export function Sidebar() {
     { id: "catalogos",   icon: <BookOpen size={20} />,         label: "Catálogos",       path: "/configuracion/catalogos" },
     ...(isAdmin ? [{ id: "admin", icon: <Users size={20} />, label: "Usuarios", path: "/admin/usuarios" }] : []),
     { id: "perfil",      icon: <User size={20} />,            label: "Perfil",           path: "/perfil" },
+    { id: "estimacion-velocidad", icon: <AiOperatorIcon width={20} />, label: "Estimación de Velocidad", path: "/estimacion-velocidad" },
   ];
 
   const isActive = (item) => {

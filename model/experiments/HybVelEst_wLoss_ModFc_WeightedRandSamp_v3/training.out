@@ -1,0 +1,17 @@
+[Starting testing phase...]
+
+/anaconda3/envs/VelocityEstimationAI/lib/python3.11/site-packages/lightning/pytorch/trainer/connectors/checkpoint_connector.py:190: .test(ckpt_path="last") is set, but there is no last checkpoint available. No checkpoint will be loaded. HINT: Set `ModelCheckpoint(..., save_last=True)`.
+Split sizes -> Train: 3329, Val: 832, Test: 1041
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/anaconda3/envs/VelocityEstimationAI/lib/python3.11/site-packages/lightning/pytorch/utilities/_pytree.py:21: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│         test_mae          │    16.161903381347656     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9/9 0:00:01 • 0:00:00 5.37it/s
+[INFO] Config saved at: model/experiments/HybVelEst_wLoss_ModFc_WeightedRandSamp_v3/config.json
+
+[end] 2026-06-05 11:01:11.449027
+
+Exectime:  2753.679842
