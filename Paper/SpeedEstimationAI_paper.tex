@@ -193,161 +193,22 @@ El resultado del preprocesamiento de imágenes y características extraídas des
 
 Con el propósito de analizar la viabilidad de estimar la velocidad vehicular precolisión a partir de información disponible después de un siniestro, se definió un diseño experimental compuesto por tres enfoques complementarios basados en distintas modalidades de datos. Esta estrategia permitió evaluar de manera independiente la contribución de la evidencia visual, la información estructurada y la combinación de ambas fuentes dentro de un mismo marco de predicción.
 
-\subsubsection{Enfoque basado en imágenes}
-
-La primera hipótesis plantea que las deformaciones estructurales observables en imágenes postcolisión contienen información suficiente para inferir la velocidad vehicular precolisión. Bajo este supuesto, se desarrolló un modelo de aprendizaje profundo basado exclusivamente en imágenes, orientado a identificar patrones visuales asociados con distintos niveles de severidad de impacto y utilizarlos para realizar una estimación continua de velocidad.
-
-\subsubsection{Enfoque basado en variables tabulares}
-
-La segunda hipótesis establece que las variables técnicas registradas durante los procesos de reconstrucción de accidentes contienen información predictiva suficiente para estimar la velocidad precolisión sin necesidad de evidencia visual. Para evaluar esta hipótesis se desarrolló un modelo basado exclusivamente en variables tabulares provenientes de la base de datos CIREN, incluyendo características relacionadas con el vehículo, la dinámica del impacto y la descripción estructural del daño.
-
-\subsubsection{Enfoque multimodal}
-
-La tercera hipótesis propone que la integración de evidencia visual e información estructurada permite construir una representación más completa del accidente que cualquiera de las modalidades por separado. Con base en este planteamiento, se diseñó una arquitectura multimodal capaz de combinar simultáneamente características extraídas de imágenes postcolisión y variables tabulares asociadas al siniestro, con el objetivo de determinar si la fusión de ambas fuentes de información mejora la precisión de las estimaciones de velocidad.
-
-La evaluación conjunta de estos tres enfoques permite cuantificar el aporte individual de cada modalidad y analizar el beneficio potencial derivado de su integración dentro de un esquema multimodal de aprendizaje profundo orientado a la reconstrucción forense de accidentes.
-
 \subsection{Modelo Basado en Imágenes}
 
-Con el objetivo de evaluar la capacidad predictiva de la evidencia visual disponible después de una colisión vehicular, se formuló la hipótesis de que la velocidad precolisión puede estimarse a partir de las deformaciones estructurales observables en imágenes postimpacto, prescindiendo completamente de variables tabulares o mediciones físicas directas del vehículo. Esta hipótesis se fundamenta en el hecho de que la magnitud y distribución del daño estructural constituyen una manifestación física de la energía disipada durante la colisión y, por tanto, contienen información indirectamente relacionada con la velocidad del impacto.
+El primer enfoque desarrollado tuvo como objetivo evaluar la posibilidad de estimar la velocidad precolisión de un vehículo utilizando exclusivamente evidencia visual proveniente de imágenes postimpacto. La hipótesis central establece que las deformaciones estructurales observables en la carrocería contienen información relacionada con la energía liberada durante la colisión y, por consiguiente, con la velocidad del vehículo al momento del impacto.
 
-Para validar este planteamiento se desarrolló una arquitectura de visión computacional denominada \textit{ImageVelocityEstimator}, diseñada para resolver el problema como una tarea de regresión supervisada. En esta formulación, la entrada del modelo corresponde a una imagen fotográfica de un vehículo involucrado en un accidente, mientras que la salida consiste en una estimación continua de la velocidad precolisión expresada en kilómetros por hora.
+Para abordar este problema se desarrolló una arquitectura de visión computacional denominada \textit{ImageVelocityEstimator}, formulando la tarea como un problema de regresión supervisada donde la entrada corresponde a una imagen del vehículo siniestrado y la salida a una estimación continua de velocidad precolisión.
 
-\subsubsection{Arquitectura Propuesta}
+La arquitectura utiliza una red ResNet50 \cite{he2016resnet} preentrenada sobre el conjunto de datos ImageNet \cite{deng2009imagenet} como extractor de características visuales mediante una estrategia de \textit{Transfer Learning} \cite{pan2010transfer}. Las representaciones generadas por el backbone son proyectadas hacia un espacio latente de 512 dimensiones mediante un bloque de embeddings, cuyo propósito es concentrar la información visual relevante asociada a la severidad del daño. Finalmente, una red neuronal completamente conectada utiliza dichas representaciones para producir la estimación final de velocidad. La arquitectura general se presenta en la Figura~\ref{fig:ImageVelocityEstimator_Arquitectura}.
 
-La arquitectura desarrollada se construyó siguiendo un enfoque de \textit{Transfer Learning}, aprovechando conocimiento previamente adquirido por modelos entrenados sobre grandes volúmenes de datos visuales. Para ello se seleccionó la arquitectura ResNet50 como extractor principal de características, utilizando pesos preentrenados sobre el conjunto de datos ImageNet.
-
-La elección de ResNet50 se fundamentó en tres factores principales. En primer lugar, esta arquitectura ha demostrado un desempeño sobresaliente en tareas de clasificación visual y extracción de características de alto nivel. En segundo lugar, la utilización de conexiones residuales permite entrenar redes profundas mitigando problemas asociados a la desaparición del gradiente. Finalmente, existe amplia evidencia en la literatura que respalda su capacidad para adaptarse exitosamente a dominios especializados mediante procesos de ajuste fino (\textit{Fine-Tuning}).
-
-Dentro de la arquitectura propuesta, ResNet50 actúa como un extractor jerárquico de representaciones visuales. Las primeras capas de la red capturan patrones elementales como bordes, texturas y contornos, mientras que las capas más profundas aprenden estructuras visuales progresivamente más complejas relacionadas con deformaciones de carrocería, patrones de aplastamiento, regiones de impacto y otros indicadores visuales asociados con la severidad de la colisión.
-
-Con el propósito de adaptar dichas representaciones al problema específico de estimación de velocidad vehicular, se implementó una etapa de \textit{Fine-Tuning} controlado sobre las capas más profundas de ResNet50. Esta estrategia permitió especializar las características visuales previamente aprendidas para capturar patrones particulares presentes en vehículos siniestrados, conservando simultáneamente la capacidad general de extracción de características adquirida durante el entrenamiento original sobre ImageNet.
-
-Posteriormente, las características visuales generadas por ResNet50 son procesadas mediante un bloque de generación de embeddings encargado de proyectar las representaciones originales de alta dimensionalidad hacia un espacio latente compacto de 512 dimensiones. Este espacio latente fue diseñado con el objetivo de concentrar la información visual más relevante para la tarea de regresión, reduciendo redundancias y favoreciendo la construcción de representaciones semánticamente organizadas del daño vehicular.
-
-Finalmente, los embeddings generados son utilizados como entrada de una red neuronal completamente conectada (\textit{Fully Connected Regressor}), responsable de realizar la estimación final de velocidad mediante una única neurona de salida con activación lineal. La Figura~\ref{fig:ImageVelocityEstimator_Arquitectura} muestra la arquitectura general implementada para el modelo ImageVelocityEstimator.
-
-\begin{figure}[H] \centering \includegraphics[width=\columnwidth]{Diagrams/ImageVelocityEstimator-arch.pdf} \caption{Arquitectura de ImageVelocityEstimator} \label{fig:ImageVelocityEstimator_Arquitectura} \end{figure}
-
-
-\subsubsection{Proceso de Entrenamiento}
-
-Con el objetivo de identificar la configuración de mayor desempeño, se llevaron a cabo múltiples iteraciones experimentales evaluando distintas variantes arquitectónicas y estrategias de optimización.
-
-Las configuraciones exploradas incluyeron diferentes esquemas de ajuste fino de ResNet50, funciones de optimización, tasas de aprendizaje, estrategias de regularización, técnicas de aumento de datos (\textit{Data Augmentation}), estructuras alternativas para el espacio latente y diversas configuraciones para la red de regresión final.
-
-Las técnicas de aumento de datos fueron incorporadas con el propósito de incrementar la variabilidad visual observada durante el entrenamiento y mejorar la capacidad de generalización del modelo frente a cambios en iluminación, orientación, encuadre y condiciones de captura de las imágenes. Paralelamente, se evaluaron diferentes mecanismos de regularización para reducir el riesgo de sobreajuste derivado del tamaño limitado del conjunto de datos disponible.
-
-La selección de la configuración final se realizó mediante evaluación sistemática sobre los conjuntos de entrenamiento y validación, considerando principalmente métricas de error absoluto medio (MAE) y la estabilidad observada durante el proceso de convergencia.
-
-\subsubsection{Configuración Experimental Seleccionada}
-
-Como resultado del proceso iterativo de experimentación descrito anteriormente, se identificó una configuración que obtuvo el mejor desempeño global entre las distintas variantes evaluadas para ImageVelocityEstimator. Esta configuración fue posteriormente adoptada como la versión definitiva del modelo visual y utilizada como encoder dentro de la arquitectura multimodal HybridVelocityEstimator.
-
-El experimento seleccionado se construyó sobre una arquitectura ResNet50 preentrenada sobre ImageNet utilizando una estrategia de \textit{Transfer Learning} con ajuste fino parcial (\textit{Fine-Tuning}) de las capas más profundas del backbone. Específicamente, se habilitó el entrenamiento de los bloques correspondientes a \texttt{resnet.layer4}, permitiendo especializar las representaciones visuales de alto nivel para la identificación de patrones asociados con daños vehiculares y severidad de impacto, mientras que las capas anteriores conservaron los pesos adquiridos durante el preentrenamiento.
-
-Con el propósito de incrementar la capacidad de representación de la arquitectura, se incorporó un bloque personalizado de generación de embeddings compuesto por una capa completamente conectada que proyecta las características extraídas por ResNet50 desde 2048 dimensiones hacia un espacio latente compacto de 512 dimensiones. Este bloque incluye Batch Normalization, función de activación GELU y una capa Dropout con probabilidad de 0.3, favoreciendo la estabilidad del entrenamiento y reduciendo el riesgo de sobreajuste.
-
-La etapa final de regresión fue implementada mediante una arquitectura \textit{Fully Connected} compuesta por una capa oculta de 128 neuronas seguida de Batch Normalization, activación GELU y Dropout con probabilidad de 0.2. Finalmente, una neurona lineal de salida genera la estimación continua de velocidad precolisión. Esta configuración fue seleccionada tras evaluar distintas alternativas para la dimensionalidad de los embeddings y la complejidad del regresor, observándose un equilibrio favorable entre capacidad de representación y generalización.
-
-Durante el entrenamiento se utilizó un conjunto de datos aumentado compuesto por 15,513 imágenes, generado mediante técnicas de \textit{Data Augmentation} orientadas a incrementar la variabilidad visual observada por la red neuronal. Todas las imágenes fueron normalizadas utilizando estadísticas calculadas sobre el conjunto de entrenamiento y posteriormente redimensionadas a una resolución de $224 \times 224$ píxeles, compatible con la arquitectura ResNet50.
-
-La optimización se realizó durante un máximo de 60 épocas utilizando un tamaño de lote de 128 muestras y una tasa de aprendizaje inicial de $1\times10^{-4}$. Adicionalmente, se incorporó un mecanismo de \textit{Early Stopping} con una paciencia de 20 épocas para prevenir sobreajuste y detener automáticamente el entrenamiento cuando no se observaran mejoras significativas en el desempeño de validación.
-
-Una de las modificaciones más relevantes respecto a experimentos anteriores consistió en sustituir la función de pérdida \textit{Smooth L1 Loss} por \textit{L1 Loss} (Error Absoluto Medio). Esta decisión permitió alinear directamente el proceso de optimización con la métrica principal utilizada durante la evaluación del modelo, favoreciendo una reducción más consistente del error absoluto medio observado sobre los conjuntos de validación y prueba.
-
-La Tabla~\ref{tab:imagevelocity_best_config} resume los principales hiperparámetros y características de la configuración seleccionada.
-
-\begin{table}[H]
-	\caption{Configuración experimental seleccionada para ImageVelocityEstimator}
-	\label{tab:imagevelocity_best_config}
+\begin{figure}[H]
 	\centering
-	\footnotesize
-	\setlength{\tabcolsep}{2pt}
-	\renewcommand{\arraystretch}{1.05}
-	
-	\begin{tabularx}{\columnwidth}{|p{3.2cm}|X|}
-		\hline
-		\textbf{Parámetro} & \textbf{Valor} \\
-		\hline
-		
-		Backbone &
-		ResNet50 preentrenada en ImageNet \\
-		\hline
-		
-		Fine-Tuning &
-		Descongelamiento de \texttt{layer4} \\
-		\hline
-		
-		Resolución de entrada &
-		$224 \times 224$ píxeles \\
-		\hline
-		
-		Dataset de entrenamiento &
-		15\,513 imágenes aumentadas mediante Data Augmentation \\
-		\hline
-		
-		Embedding visual &
-		512 dimensiones \\
-		\hline
-		
-		Función de activación &
-		GELU \\
-		\hline
-		
-		Dropout (Embedding Layer) &
-		0.3 \\
-		\hline
-		
-		Dropout (Regressor) &
-		0.2 \\
-		\hline
-		
-		Batch Size &
-		128 \\
-		\hline
-		
-		Learning Rate &
-		$1\times10^{-4}$ \\
-		\hline
-		
-		Épocas máximas &
-		60 \\
-		\hline
-		
-		Early Stopping &
-		Paciencia de 20 épocas \\
-		\hline
-		
-		Función de pérdida &
-		L1 Loss (MAE) \\
-		\hline
-		
-		Optimizador &
-		AdamW \\
-		\hline
-		
-		Precisión de entrenamiento &
-		bf16-mixed \\
-		\hline
-		
-		Semilla aleatoria &
-		42 \\
-		\hline
-		
-	\end{tabularx}
-\end{table}
+	\includegraphics[width=\columnwidth]{Diagrams/ImageVelocityEstimator-arch.pdf}
+	\caption{Arquitectura de ImageVelocityEstimator.}
+	\label{fig:ImageVelocityEstimator_Arquitectura}
+\end{figure}
 
-
-Todos los experimentos correspondientes a ImageVelocityEstimator fueron ejecutados sobre una estación de trabajo portátil equipada con un procesador Intel Core i9-14900HX de 24 núcleos (32 hilos de ejecución), una unidad de procesamiento gráfico NVIDIA GeForce RTX 4060 Laptop GPU y 16 GB de memoria RAM. El entorno de ejecución estuvo basado en Debian GNU/Linux 12 (Bookworm), utilizando aceleración por GPU mediante CUDA y entrenamiento en precisión mixta (\textit{bf16-mixed}). Esta configuración permitió completar el proceso de entrenamiento y evaluación del modelo seleccionado en aproximadamente 1281.4 segundos (21.36 minutos), proporcionando recursos computacionales suficientes para el entrenamiento eficiente de las arquitecturas multimodales propuestas.
-
-\subsubsection{Análisis del Espacio Latente}
-
-Además de la evaluación tradicional basada en métricas de regresión, se realizó un análisis exploratorio orientado a comprender la calidad de las representaciones internas aprendidas por la red neuronal.
-
-Para ello se extrajeron los embeddings visuales de 512 dimensiones generados inmediatamente antes de la etapa de regresión. Desde una perspectiva conceptual, estos embeddings constituyen la representación interna que el modelo construye sobre cada vehículo colisionado, codificando en forma matemática las características visuales que considera relevantes para inferir la velocidad del impacto.
-
-Con el objetivo de analizar la organización de este espacio latente, se aplicaron múltiples técnicas de reducción de dimensionalidad que permitieron proyectar los embeddings hacia espacios bidimensionales para su posterior visualización. Este procedimiento tuvo como finalidad determinar si las representaciones aprendidas por la red exhibían patrones de agrupamiento asociados a diferentes niveles de velocidad.
+Durante el desarrollo se evaluaron múltiples configuraciones de entrenamiento, incluyendo distintas estrategias de ajuste fino del backbone, regularización, aumento de datos y estructuras para el espacio latente. La configuración final fue seleccionada con base en su desempeño sobre los conjuntos de validación y prueba utilizando el Error Absoluto Medio (MAE) como métrica principal.	
 
 
 \subsection{Modelo Basado en Variables Tabulares}
@@ -597,7 +458,7 @@ Los experimentos fueron ejecutados en una estación de trabajo equipada con un p
 
 \paragraph{Red Neuronal Multicapa (MLP) - }
 
-Se implementó una arquitectura completamente conectada (fully connected) compuesta por tres capas ocultas con 64, 32 y 16 neuronas respectivamente, siguiendo una estructura de tipo embudo que condensa progresivamente la representación aprendida a lo largo de las capas. Todas las unidades ocultas emplearon la función de activación ReLU (Rectified Linear Unit), y la capa de salida consistió en una única neurona lineal acorde con la naturaleza continua de la variable objetivo.
+Se implementó una arquitectura completamente conectada (fully connected) compuesta por tres capas ocultas con 64, 32 y 16 neuronas respectivamente, siguiendo una estructura de tipo embudo que condensa progresivamente la representación aprendida a lo largo de las capas. Todas las unidades ocultas emplearon la función de activación ReLU (Rectified Linear Unit) \cite{nair2010relu}, y la capa de salida consistió en una única neurona lineal acorde con la naturaleza continua de la variable objetivo.
 
 Para mitigar el sobreajuste se incorporó regularización mediante Dropout con una tasa del 5\%, aplicada tras cada capa oculta, técnica que durante el entrenamiento desactiva aleatoriamente una fracción de las neuronas, forzando al modelo a aprender representaciones más robustas y distribuidas. El entrenamiento se realizó con un tamaño de batch de 16 muestras y una tasa de aprendizaje de 0.0003, utilizando el Error Cuadrático Medio (MSE) como función de pérdida. Se estableció un máximo de 100 épocas de entrenamiento con un criterio de parada anticipada (Early Stopping) de 10 épocas consecutivas sin mejora en la pérdida de validación, con el fin de evitar el sobreajuste y reducir el tiempo de cómputo. Los tres experimentos realizados con esta arquitectura se denominaron MLP-P1, MLP-P2 y MLP-P3, correspondiendo cada uno al pipeline de preprocesamiento homónimo.
 
@@ -691,7 +552,7 @@ Error Absoluto Medio (km/h) \\
 
 \paragraph{XGBoost para Regresión - }
 
-Como alternativa al paradigma neuronal, se implementó un modelo XGBoost (eXtreme Gradient Boosting) para regresión, familia de métodos que construye un ensamble de árboles de decisión de manera secuencial, donde cada árbol sucesivo corrige los errores residuales del conjunto previamente entrenado mediante descenso de gradiente sobre una función de pérdida diferenciable. Este modelo fue entrenado utilizando el conjunto de características seleccionadas por el Pipeline 3.
+Como alternativa al paradigma neuronal, se implementó un modelo XGBoost (eXtreme Gradient Boosting) \cite{chen2016xgboost} para regresión, familia de métodos que construye un ensamble de árboles de decisión de manera secuencial, donde cada árbol sucesivo corrige los errores residuales del conjunto previamente entrenado mediante descenso de gradiente sobre una función de pérdida diferenciable. Este modelo fue entrenado utilizando el conjunto de características seleccionadas por el Pipeline 3.
 
 Los hiperparámetros del modelo fueron configurados de la siguiente manera: el número máximo de estimadores (árboles) se fijó en 1000, la profundidad máxima de cada árbol en 5 niveles, la tasa de aprendizaje (shrinkage) en 0.05 para controlar la contribución de cada árbol individual al ensamble, y las tasas de submuestreo de instancias y características en 0.80 para ambos casos, lo que introduce variabilidad estocástica en cada iteración y reduce la correlación entre árboles. Se aplicó un criterio de parada anticipada de 50 rondas consecutivas sin mejora en la pérdida de validación. La función objetivo minimizada durante el entrenamiento fue el Error Cuadrático Medio, mientras que la métrica empleada para la evaluación comparativa entre modelos fue el Error Absoluto Medio (MAE), dada su interpretabilidad directa en unidades físicas de velocidad (km/h) y su menor sensibilidad a valores atípicos respecto al RMSE.
 
@@ -754,261 +615,45 @@ Error Absoluto Medio (km/h) \\
 \end{table}
 
 
-\subsection{Modelo Híbrido}
+\subsection{Modelo Multimodal}
 
-Los resultados obtenidos durante el desarrollo de los enfoques unimodales permitieron identificar fortalezas y limitaciones complementarias en cada modalidad de información. Por una parte, el modelo basado en imágenes demostró la capacidad de aprender representaciones visuales asociadas con la severidad de los daños estructurales y con la velocidad precolisión, aunque su desempeño se encontraba limitado por la ausencia de información contextual y técnica del accidente. Por otra parte, el modelo basado en variables tabulares logró capturar relaciones estadísticas relevantes entre atributos derivados de procesos de reconstrucción forense y la velocidad de impacto, pero carecía de acceso a la información visual contenida en las deformaciones observables de los vehículos involucrados.
+Los resultados obtenidos mediante los enfoques unimodales sugieren que tanto la información visual contenida en las imágenes postcolisión como las variables estructuradas derivadas de procesos de reconstrucción forense aportan señales relevantes para la estimación de velocidad precolisión. Sin embargo, cada modalidad captura únicamente una parte del fenómeno físico subyacente. Con el propósito de aprovechar la complementariedad de ambas fuentes de información, se desarrolló una arquitectura multimodal denominada \textit{HybridVelocityEstimator}.
 
-A partir de estas observaciones se formuló una nueva hipótesis de investigación: si ambas modalidades describen aspectos complementarios del mismo fenómeno físico, entonces la integración conjunta de información visual e información estructurada podría permitir la construcción de representaciones más completas del siniestro y, en consecuencia, mejorar la precisión de las estimaciones de velocidad precolisión.
+La arquitectura recibe como entrada una imagen del vehículo colisionado y un conjunto de variables tabulares asociadas al mismo caso. La rama visual reutiliza el encoder previamente entrenado mediante \textit{ImageVelocityEstimator}, generando un embedding de 512 dimensiones que resume la información visual relacionada con la severidad y geometría del daño. Paralelamente, las variables tabulares son procesadas mediante una red neuronal especializada para obtener una representación estructurada de los atributos técnicos del accidente.
 
-Con el propósito de validar esta hipótesis se desarrolló una arquitectura multimodal denominada \textit{HybridVelocityEstimator}, diseñada para combinar simultáneamente evidencia visual proveniente de imágenes postcolisión y variables tabulares derivadas de procesos de reconstrucción de accidentes. El objetivo principal de esta arquitectura consiste en aprovechar las fortalezas de cada modalidad dentro de un único proceso de inferencia, permitiendo que el modelo disponga de una descripción más rica y completa de cada evento.
-
-Desde una perspectiva conceptual, el modelo busca aproximar una función donde la velocidad precolisión depende tanto de las características visuales observables en el vehículo siniestrado como de los atributos técnicos asociados al caso. En lugar de obligar a una única fuente de información a explicar completamente el fenómeno, la arquitectura distribuye el aprendizaje entre dos ramas especializadas que posteriormente son fusionadas dentro de una representación conjunta.
-
-\subsubsection{Arquitectura Propuesta}
-
-La arquitectura recibe dos entradas para cada muestra del conjunto de datos:
-
-\begin{itemize}
-	\item Una imagen correspondiente al vehículo colisionado.
-	\item Un vector de variables tabulares asociado al mismo caso.
-\end{itemize}
-
-La rama visual reutiliza el modelo \textit{ImageVelocityEstimator} previamente desarrollado, empleándolo como un encoder especializado de características visuales. Bajo esta configuración, la imagen es procesada por el backbone ResNet50 y por el bloque de generación de embeddings hasta producir una representación latente de 512 dimensiones.
-
-Este embedding constituye la representación interna que el modelo construye sobre la evidencia visual disponible y concentra información relacionada con la severidad del daño estructural, los patrones de deformación observados en la carrocería, la distribución espacial de los impactos y otras características visuales relevantes para la estimación de velocidad.
-
-De manera paralela, las variables tabulares correspondientes al mismo caso son procesadas mediante los pipelines de preprocesamiento descritos en la sección anterior, obteniendo una representación estructurada de las características técnicas del accidente.
-
-Una vez obtenidas ambas representaciones, se aplica una operación de concatenación que constituye el mecanismo de fusión multimodal empleado por la arquitectura. Esta estrategia permite preservar íntegramente la información aportada por cada modalidad antes de iniciar el proceso de aprendizaje conjunto.
-
-Como resultado de esta etapa se genera un vector multimodal compuesto por:
-
-\begin{center}
-	Embedding Visual (512 dimensiones)
-	+
-	Variables Tabulares
-\end{center}
-
-La Figura~\ref{fig:HybridVelocityEstimator_Arquitectura} muestra la arquitectura general implementada para el modelo HybridVelocityEstimator.
+Ambas representaciones son fusionadas mediante concatenación para formar un vector multimodal conjunto, el cual es utilizado como entrada de una red neuronal completamente conectada encargada de realizar la estimación final de velocidad precolisión. La arquitectura general se presenta en la Figura~\ref{fig:HybridVelocityEstimator_Arquitectura}.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\columnwidth]{Diagrams/HybridVelocityEstimator-arch.pdf}
-	\caption{Arquitectura propuesta para HybridVelocityEstimator}
+	\caption{Arquitectura propuesta para HybridVelocityEstimator.}
 	\label{fig:HybridVelocityEstimator_Arquitectura}
 \end{figure}
 
-\subsubsection{Regresor Multimodal}
-
-La representación fusionada es procesada mediante una red neuronal completamente conectada diseñada específicamente para aprender relaciones cruzadas entre ambas modalidades.
-
-La arquitectura implementada utiliza una estructura de reducción progresiva de dimensionalidad compuesta por capas ocultas de 512, 256, 128 y 64 neuronas respectivamente. Cada bloque incorpora Batch Normalization, función de activación GELU y mecanismos de regularización mediante Dropout.
-
-La utilización de Batch Normalization contribuye a estabilizar la distribución interna de activaciones durante el entrenamiento, facilitando la convergencia del modelo y reduciendo la sensibilidad a la inicialización de parámetros. Por su parte, la activación GELU introduce una transformación no lineal suave que ha demostrado un desempeño superior al de funciones clásicas como ReLU en diversas arquitecturas profundas. Finalmente, la incorporación de Dropout permite reducir el riesgo de sobreajuste mediante la desactivación aleatoria de neuronas durante el entrenamiento.
-
-La estructura de reducción progresiva fue diseñada con el objetivo de permitir que el modelo aprenda representaciones cada vez más abstractas a medida que la información avanza a través de la red. Este proceso favorece la construcción de relaciones complejas entre características visuales y variables tabulares, capturando interacciones que difícilmente podrían ser modeladas por cualquiera de las modalidades de forma independiente.
-
-La arquitectura concluye con una única neurona lineal de salida encargada de generar la estimación continua de velocidad precolisión.
-
-\subsubsection{Proceso de Entrenamiento}
-
-Una vez definida la arquitectura, se llevó a cabo una etapa extensa de experimentación orientada a optimizar el desempeño del modelo. Al igual que en los enfoques anteriores, se evaluaron múltiples configuraciones relacionadas con hiperparámetros, tasas de aprendizaje, mecanismos de regularización y configuraciones internas de la red de regresión.
-
-La evaluación sistemática de estas configuraciones permitió identificar la combinación de parámetros con mejor desempeño sobre los conjuntos de validación y prueba. Durante esta etapa se observó un comportamiento particularmente estable de las curvas de entrenamiento, caracterizado por una convergencia consistente y por la ausencia de divergencias significativas entre las métricas de entrenamiento y validación.
-
-Este comportamiento constituye un indicio de que la arquitectura fue capaz de aprovechar la información adicional proporcionada por ambas modalidades para construir representaciones más robustas y generalizables que las obtenidas por los enfoques unimodales.
-
-\subsubsection{Configuración Experimental Seleccionada}
-
-Como resultado del proceso iterativo de experimentación realizado sobre la arquitectura multimodal propuesta, se identificó una configuración que obtuvo el mejor desempeño global entre todas las variantes evaluadas para HybridVelocityEstimator. Esta configuración fue seleccionada como modelo final debido a su capacidad para integrar eficazmente la información visual proveniente del encoder ImageVelocityEstimator con las variables tabulares derivadas del proceso de reconstrucción forense.
-
-La arquitectura fue entrenada utilizando un conjunto de datos multimodal compuesto por 5\,202 muestras, cada una formada por una imagen postcolisión y un conjunto de variables estructuradas previamente seleccionadas mediante los procesos de preprocesamiento y análisis descritos en secciones anteriores. El conjunto de datos fue particionado en subconjuntos de entrenamiento, validación y prueba siguiendo una estrategia estratificada, obteniéndose 3\,329 muestras para entrenamiento, 832 para validación y 1\,041 para evaluación final.
-
-Para la modalidad visual se reutilizó el encoder previamente entrenado mediante ImageVelocityEstimator, empleando los pesos correspondientes al experimento visual de mejor desempeño. Este encoder genera una representación latente de 512 dimensiones que resume la información visual relevante asociada con la severidad y características estructurales del daño vehicular.
-
-La modalidad tabular estuvo compuesta por las siete variables seleccionadas durante el desarrollo del modelo TabularVelocityEstimator. Estas variables fueron procesadas mediante una red neuronal especializada encargada de proyectarlas a un espacio de representación compatible con los embeddings visuales.
-
-La fusión multimodal se realizó mediante concatenación de ambas representaciones latentes, generando un vector conjunto utilizado como entrada para una red de regresión completamente conectada responsable de producir la estimación final de velocidad precolisión.
-
-Durante el entrenamiento se empleó un tamaño de lote de 128 muestras, una tasa de aprendizaje inicial de $1\times10^{-4}$ y un máximo de 80 épocas. Adicionalmente, se incorporó un mecanismo de \textit{Early Stopping} con una paciencia de 10 épocas para prevenir sobreajuste y detener automáticamente el entrenamiento cuando el desempeño sobre el conjunto de validación dejara de mejorar.
-
-La evaluación sobre el conjunto de prueba produjo un Error Absoluto Medio (MAE) de 4.45 km/h, constituyendo el mejor resultado obtenido durante el desarrollo del proyecto y superando significativamente el desempeño alcanzado por los enfoques unimodales basados exclusivamente en imágenes o variables tabulares.
-
-La Tabla~\ref{tab:hybrid_best_config} resume los principales hiperparámetros y características de la configuración experimental seleccionada para HybridVelocityEstimator.
-
-\begin{table}[H]
-	\caption{Configuración experimental seleccionada para HybridVelocityEstimator}
-	\label{tab:hybrid_best_config}
-	\centering
-	\footnotesize
-	\setlength{\tabcolsep}{2pt}
-	\renewcommand{\arraystretch}{1.05}
-	
-	\begin{tabularx}{\columnwidth}{|p{3.2cm}|X|}
-		\hline
-		\textbf{Parámetro} & \textbf{Valor} \\
-		\hline
-		
-		\multicolumn{2}{|c|}{\textbf{Arquitectura}} \\
-		\hline
-		
-		Encoder visual &
-		ImageVelocityEstimator preentrenado \\
-		\hline
-		
-		Dimensión de embedding visual &
-		512 características \\
-		\hline
-		
-		Modalidad tabular &
-		7 variables seleccionadas mediante Pipeline 3 \\
-		\hline
-		
-		Método de fusión &
-		Concatenación de embeddings visuales y tabulares \\
-		\hline
-		
-		Tarea &
-		Regresión de velocidad precolisión \\
-		\hline
-		
-		\multicolumn{2}{|c|}{\textbf{Entrenamiento}} \\
-		\hline
-		
-		Batch Size &
-		128 \\
-		\hline
-		
-		Learning Rate &
-		$1\times10^{-4}$ \\
-		\hline
-		
-		Épocas máximas &
-		80 \\
-		\hline
-		
-		Early Stopping &
-		Paciencia de 10 épocas \\
-		\hline
-		
-		Precisión &
-		bf16-mixed \\
-		\hline
-		
-		Acelerador &
-		GPU (CUDA) \\
-		\hline
-		
-		Semilla aleatoria &
-		42 \\
-		\hline
-		
-		\multicolumn{2}{|c|}{\textbf{Datos}} \\
-		\hline
-		
-		Número total de muestras &
-		5\,202 \\
-		\hline
-		
-		Entrenamiento &
-		3\,329 muestras \\
-		\hline
-		
-		Validación &
-		832 muestras \\
-		\hline
-		
-		Prueba &
-		1\,041 muestras \\
-		\hline
-		
-		Resolución de imágenes &
-		$224 \times 224$ píxeles \\
-		\hline
-		
-		\multicolumn{2}{|c|}{\textbf{Resultados}} \\
-		\hline
-		
-		MAE de prueba &
-		4.45 km/h \\
-		\hline
-		
-		Tiempo total de ejecución &
-		2\,219 s (36.98 min) \\
-		\hline
-		
-	\end{tabularx}
-	
-\end{table}
-
-Todos los experimentos correspondientes a HybridVelocityEstimator fueron ejecutados sobre una estación de trabajo portátil equipada con un procesador Intel Core i9-14900HX de 24 núcleos (32 hilos de ejecución), una unidad de procesamiento gráfico NVIDIA GeForce RTX 4060 Laptop GPU y 16 GB de memoria RAM. El entorno de ejecución estuvo basado en Debian GNU/Linux 12 (Bookworm), utilizando aceleración por GPU mediante CUDA y entrenamiento en precisión mixta (\textit{bf16-mixed}). Esta configuración permitió completar el proceso de entrenamiento y evaluación del modelo seleccionado en aproximadamente 2,219 segundos (36.98 minutos), proporcionando recursos computacionales suficientes para el entrenamiento eficiente de las arquitecturas multimodales propuestas.
-
-
-\subsubsection{Diseño Modular y Reutilización del Encoder Visual}
-
-Una de las decisiones arquitectónicas más relevantes implementadas en HybridVelocityEstimator consiste en reutilizar el modelo ImageVelocityEstimator como un encoder visual independiente encargado de generar las representaciones latentes utilizadas durante el proceso de fusión multimodal.
-
-A diferencia de arquitecturas multimodales monolíticas entrenadas completamente de extremo a extremo, el enfoque propuesto desacopla la generación de características visuales del proceso de aprendizaje multimodal. Bajo esta estrategia, ImageVelocityEstimator es entrenado previamente hasta aprender un espacio latente especializado en la representación de daños vehiculares y posteriormente es reutilizado únicamente como extractor de características dentro de la arquitectura híbrida.
-
-Esta decisión aporta múltiples ventajas desde la perspectiva computacional y de ingeniería de software. En primer lugar, permite reducir significativamente la cantidad de parámetros entrenables durante la etapa multimodal. Dado que ResNet50 contiene aproximadamente 25 millones de parámetros, congelar el encoder visual evita la necesidad de propagar gradientes a través de toda la red convolucional durante cada iteración de entrenamiento.
-
-Como consecuencia, se reduce el consumo de memoria GPU, disminuyen los tiempos de entrenamiento y se facilita la experimentación con distintas configuraciones del bloque multimodal.
-
-Adicionalmente, esta estrategia introduce una separación clara de responsabilidades entre componentes. Mientras ImageVelocityEstimator se especializa en aprender representaciones visuales del daño vehicular, HybridVelocityEstimator se enfoca exclusivamente en aprender la relación existente entre dichas representaciones, las variables tabulares y la velocidad objetivo.
-
-Esta modularidad facilita significativamente la mantenibilidad y evolución futura del sistema.
-
-\subsubsection{Escalabilidad y Evolución del Sistema}
-
-El desacoplamiento arquitectónico implementado permite además aprovechar conjuntos de datos heterogéneos de manera independiente.
-
-En escenarios reales, los conjuntos de datos multimodales completos, que contienen simultáneamente imágenes, variables tabulares y velocidades reconstruidas, suelen ser considerablemente más escasos que aquellos compuestos únicamente por imágenes etiquetadas. Gracias a la modularidad del diseño, ImageVelocityEstimator puede continuar entrenándose y mejorándose utilizando grandes volúmenes de datos visuales sin requerir la disponibilidad simultánea de variables tabulares asociadas.
-
-Como consecuencia, cualquier mejora obtenida en la calidad de las representaciones visuales generadas por el encoder puede transferirse directamente al sistema multimodal sin necesidad de rediseñar la arquitectura híbrida. Embeddings más discriminativos permiten proporcionar información visual más rica al bloque de fusión, incrementando potencialmente la capacidad predictiva del modelo final.
-
-Desde esta perspectiva, HybridVelocityEstimator constituye una arquitectura modular, escalable y sostenible, diseñada no sólo para maximizar el desempeño sobre el conjunto de datos disponible, sino también para facilitar futuras iteraciones de investigación y aprovechar nuevas fuentes de información conforme estas se encuentren disponibles.
+El regresor multimodal utiliza una estructura de reducción progresiva de dimensionalidad compuesta por capas totalmente conectadas con mecanismos de normalización y regularización. Esta etapa tiene como objetivo aprender relaciones cruzadas entre la información visual y tabular, permitiendo modelar interacciones que no pueden capturarse adecuadamente mediante ninguna de las modalidades de forma independiente. La configuración final fue seleccionada a partir de múltiples experimentos considerando principalmente el Error Absoluto Medio (MAE) sobre los conjuntos de validación y prueba.
 
 
 \section{RESULTADOS}
 
 \subsection{Resultados del Modelo Basado en Imágenes}
 
-Esta sección presenta los resultados obtenidos por el modelo ImageVelocityEstimator, desarrollado para estimar la velocidad precolisión utilizando exclusivamente evidencia visual proveniente de imágenes de vehículos siniestrados. El desempeño del modelo se evaluó mediante el Error Absoluto Medio (MAE) sobre los conjuntos de validación y prueba, complementando el análisis cuantitativo con curvas de aprendizaje, diagramas de dispersión entre velocidades reales y estimadas, así como visualizaciones del espacio latente aprendido por la red neuronal. Estas representaciones permiten analizar tanto la capacidad predictiva del modelo como la calidad de las características visuales extraídas durante el proceso de entrenamiento.
+Esta sección presenta los resultados obtenidos por ImageVelocityEstimator, arquitectura desarrollada para estimar la velocidad precolisión utilizando exclusivamente imágenes de daños vehiculares posteriores al impacto. El desempeño del modelo fue evaluado mediante el Error Absoluto Medio (MAE) sobre los conjuntos de validación y prueba.
 
-El modelo alcanzó un MAE de validación de 11.504 km/h y un MAE de prueba de 12.534 km/h. Los resultados obtenidos demuestran que la información contenida en las deformaciones estructurales visibles después de una colisión resulta suficientemente informativa para que una red neuronal profunda aprenda relaciones significativas con la velocidad precolisión. 
+El modelo alcanzó un MAE de validación de 11.504 km/h y un MAE de prueba de 12.534 km/h. Estos resultados demuestran que la información visual contenida en las deformaciones estructurales observables después de una colisión posee capacidad predictiva suficiente para inferir, de manera aproximada, la velocidad precolisión del vehículo.
 
-Las curvas de aprendizaje muestran un proceso de convergencia estable tanto para los conjuntos de entrenamiento como de validación, sin evidencias significativas de sobreajuste durante las etapas finales del entrenamiento. La evolución consistente del Error Absoluto Medio a lo largo de las épocas sugiere que la arquitectura logró extraer características visuales relevantes y generalizables a partir de las imágenes disponibles. Las curvas de aprendizaje correspondientes se presentan en la Figura~\ref{fig:image_mae_curves}.
+Con el propósito de analizar la calidad de las representaciones internas aprendidas por la red neuronal, se realizó un estudio adicional sobre los embeddings visuales de 512 dimensiones generados por la arquitectura antes de la etapa final de regresión. Dichos embeddings constituyen la representación latente construida por el modelo a partir de las características visuales extraídas de cada vehículo siniestrado.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\columnwidth]{Figures/mae_curves_ImageVelocityEstimator.png}
-	\caption{Curvas de aprendizaje del Error Absoluto Medio (MAE) para el modelo ImageVelocityEstimator}
-	\label{fig:image_mae_curves}
-\end{figure}
-
-El análisis del diagrama de dispersión entre velocidades predichas y velocidades reales permite caracterizar con mayor detalle el comportamiento del modelo a lo largo del rango dinámico de velocidades presente en el conjunto de datos. Para velocidades bajas y medias, las predicciones presentan una dispersión relativamente acotada alrededor de la línea de identidad, indicando que el modelo es capaz de capturar patrones visuales consistentes asociados con niveles moderados de daño estructural. Sin embargo, conforme la velocidad real aumenta, se observa una degradación progresiva en la precisión de las estimaciones.
-
-Particularmente, a partir de aproximadamente 60 km/h comienza a manifestarse una tendencia sistemática de subestimación, donde eventos de alta severidad son proyectados hacia rangos de velocidad considerablemente inferiores. Este comportamiento resulta consistente con la distribución del conjunto de datos utilizado para entrenamiento, caracterizado por una representación significativamente menor de accidentes de alta energía en comparación con colisiones de baja y media severidad. Como consecuencia, el modelo dispone de una cantidad limitada de ejemplos para aprender adecuadamente las características visuales distintivas de impactos a velocidades elevadas. El diagrama de dispersión correspondiente se presenta en la Figura~\ref{fig:image_scatter}.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\columnwidth]{Figures/predicted_vs_true_ImageVelocityEstimator.png}
-	\caption{Diagrama de dispersión entre velocidades predichas y velocidades reales para el modelo ImageVelocityEstimator}
-	\label{fig:image_scatter}
-\end{figure}
-
-Con el propósito de analizar la calidad de las representaciones internas aprendidas por la red neuronal, se realizó un estudio adicional sobre los embeddings visuales de 512 dimensiones generados por la arquitectura antes de la etapa final de regresión. Dichos embeddings constituyen la representación latente que el modelo construye sobre cada vehículo colisionado y permiten examinar si la red está organizando las muestras de acuerdo con patrones visuales relacionados con la variable objetivo.
-
-Para facilitar su interpretación, los embeddings fueron proyectados a espacios bidimensionales mediante distintas técnicas de reducción de dimensionalidad. Los resultados obtenidos evidencian la aparición de agrupamientos y gradientes coherentes con la distribución de velocidades observadas en los datos. Las muestras correspondientes a velocidades similares tienden a concentrarse en regiones próximas del espacio latente, mientras que los accidentes asociados a mayores niveles de severidad se desplazan progresivamente hacia zonas diferenciadas de la representación aprendida.
-
-Este comportamiento constituye evidencia directa de que la red neuronal logró capturar características visuales semánticamente significativas relacionadas con la magnitud del daño estructural y con la velocidad precolisión asociada a cada evento. Las visualizaciones del espacio latente se presentan en la Figura~\ref{fig:image_embeddings}.
+Para facilitar su interpretación, los embeddings fueron proyectados a dos dimensiones mediante técnicas de reducción de dimensionalidad como UMAP \cite{mcinnes2018umap}. Como se observa en la Figura~\ref{fig:image_embeddings}, las muestras correspondientes a velocidades similares tienden a concentrarse en regiones próximas del espacio latente, mientras que los eventos asociados a diferentes niveles de severidad se distribuyen progresivamente en zonas diferenciadas. Este comportamiento sugiere que la arquitectura logró aprender representaciones visuales organizadas de acuerdo con patrones relevantes para la estimación de velocidad.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\columnwidth]{Figures/umap_true_speed_ImageVelocityEstimator.png}
-	\caption{Visualización bidimensional de los embeddings generados por el modelo ImageVelocityEstimator}
+	\caption{Visualización bidimensional de los embeddings generados por el modelo ImageVelocityEstimator.}
 	\label{fig:image_embeddings}
 \end{figure}
+
+Los resultados obtenidos validan la capacidad del modelo para extraer información significativa a partir de evidencia visual postcolisión y construir representaciones latentes coherentes con la variable objetivo. Estas representaciones constituyeron posteriormente la base para el desarrollo del enfoque multimodal presentado en la siguiente sección.
+
 
 
 \subsection{Resultados del Modelo Basado en Variables Tabulares}
@@ -1039,7 +684,7 @@ El análisis del diagrama de dispersión entre velocidades predichas y velocidad
 
 \subsubsection{MLP con Pipeline de Preprocesamiento 2 (MLP-P2)}
 
-El segundo experimento empleó la misma arquitectura neuronal entrenada sobre un conjunto ampliado de 288 registros y 11 características, resultado de dos modificaciones sustanciales respecto al pipeline anterior: la sustitución de One-Hot Encoding por Target Encoding para las variables categóricas nominales, y la integración de mediciones reconstruidas con estimaciones de simulación como estrategia de enriquecimiento de la variable objetivo. Ambas modificaciones operaron de manera conjunta, reduciendo la dimensionalidad del espacio de entrada al tiempo que incrementaban el volumen de observaciones disponibles para entrenamiento.
+El segundo experimento empleó la misma arquitectura neuronal entrenada sobre un conjunto ampliado de 288 registros y 11 características, resultado de dos modificaciones sustanciales respecto al pipeline anterior: la sustitución de One-Hot Encoding por Target Encoding \cite{micci2001preprocessing} para las variables categóricas nominales, y la integración de mediciones reconstruidas con estimaciones de simulación como estrategia de enriquecimiento de la variable objetivo. Ambas modificaciones operaron de manera conjunta, reduciendo la dimensionalidad del espacio de entrada al tiempo que incrementaban el volumen de observaciones disponibles para entrenamiento.
 
 El modelo obtuvo un MAE de validación de 11.6 km/h y un MAE de prueba de 8.5 km/h. La inversión en la relación entre ambas métricas —donde el error sobre el conjunto de prueba resulta inferior al registrado en validación— no indica una mejora artificial del desempeño, sino que refleja la variabilidad estadística inherente a la partición de datos en conjuntos de tamaño moderado, particularmente cuando la distribución de velocidades no es uniforme entre subconjuntos. En términos de error de prueba, MLP-P2 presenta un resultado prácticamente equivalente al de MLP-P1 (8.5 km/h frente a 8.4 km/h), lo que evidencia que la reducción dimensional asociada al Target Encoding no comprometió la capacidad predictiva global del modelo pese a operar con una representación de entrada considerablemente más compacta.
 
@@ -1062,7 +707,7 @@ El análisis del diagrama de dispersión permite caracterizar con mayor precisi�
 
 \subsubsection{MLP con Pipeline de Preprocesamiento 3 (MLP-P3)}
 
-El tercer experimento corresponde a la configuración que incorporó una etapa adicional de selección de características mediante Información Mutua y análisis de correlación, reduciendo el espacio de entrada de 11 a 7 variables de alta relevancia predictiva. Esta reducción implicó descartar aquellos predictores cuya contribución estadística a la estimación del delta-V resultó marginal o redundante respecto a variables de mayor capacidad discriminatoria, permitiendo al modelo concentrar su capacidad representacional en el subconjunto de características más informativo. El modelo fue entrenado sobre los 288 registros disponibles y obtuvo un MAE de validación de 11.9 km/h y un MAE de prueba de 7.3 km/h, constituyendo este último el mejor resultado registrado entre las tres configuraciones de red neuronal evaluadas.
+El tercer experimento corresponde a la configuración que incorporó una etapa adicional de selección de características mediante Información Mutua \cite{cover2006elements} y análisis de correlación de Pearson \cite{pearson1895note}, reduciendo el espacio de entrada de 11 a 7 variables de alta relevancia predictiva. Esta reducción implicó descartar aquellos predictores cuya contribución estadística a la estimación del delta-V resultó marginal o redundante respecto a variables de mayor capacidad discriminatoria, permitiendo al modelo concentrar su capacidad representacional en el subconjunto de características más informativo. El modelo fue entrenado sobre los 288 registros disponibles y obtuvo un MAE de validación de 11.9 km/h y un MAE de prueba de 7.3 km/h, constituyendo este último el mejor resultado registrado entre las tres configuraciones de red neuronal evaluadas.
 
 La brecha observada entre el MAE de validación y el MAE de prueba, de 4.6 km/h, es atribuible a la variabilidad estadística de la partición en conjuntos de tamaño moderado y no constituye evidencia concluyente de sobreajuste al conjunto de prueba. Más relevante es el hecho de que la mejora en el error de prueba respecto a MLP-P1 y MLP-P2 —de 8.4 y 8.5 km/h respectivamente a 7.3 km/h— se produce precisamente al reducir la dimensionalidad del espacio de entrada, lo que respalda empíricamente la hipótesis de que la eliminación de variables redundantes y de baja relevancia contribuye positivamente a la capacidad de generalización del modelo sobre datos no observados.
 
@@ -1139,17 +784,11 @@ XGBoost & P3 & 8.0 & 7.8 \\
 
 \subsection{Resultados del Modelo Híbrido}
 
-Esta sección presenta los resultados obtenidos por la arquitectura multimodal \textit{HybridVelocityEstimator}, desarrollada para integrar simultáneamente información visual proveniente de imágenes postcolisión y variables tabulares derivadas de procesos de reconstrucción de accidentes. El objetivo principal de esta evaluación consiste en determinar si la combinación de ambas modalidades permite mejorar la precisión de las estimaciones de velocidad precolisión respecto a los enfoques unimodales desarrollados previamente.
+Esta sección presenta los resultados obtenidos por \textit{HybridVelocityEstimator}, arquitectura multimodal desarrollada para integrar información visual proveniente de imágenes postcolisión con variables tabulares derivadas de procesos de reconstrucción de accidentes. El objetivo de esta evaluación consiste en determinar si la combinación de ambas modalidades permite mejorar la estimación de velocidad precolisión respecto a los enfoques unimodales presentados anteriormente.
 
-El desempeño del modelo fue evaluado mediante el Error Absoluto Medio (MAE) sobre los conjuntos de validación y prueba, complementando el análisis con curvas de aprendizaje y diagramas de dispersión entre velocidades reales y estimadas. Los resultados obtenidos fueron posteriormente comparados con aquellos alcanzados por los modelos ImageVelocityEstimator y TabularVelocityEstimator con el propósito de cuantificar el impacto de la estrategia de fusión multimodal.
+El modelo alcanzó un MAE de validación de 4.457 km/h y un MAE de prueba de 4.449 km/h, constituyendo el mejor resultado obtenido entre todas las arquitecturas evaluadas durante el proyecto. En comparación con los modelos unimodales, el enfoque híbrido logró reducir aproximadamente un 50% el error obtenido por ImageVelocityEstimator y entre un 35% y un 40% el error alcanzado por las mejores configuraciones basadas exclusivamente en variables tabulares.
 
-Los experimentos realizados mostraron una mejora consistente y significativa respecto a todos los enfoques desarrollados previamente. El modelo alcanzó un MAE de validación de 4.457 km/h y un MAE de prueba de 4.449 km/h, convirtiéndose en la arquitectura con mejor desempeño dentro de las alternativas evaluadas durante el proyecto.
-
-Particularmente, se observó una reducción aproximada del 50\% en el error de predicción respecto al modelo basado exclusivamente en imágenes. Asimismo, el modelo híbrido logró disminuir entre un 35\% y un 40\% el error obtenido por el mejor modelo basado únicamente en variables tabulares. Estas mejoras constituyen evidencia cuantitativa de que ambas modalidades contienen información complementaria y que su integración permite construir representaciones más completas del fenómeno estudiado.
-
-Las curvas de aprendizaje obtenidas durante el entrenamiento evidencian un proceso de convergencia estable y consistente. Tanto las métricas de entrenamiento como las de validación muestran una disminución progresiva del error a lo largo de las épocas, sin divergencias significativas entre ambas curvas. Este comportamiento sugiere que la arquitectura fue capaz de aprovechar eficazmente la información adicional proporcionada por cada modalidad, generando representaciones más robustas y generalizables que las obtenidas mediante los enfoques unimodales.
-
-La Figura~\ref{fig:hybrid_mae_curves} presenta las curvas de aprendizaje correspondientes al modelo HybridVelocityEstimator.
+Las curvas de aprendizaje mostraron un proceso de convergencia estable a lo largo del entrenamiento, con una evolución consistente de las métricas de entrenamiento y validación. La Figura~\ref{fig:hybrid_mae_curves} presenta las curvas correspondientes al modelo seleccionado.
 
 \begin{figure}[H]
 	\centering
@@ -1158,7 +797,7 @@ La Figura~\ref{fig:hybrid_mae_curves} presenta las curvas de aprendizaje corresp
 	\label{fig:hybrid_mae_curves}
 \end{figure}
 
-El análisis de las predicciones permite observar con mayor detalle las mejoras alcanzadas mediante la estrategia multimodal. La Figura~\ref{fig:hybrid_scatter} muestra el diagrama de dispersión entre velocidades reales y velocidades estimadas sobre el conjunto de prueba.
+La Figura~\ref{fig:hybrid_scatter} muestra el diagrama de dispersión entre velocidades reales y velocidades estimadas sobre el conjunto de prueba. Puede observarse una concentración significativamente mayor de las predicciones alrededor de la línea de identidad en comparación con los enfoques unimodales, reflejando una mejora sustancial en la precisión de las estimaciones a lo largo del rango de velocidades analizado.
 
 \begin{figure}[H]
 	\centering
@@ -1167,7 +806,7 @@ El análisis de las predicciones permite observar con mayor detalle las mejoras 
 	\label{fig:hybrid_scatter}
 \end{figure}
 
-
+Los resultados obtenidos posicionan a HybridVelocityEstimator como la arquitectura de mayor desempeño desarrollada en este trabajo y demuestran el potencial de los enfoques multimodales para la estimación automática de velocidad precolisión a partir de evidencia postaccidente.
 
 
 
