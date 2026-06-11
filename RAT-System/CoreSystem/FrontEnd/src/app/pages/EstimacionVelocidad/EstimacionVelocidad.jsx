@@ -28,6 +28,10 @@ const AI_VELOCITY_API_URL =
   import.meta.env.VITE_AI_VELOCITY_API_URL ||
   "https://leil6c6oz3.execute-api.us-east-2.amazonaws.com/default/ai-vel-repo";
 
+const AI_VELOCITY_HYBRID_API_URL =
+  import.meta.env.VITE_AI_VELOCITY_HYBRID_API_URL ||
+  "https://a8pd3bep2l.execute-api.us-east-2.amazonaws.com/default/ai-vel-repo-hyb";
+
 // Función para manejar diferentes formatos de respuesta de la API
 function parsePredictionBody(payload) {
   if (!payload || payload.body == null) {
@@ -61,19 +65,28 @@ async function uploadImageToS3(file) {
   return data.image_url;
 }
 // Función para solicitar la predicción de velocidad a la API de IA
-async function requestVelocityPrediction(imageUrl) {
-  const endpoint = `${AI_VELOCITY_API_URL}?ImageURL=${encodeURIComponent(
-    imageUrl
-  )}`;
+async function requestVelocityPrediction(imageUrl, additionalParams = {}, canUseHybrid = false) {
+  let endpoint = "";
+
+  console.log("CCCCC")
+
+  if(canUseHybrid) {
+    endpoint = `${AI_VELOCITY_HYBRID_API_URL}?ImageURL=${encodeURIComponent(imageUrl)}`;
+
+    for (const [key, value] of Object.entries(additionalParams)) {
+      endpoint += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+    }
+  }
+  else{
+    endpoint = `${AI_VELOCITY_API_URL}?ImageURL=${encodeURIComponent(imageUrl)}`;
+  }
+
   const response = await fetch(endpoint);
   if (!response.ok) {
     throw new Error("La API de estimación respondió con error.");
   }
   const payload = await response.json();
   const body = parsePredictionBody(payload);
-
-  console.log("Respuesta de la API de IA:", payload);
-  console.log("Body parseado:", body);
 
   const velocity = payload?.velocity_kph ?? body?.velocity_kph;
 
@@ -112,12 +125,43 @@ export default function NuevoCasoEstimacion() {
     cargoWeightKg: ""
   });
 
+    const [FIELD_VALUES, setFIELD_VALUES] = useState({
+    imageUrl: "",
+    mais : "",
+    forceDirection: "",
+    rolloverStatus: "",
+    damagePlaneDescription: "",
+    severityDescription: "",
+    vehicleClass: "",
+    curbWeightKg: "",
+    cargoWeightKg: ""
+  });
+
   const [fieldErrors, setFieldErrors] = useState({});
 
   const handleAPIParameterChange = (event) => {
     const { name, value } = event.target;
 
+    let formattedValue = value;
+
+    switch (name) {
+      case "forceDirection":
+        formattedValue = value + " degrees";
+        break;
+    }
+
+    if (value === "") {
+      formattedValue = "";
+    }
+
+    console.log(`Campo actualizado: ${name} = ${formattedValue}`);
+
     setAPI_PARAMETERS((prev) => ({
+      ...prev,
+      [name]: formattedValue,
+    }));
+
+    setFIELD_VALUES((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -218,7 +262,7 @@ const validateField = (name, value) => {
   const validateAllAPIParameters = () => {
     let isValid = true;
     
-    Object.entries(API_PARAMETERS).forEach(([name, value]) => {
+    Object.entries(FIELD_VALUES).forEach(([name, value]) => {
       const fieldIsValid = validateField(name, value);
       if (!fieldIsValid) {
         isValid = false;
@@ -269,14 +313,22 @@ const validateField = (name, value) => {
       const publicImageUrl = await uploadImageToS3(selectedFile);
       setUploadedUrl(publicImageUrl);
 
-      const velocity = await requestVelocityPrediction(publicImageUrl);
-      const formattedVelocity = parseFloat(velocity).toFixed(2);
-
-      setPredictedVelocity(formattedVelocity);
+      let velocity = "ERROR";
 
       const hasAllParams = Object.entries(API_PARAMETERS)
         .filter(([key]) => key !== "imageUrl")
         .every(([, value]) => value !== "");
+
+      if(hasAllParams){
+        velocity = await requestVelocityPrediction(publicImageUrl, API_PARAMETERS, true);
+      }
+      else{
+        velocity = await requestVelocityPrediction(publicImageUrl, {}, false);
+      }
+
+      const formattedVelocity = parseFloat(velocity).toFixed(2);
+
+      setPredictedVelocity(formattedVelocity);
 
       setSelectedModel(hasAllParams ? MODELOS[1] : MODELOS[0]);
       setShowModelCard(true);
@@ -354,7 +406,7 @@ const validateField = (name, value) => {
                     id={name}
                     name={name}
                     className="ev-select"
-                    value={API_PARAMETERS[name]}
+                    value={FIELD_VALUES[name]}
                     onChange={handleAPIParameterChange}
                   >
                     <option value="">Selecciona una opción</option>
@@ -395,7 +447,7 @@ const validateField = (name, value) => {
                     }
                     placeholder={placeholder}
                     className={`ev-input ${fieldErrors[name] ? "ev-input-error" : ""}`}
-                    value={API_PARAMETERS[name]}
+                    value={FIELD_VALUES[name]}
                     onChange={handleAPIParameterChange}
                   />
                 </div>
