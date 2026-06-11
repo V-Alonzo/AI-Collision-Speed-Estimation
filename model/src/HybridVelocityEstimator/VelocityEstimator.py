@@ -163,7 +163,12 @@ class VelocityEstimator:
         self.lightningModel.eval()
 
         # Load image
-        image = Image.open(image_path).convert("RGB")
+        if image_path.startswith(("http://", "https://")):
+            response = requests.get(image_path)
+            response.raise_for_status()
+            image = Image.open(BytesIO(response.content)).convert("RGB")
+        else:
+            image = Image.open(image_path).convert("RGB")
 
         # Apply transforms
         transformed_image = Transformations.test_transform(image)

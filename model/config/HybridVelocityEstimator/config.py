@@ -65,7 +65,7 @@ class TrainingConfig:
     ENCODER_IMAGEVELOCITYESTIMATOR_SERIALIZED_PATH: str = "model/experiments/ImagVelEst_aug_ModFc_EmbHead_l1Loss_v1/serialized/ImagVelEst_aug_ModFc_EmbHead_l1Loss_v1_weights.pth"
 
     # Experiment / Model Naming
-    MODEL_PREFIX: str = "HybVelEst_wLoss_ModFc_WeightedRandSamp_v3"
+    MODEL_PREFIX: str = "HybVelEst_wLoss_ModFc_v2"
 
     EXPERIMENTS_ROOT_DIR: str = "model/experiments"
 
