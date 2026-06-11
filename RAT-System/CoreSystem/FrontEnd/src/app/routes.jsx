@@ -9,7 +9,6 @@ import Catalogos from "./pages/Catalogos";
 import Perfil from "./pages/Perfil";
 import ProtectedRoute from "../components/ProtectedRoute";
 import AdminUsuarios from "./pages/AdminUsuarios";
-import EstimacionVelocidadIA from "./pages/EstimacionVelocidadIA";
 import EstimacionVelocidad from "./pages/EstimacionVelocidad/EstimacionVelocidad";
 
 export const router = createBrowserRouter([
@@ -29,7 +28,6 @@ export const router = createBrowserRouter([
           { path: "expedientes/nuevo", Component: NuevoCaso },
           { path: "expedientes/:id", Component: DetalleExpediente },
           { path: "expedientes/:id/editar", Component: NuevoCaso },
-          { path: "ia/estimacion-velocidad", Component: EstimacionVelocidadIA },
           { path: "configuracion/catalogos", Component: Catalogos },
           { path: "perfil", Component: Perfil },
           { path: "admin/usuarios", Component: AdminUsuarios },
