@@ -22,7 +22,7 @@ if __name__ == "__main__":
     start = datetime.datetime.now()
     print("\n" + "\033[0;34m" + "[start] " + str(start) + "\033[0m" + "\n");
     download_huggingface_dataset(
-        repo_id = "CrashVisionAITeam/CrashedDBAugmented",
+        repo_id = "CrashVisionAITeam/CrashedDB",
         dir_to_save_data= "utils/Preprocessing/NHTSADatabaseExtraction/Extraction/Images"
         
     )

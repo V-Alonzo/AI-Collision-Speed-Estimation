@@ -1,0 +1,26 @@
+---
+config:
+  layout: fixed
+---
+flowchart LR
+ subgraph V["ImageVelocityEstimator"]
+        V1["ResNet50 Backbone"]
+        V2["Embedding Head"]
+  end
+ subgraph s1["HybridVelocityEstimator"]
+        REG["Regressor"]
+  end
+    REG --> OUT["Velocidad Estimada"]
+    V2 --> V3["Embedding Normalizado<br>512D"]
+    V1 --> V2
+    IMG["Imagen de Entrada"] --> V1
+    TAB["Características Tabulares<br>Feature Vector"] --> REG
+    V3 --> REG
+
+    style V1 fill:#E1BEE7
+    style V2 fill:#FFCDD2
+    style REG fill:#D7CCC8
+    style OUT fill:#C8E6C9
+    style V3 fill:#C8E6C9
+    style IMG fill:#BBDEFB
+    style TAB fill:#BBDEFB

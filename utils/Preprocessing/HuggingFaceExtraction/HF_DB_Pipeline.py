@@ -150,6 +150,9 @@ def HuggingFacePipeline():
         ('imputer', SimpleImputer(strategy='constant', fill_value='No rollover (no overturning)')),
         ('binarizer', BinaryRolloverEncoder())
     ])
+
+    image_features = ["image_relpath"]
+
     # Ensamblar el ColumnTransformer
     preprocessor = ColumnTransformer(
         transformers=[
@@ -159,7 +162,8 @@ def HuggingFacePipeline():
             ('mais', mais_transformer, mais_features),
             ('force_cyc', force_transformer, force_dir_features),
             ('clock_cyc', clock_transformer, clock_dir_features),
-            ('rollover', rollover_transformer, rollover_features)
+            ('rollover', rollover_transformer, rollover_features),
+            ("image_relpath", "passthrough", image_features)
         ],
         remainder='drop', # Ignora columnas como 'cdc', 'primaryVehicleNumber', strings de peso crudo, etc.
         verbose_feature_names_out=False # Para evitar nombres de columnas excesivamente largos
@@ -184,7 +188,7 @@ def prepareDataset(df):
     
     df_clean = df_clean.dropna(subset=['targetVariable']) # Asegurar que no queden filas sin target
     
-    df_clean = df_clean.drop_duplicates(subset="cirenId") # Verificar que no haya duplicados en cirenId después de la limpieza
+    #df_clean = df_clean.drop_duplicates(subset="cirenId") # Verificar que no haya duplicados en cirenId después de la limpieza
     df_clean = df_clean.reset_index(drop=True) # Resetear índices después de la limpieza
     print(df_clean["cirenId"])
     print(df_clean.shape)

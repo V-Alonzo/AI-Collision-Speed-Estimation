@@ -1,0 +1,14 @@
+---
+config:
+  layout: fixed
+---
+flowchart LR
+ subgraph T["TabularVelocityEstimator"]
+        B["Regressor<br>FC Network (64, 32, 16)"]
+  end
+    A["Variables Tabulares<br>Feature Vector"] --> B
+    B --> C["Velocidad Estimada"]
+
+    style B fill:#E1BEE7
+    style A fill:#BBDEFB
+    style C fill:#C8E6C9

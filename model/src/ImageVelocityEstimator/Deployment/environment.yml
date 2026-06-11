@@ -1,0 +1,10 @@
+name: AIServing
+channels:
+  - defaults
+dependencies:
+  - boto3
+  - pillow
+  - python=3.11
+  - pytorch
+  - torchvision
+prefix: /opt/anaconda3/envs/AIServing

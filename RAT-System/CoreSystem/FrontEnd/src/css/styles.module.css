@@ -1,0 +1,34 @@
+
+
+.content {
+  padding: 25px;
+  min-height: 280px;
+  background-color: #fff;
+}
+
+.site-layout .site-layout-background {
+  border-bottom: solid;
+  border-bottom-width: 0.5px;
+  border-bottom-color: #f0f0f0;
+  /* background: rgb(13, 88, 201); */
+  /* background-image: -webkit-linear-gradient(
+    25deg,
+    #0b2b8b,
+    #095071 54%,
+    #3884db
+  ); */
+  height: 60px;
+}
+.ant-layout-sider .ant-layout-sider-light {
+  flex: 0 0 300px;
+}
+
+.ant-drawer-mask{
+  background-color: rgba(111, 126, 140, 0.2)!important;
+  backdrop-filter: blur(4px)!important;
+}
+
+
+
+
+

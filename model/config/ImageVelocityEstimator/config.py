@@ -47,7 +47,7 @@ class TrainingConfig:
     OUTPUT_LABEL_CSV_INDEX: str = "final_speed_kph"
 
     # Experiment / Model Naming
-    MODEL_PREFIX: str = "ImgVelEst_aug_ModFc_EmbHd_l1Loss_dycLR_v3"
+    MODEL_PREFIX: str = "ImgVelEst_aug_ModFc_EmbHdNoNorm_l1Loss_dycLR_v2"
 
     EXPERIMENTS_ROOT_DIR: str = "model/experiments"
 
