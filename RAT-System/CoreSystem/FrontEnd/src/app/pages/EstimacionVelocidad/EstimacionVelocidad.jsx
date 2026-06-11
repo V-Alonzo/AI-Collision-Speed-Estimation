@@ -205,11 +205,13 @@ const validateField = (name, value) => {
       label: "Modelo de Visión Computacional",
       desc: "Predice la velocidad a partir de una imagen del impacto recibido.",
       icon: <NeuralNetworkIcon height="2em" style={{ color: "#33369e" }} />,
+      predictionError: "± 12.5 km/h",
     },
     {
       label: "Modelo Híbrido",
       desc: "Predice la velocidad combinando la imagen del impacto con características adicionales.",
       icon: <ChipIcon height="2em" style={{ color: "#33369e" }} />,
+      predictionError: "± 4.5 km/h",
     },
   ];
   // Función para validar todos los campos del formulario antes de enviar la predicción
@@ -276,7 +278,7 @@ const validateField = (name, value) => {
         .filter(([key]) => key !== "imageUrl")
         .every(([, value]) => value !== "");
 
-      setSelectedModel(hasAllParams ? "Modelo Híbrido" : "Modelo de Visión Computacional");
+      setSelectedModel(hasAllParams ? MODELOS[1] : MODELOS[0]);
       setShowModelCard(true);
     } catch (requestError) {
       setError(
@@ -495,7 +497,7 @@ const validateField = (name, value) => {
             </div>
             <div className="ev-modelos-list">
               {MODELOS.map(({ label, desc, icon }) => (
-                <div key={label} className={`ev-modelo-item ${selectedModel === label ? "ev-modelo-selected" : ""}`}>
+                <div key={label} className={`ev-modelo-item ${selectedModel.label === label ? "ev-modelo-selected" : ""}`}>
                   <div className="ev-modelo-icon-wrap">{icon}</div>
                   <div className="ev-modelo-info">
                     <span className="ev-modelo-label">{label}</span>
@@ -512,7 +514,7 @@ const validateField = (name, value) => {
                 <span className="ev-result-value">
                   {predictedVelocity == null
                     ? "--"
-                    : `${predictedVelocity} km/h`}
+                    : `${predictedVelocity} km/h ${selectedModel.predictionError}` }
                 </span>
               </div>
               {uploadedUrl && (
