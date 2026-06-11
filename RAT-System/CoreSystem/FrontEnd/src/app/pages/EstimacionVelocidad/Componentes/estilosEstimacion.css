@@ -5,6 +5,126 @@
 .ev-wrapper {
   padding: 1.5rem;
 }
+
+.ev-help-text {
+  margin: 4px 0 8px;
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.35;
+}
+
+.ev-error-text {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  color: #b91c1c;
+}
+
+.ev-input-error {
+  border-color: #dc2626 !important;
+  background: #fef2f2;
+}
+
+
+.ev-prediction-actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.ev-predict-btn {
+  border: none;
+  border-radius: 12px;
+  background: #00adcf;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 11px 20px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.ev-predict-btn:hover {
+  background: #008faf;
+}
+
+.ev-predict-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ev-result-section {
+  margin-top: 22px;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.ev-result-title {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.ev-result-box {
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ev-result-label {
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.ev-result-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.ev-error-box {
+  margin-top: 12px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+  border-radius: 12px;
+  padding: 11px 13px;
+  font-size: 0.88rem;
+}
+
+.ev-uploaded-url {
+  margin: 10px 0 0;
+  color: #047857;
+  font-size: 0.85rem;
+}
+
+.ev-remove-image-btn {
+  width: fit-content;
+  border: none;
+  border-radius: 10px;
+  background: #e5e7eb;
+  color: #111827;
+  font-weight: 700;
+  padding: 8px 13px;
+  cursor: pointer;
+}
+
+.ev-remove-image-btn:hover {
+  background: #d1d5db;
+}
+
+.ev-remove-image-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Tarjeta de casos */
 .ev-card {
   background: rgba(255, 255, 255, 0.6)/50;
@@ -21,6 +141,7 @@
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
+  margin-top: 1rem;
 }
 /* Ícono del encabezado */
 .ev-card-header-icon {
@@ -37,145 +158,301 @@
   font-weight: 800;
   color: #374151;
 }
-/* Tabla de casos */
-.ev-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-/* Encabezados de la tabla */
-.ev-table thead th {
-  text-align: left;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.95rem;
-  color: #6b7280;
-  font-weight: 500;
-}
-/* Filas de la tabla */
-.ev-table tbody tr {
-  border-top: 1px solid #e5e7eb;
-  transition: background 0.15s;
-}
-/* Hover en filas */
-.ev-table tbody tr:hover {
-  background-color: #f9fafb;
-}
-/* Celdas de la tabla */
-.ev-table td {
-  padding: 0.75rem;
-  font-size: 0.875rem;
-}
-/* Estilos específicos para cada columna */
-.ev-table .td-id {
-  font-weight: 600;
-  color: #374151;
-}
-.ev-table .td-fecha {
-  color: #6b7280;
-}
-.ev-table .td-chevron {
-  text-align: right;
-  color: #3b82f6;
-}
-/* Badge de velocidad */
-.ev-badge {
-  background-color: #dbeafe;
-  color: #2563eb;
-  padding: 0.2rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-/* --- Paginación --- */
-.ev-pagination {
+
+
+/* Botones de acciones */
+.ev-accion-btn {
   display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-/* Botón de página */
-.ev-pag-btn {
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1.1rem;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
   cursor: pointer;
-  border: none;
+  text-align: left;
+  width: 100%;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
-.ev-pag-btn.active {
-  background-color: #3b82f6;
-  color: #fff;
+
+.ev-accion-btn:hover {
+  background: #eff6ff;
+  border-color: #1983b4;
+  box-shadow: 0 2px 8px rgba(25, 131, 180, 0.12);
 }
-.ev-pag-btn.inactive {
-  background-color: #e5e7eb;
+
+.ev-accion-btn-icon {
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+  background: #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+
+.upload-dropzone {
+  min-height: 360px;
+  border: 2px dashed #93c5fd;
+  border-radius: 20px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 34px;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.upload-dropzone:hover {
+  border-color: #1983b4;
+  background: #eff6ff;
+}
+
+.upload-dropzone-active {
+  border-color: #1983b4;
+  background: #dbeafe;
+  transform: scale(1.01);
+}
+
+.upload-hidden-input {
+  display: none;
+}
+
+.upload-dropzone-icon {
+  width: 86px;
+  height: 86px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #1983b4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-dropzone-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.upload-dropzone-text {
+  margin: 0;
+  font-size: 0.95rem;
   color: #4b5563;
 }
-/* --- Grid de botones de acción ---*/
-.ev-actions-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  height: 150px;
-}
-/* Botón de acción individual */
-.ev-action-btn {
-  background: rgba(255, 255, 255, 0.6)/50;
+
+.upload-dropzone-hint {
+  font-size: 0.82rem;
+  color: #6b7280;
+  background: #ffffff;
   border: 1px solid #e5e7eb;
-  backdrop-filter: blur(12px);
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  padding: 1.25rem 1.5rem;
+  border-radius: 999px;
+  padding: 7px 12px;
+}
+
+.upload-preview-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.upload-file-info {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
-  text-align: left;
-  width: 100%;
-}
-.ev-action-btn:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-}
-/* Contenido del botón */
-.ev-action-btn-content {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-.ev-action-btn-label {
-  font-weight: 600;
-  font-size: 1.5rem;
+  gap: 8px;
   color: #374151;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  word-break: break-word;
 }
-/* Chevron del botón de acción */
-.ev-action-btn-chevron {
-  color: #9ca3af;
-  flex-shrink: 0;
-  font-size: 1.5rem;
-  height: 2.5rem;
+
+
+.photo-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(15, 23, 42, 0.68);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
 }
+
+.photo-modal {
+  width: min(920px, 100%);
+  max-height: 92vh;
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.photo-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 22px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.photo-modal-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.photo-modal-subtitle {
+  margin: 6px 0 0;
+  font-size: 0.92rem;
+  color: #6b7280;
+}
+
+.photo-modal-close {
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.photo-modal-close:hover {
+  background: #e5e7eb;
+}
+
+.photo-modal-body {
+  padding: 22px 24px;
+  background: #f8fafc;
+}
+
+.photo-modal-video,
+.photo-modal-preview {
+  width: 100%;
+  max-height: 58vh;
+  object-fit: contain;
+  background: #000;
+  border-radius: 18px;
+  border: 1px solid #d1d5db;
+  transform: scaleX(-1);
+}
+
+.photo-modal-error {
+  margin: 12px 0 0;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
+
+.photo-modal-actions {
+  padding: 18px 24px 22px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.photo-modal-primary-btn,
+.photo-modal-secondary-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 11px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.photo-modal-primary-btn {
+  background: #1983b4;
+  color: #ffffff;
+}
+
+.photo-modal-primary-btn:hover {
+  background: #14698f;
+}
+
+.photo-modal-primary-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.photo-modal-secondary-btn {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.photo-modal-secondary-btn:hover {
+  background: #d1d5db;
+}
+
+.ev-photo-preview-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ev-photo-preview-img {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border-radius: 14px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+}
+
+.ev-photo-preview-name {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #4b5563;
+  word-break: break-word;
+}
+
 /* ================================
    Estilos para NuevoCasoEstimacion
    ================================ */
 /* --- Grid principal de la página --- */
-.nc-grid {
+.ev-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-rows: auto auto auto;
   gap: 1.25rem;
 }
 /* Tarjeta del formulario */
-.nc-form-card {
+.ev-form-card {
   grid-column: 1;
   grid-row: 1;
+  height: fit-content;
 }
 /* Tarjeta de modelos */
-.nc-modelos-card {
+.ev-modelos-card {
   grid-column: 2;
   grid-row: 1 / 3;
 }
 /* Fila de acciones de archivo */
-.nc-acciones-row {
+.ev-acciones-row {
   grid-column: 1;
   grid-row: 2;
   display: grid;
@@ -183,30 +460,30 @@
   gap: 1rem;
 }
 /* Tarjeta de tipo de cálculo */
-.nc-calculo-card {
+.ev-calculo-card {
   grid-column: 1;
   grid-row: 3;
 }
 /* Subtítulo del encabezado */
-.nc-subtitle {
+.ev-subtitle {
   font-size: 0.8rem;
   color: #6b7280;
   margin-top: 0.15rem;
 }
 /* Campos del formulario */
-.nc-field {
+.ev-field {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
   margin-bottom: 1rem;
 }
-.nc-label {
+.ev-label {
   font-size: 0.85rem;
   font-weight: 500;
   color: #374151;
 }
 /* Input con ícono */
-.nc-input-wrapper {
+.ev-input-wrapper {
   display: flex;
   align-items: center;
   border: 1px solid #e5e7eb;
@@ -214,14 +491,14 @@
   overflow: hidden;
   background: #fff;
 }
-.nc-input-icon {
+.ev-input-icon {
   padding: 0.6rem 0.75rem;
   background: #eff6ff;
   display: flex;
   align-items: center;
   border-right: 1px solid #e5e7eb;
 }
-.nc-input {
+.ev-input {
   flex: 1;
   padding: 0.6rem 0.75rem;
   font-size: 0.875rem;
@@ -231,7 +508,7 @@
   background: transparent;
 }
 /* Textarea con ícono */
-.nc-textarea-wrapper {
+.ev-textarea-wrapper {
   display: flex;
   align-items: flex-start;
   border: 1px solid #e5e7eb;
@@ -239,7 +516,7 @@
   overflow: hidden;
   background: #fff;
 }
-.nc-textarea-icon {
+.ev-textarea-icon {
   padding: 0.6rem 0.75rem;
   background: #eff6ff;
   display: flex;
@@ -247,7 +524,7 @@
   border-right: 1px solid #e5e7eb;
   padding-top: 0.75rem;
 }
-.nc-textarea {
+.ev-textarea {
   flex: 1;
   padding: 0.6rem 0.75rem;
   font-size: 0.875rem;
@@ -259,7 +536,7 @@
   font-family: inherit;
 }
 /* Zona de arrastrar imagen */
-.nc-dropzone {
+.ev-dropzone {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -268,17 +545,17 @@
   padding: 0.75rem 1rem;
   background: #eff6ff;
 }
-.nc-dropzone-text {
+.ev-dropzone-text {
   font-size: 0.875rem;
   color: #374151;
   margin: 0;
 }
-.nc-dropzone-hint {
+.ev-dropzone-hint {
   font-size: 0.75rem;
   color: #9ca3af;
   margin: 0;
 }
-.nc-examinar-btn {
+.ev-examinar-btn {
   margin-left: auto;
   display: flex;
   align-items: center;
@@ -292,12 +569,12 @@
   cursor: pointer;
   white-space: nowrap;
 }
-.nc-examinar-btn:hover {
+.ev-examinar-btn:hover {
   border-color: #1983b4;
   color: #1983b4;
 }
 /* Panel de modelos */
-.nc-modelos-icon-wrap {
+.ev-modelos-icon-wrap {
   width: 3rem;
   height: 3rem;
   border-radius: 0.75rem;
@@ -306,12 +583,14 @@
   align-items: center;
   justify-content: center;
 }
-.nc-modelos-list {
-  display: flex;
-  flex-direction: column;
+.ev-modelos-list {
+  grid-template-columns: 2fr 2fr;
+  display: grid;
+  flex-direction: row;
   gap: 0.75rem;
+  margin-bottom: 1.5rem;
 }
-.nc-modelo-item {
+.ev-modelo-item {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -323,10 +602,10 @@
   cursor: pointer;
   transition: box-shadow 0.15s;
 }
-.nc-modelo-item:hover {
+.ev-modelo-item:hover {
   box-shadow: 0 2px 10px rgba(25, 131, 180, 0.12);
 }
-.nc-modelo-icon-wrap {
+.ev-modelo-icon-wrap {
   width: 3rem;
   height: 3rem;
   border-radius: 0.75rem;
@@ -336,22 +615,24 @@
   justify-content: center;
   flex-shrink: 0;
 }
-.nc-modelo-info {
+.ev-modelo-info {
   display: flex;
   flex-direction: column;
   flex: 1;
 }
-.nc-modelo-label {
+.ev-modelo-label {
   font-size: 0.9rem;
   font-weight: 600;
   color: #1983b4;
 }
-.nc-modelo-desc {
+.ev-modelo-desc {
   font-size: 0.78rem;
+  margin-top: 0.4rem;
+  line-height: 1.6;
   color: #6b7280;
 }
 /* Tarjetas de acciones de archivo */
-.nc-accion-card {
+.ev-accion-card {
   background: rgba(255, 255, 255, 0.6);
   border: 1px solid #e5e7eb;
   backdrop-filter: blur(12px);
@@ -363,7 +644,7 @@
   gap: 0.5rem;
   position: relative;
 }
-.nc-accion-icon-wrap {
+.ev-accion-icon-wrap {
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;
@@ -372,23 +653,23 @@
   align-items: center;
   justify-content: center;
 }
-.nc-accion-info {
+.ev-accion-info {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   flex: 1;
 }
-.nc-accion-label {
+.ev-accion-label {
   font-size: 0.9rem;
   font-weight: 600;
   color: #374151;
 }
-.nc-accion-desc {
+.ev-accion-desc {
   font-size: 0.78rem;
   color: #6b7280;
   line-height: 1.4;
 }
-.nc-accion-chevron {
+.ev-accion-chevron {
   align-self: flex-end;
   width: 1.8rem;
   height: 1.8rem;
@@ -402,11 +683,11 @@
   cursor: pointer;
   transition: background 0.15s;
 }
-.nc-accion-chevron:hover {
+.ev-accion-chevron:hover {
   background: #dbeafe;
 }
 /* --- Vista previa de archivos (dentro del panel de modelos) --- */
-.nc-preview-section {
+.ev-preview-section {
   margin-top: 1rem;
   border-top: 1px solid #e5e7eb;
   padding-top: 0.5rem;
@@ -415,19 +696,19 @@
   gap: 0.6rem;
 }
 
-.nc-preview-header {
+.ev-preview-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.nc-preview-title {
+.ev-preview-title {
   font-size: 0.875rem;
   font-weight: 600;
   color: #374151;
 }
 /* Área donde aparecerán las imágenes/archivos */
-.nc-preview-area {
+.ev-preview-area {
   min-height: 8rem;
   border: 1px dashed #bfdbfe;
   border-radius: 0.75rem;
@@ -437,14 +718,14 @@
   justify-content: center;
   padding: 1rem;
 }
-.nc-preview-empty {
-  font-size: 0.78rem;
+.ev-preview-empty {
+  font-size: 1rem;
   color: #9ca3af;
   text-align: center;
   line-height: 1.5;
 }
 /* Select de tipo de cálculo */
-.nc-select-wrapper {
+.ev-select-wrapper {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -454,7 +735,7 @@
   background: #fff;
   margin-top: 0.4rem;
 }
-.nc-select {
+.ev-select {
   flex: 1;
   border: none;
   outline: none;
@@ -463,65 +744,36 @@
   background: transparent;
   cursor: pointer;
 }
-/* ---------------------- */
-/* ----- Responsive ----- */
-/* ---------------------- */
-@media (max-width: 1024px) {
-  .ev-actions-grid {
-    grid-template-columns: repeat(1, 1fr);
-  }
-}
-@media (max-width: 640px) {
-  .ev-wrapper {
-    padding: 1rem;
-  }
-  .ev-actions-grid {
-    grid-template-columns: 1fr;
-  }
-  .ev-card-title {
-    font-size: 1rem;
-  }
-  .ev-action-btn {
-    padding: 1rem;
-  }
-  .ev-table thead th,
-  .ev-table td {
-    font-size: 0.75rem;
-    padding: 0.5rem;
-  }
-  .ev-badge {
-    font-size: 0.75rem;
-    padding: 0.15rem 0.5rem;
-  }
-}
+
+
 /* Responsive NuevoCaso */
 @media (max-width: 1024px) {
-  .nc-grid {
+  .ev-grid {
     grid-template-columns: 1fr;
   }
 
-  .nc-form-card,
-  .nc-modelos-card,
-  .nc-acciones-row,
-  .nc-calculo-card {
+  .ev-form-card,
+  .ev-modelos-card,
+  .ev-acciones-row,
+  .ev-calculo-card {
     grid-column: 1;
     grid-row: auto;
   }
 
-  .nc-acciones-row {
+  .ev-acciones-row {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 @media (max-width: 640px) {
-  .nc-acciones-row {
+  .ev-acciones-row {
     grid-template-columns: 1fr;
   }
 
-  .nc-dropzone {
+  .ev-dropzone {
     flex-wrap: wrap;
   }
 
-  .nc-examinar-btn {
+  .ev-examinar-btn {
     margin-left: 0;
     width: 100%;
     justify-content: center;

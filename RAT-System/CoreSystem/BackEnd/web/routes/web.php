@@ -104,6 +104,10 @@ $router->group(['prefix' => 'v1/rat', 'middleware' => 'jwt'], function () use ($
     // Monitor
     $router->get('/monitor', 'RAT\MonitorController@show');
 
+    // IA velocidad
+    $router->post('/ia/estimacion-velocidad/upload-url', 'RAT\AiVelocityController@createUploadUrl');
+    $router->post('/ia/estimacion-velocidad/upload', 'RAT\AiVelocityController@uploadViaBackend');
+
     // Admin (solo admin@cesvi.com)
     $router->get('/admin/usuarios',                 'RAT\AdminController@getUsuarios');
     $router->put('/admin/usuarios/{id}/password',   'RAT\AdminController@updatePassword');

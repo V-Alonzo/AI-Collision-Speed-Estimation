@@ -6,12 +6,12 @@ import {
   BookOpen,
   User,
   Users,
+  Gauge,
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
 import { useAuth } from "../../../hooks/useAuth";
-import AiOperatorIcon from '@iconify-react/eos-icons/ai-operator';
-
+import {Icon} from "@iconify/react";
 const BRAND_COLOR = "#00ADCF";
 
 export function Sidebar() {
@@ -25,10 +25,11 @@ export function Sidebar() {
   const NAV_ITEMS = [
     { id: "dashboard",   icon: <LayoutDashboard size={20} />, label: "Dashboard",       path: "/" },
     { id: "expedientes", icon: <FileText size={20} />,        label: "Expedientes RAT", path: "/expedientes" },
+    { id: "ia-velocidad", icon: <Gauge size={20} />,          label: "Estimación IA",   path: "/ia/estimacion-velocidad" },
     { id: "catalogos",   icon: <BookOpen size={20} />,         label: "Catálogos",       path: "/configuracion/catalogos" },
     ...(isAdmin ? [{ id: "admin", icon: <Users size={20} />, label: "Usuarios", path: "/admin/usuarios" }] : []),
     { id: "perfil",      icon: <User size={20} />,            label: "Perfil",           path: "/perfil" },
-    { id: "estimacion-velocidad", icon: <AiOperatorIcon width={20} />, label: "Estimación de Velocidad", path: "/estimacion-velocidad" },
+    { id: "estimacion-velocidad", icon: <Icon icon="eos-icons:ai-operator" width={20} />, label: "Estimación de Velocidad", path: "/estimacion-velocidad" },
   ];
 
   const isActive = (item) => {

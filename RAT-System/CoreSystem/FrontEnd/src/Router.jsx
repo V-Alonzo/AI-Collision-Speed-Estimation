@@ -9,6 +9,7 @@ import NuevoCaso from "./app/pages/NuevoCaso.jsx";
 import DetalleExpediente from "./app/pages/DetalleExpediente.jsx";
 import Catalogos from "./app/pages/Catalogos.jsx";
 import Perfil from "./app/pages/Perfil.jsx";
+import EstimacionVelocidadIA from "./app/pages/EstimacionVelocidadIA.jsx";
 
 export default function Router() {
   return (
@@ -26,6 +27,7 @@ export default function Router() {
           <Route path="/expedientes" element={<Expedientes />} />
           <Route path="/expedientes/nuevo" element={<NuevoCaso />} />
           <Route path="/expedientes/:id" element={<DetalleExpediente />} />
+          <Route path="/ia/estimacion-velocidad" element={<EstimacionVelocidadIA />} />
           <Route path="/configuracion/catalogos" element={<Catalogos />} />
           <Route path="/perfil" element={<Perfil />} />
         </Route>

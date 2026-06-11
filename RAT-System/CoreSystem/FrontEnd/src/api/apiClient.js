@@ -2,7 +2,7 @@ import axios from "axios";
 
 const STORAGE_KEY = "cesvi_auth";
 const BASE_URL    = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const API_PREFIX  = "/api/v1/rat";
+const API_PREFIX  = import.meta.env.VITE_API_PREFIX || "/api/v1/rat";
 
 export const apiClient = axios.create({
   baseURL: `${BASE_URL}${API_PREFIX}`,

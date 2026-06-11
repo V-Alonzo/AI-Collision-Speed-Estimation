@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, FileText, BookOpen, Users, User, ChevronRight, ChevronLeft } from "lucide-react";
+import { LayoutDashboard, FileText, BookOpen, Users, User, Gauge, ChevronRight, ChevronLeft } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
 const BRAND_COLOR = "#00ADCF";
@@ -16,6 +16,7 @@ export default function Sidebar() {
   const NAV_ITEMS = [
     { id: "dashboard",    icon: <LayoutDashboard size={20} />, label: "Dashboard",       path: "/Dashboard" },
     { id: "expedientes",  icon: <FileText size={20} />,        label: "Expedientes RAT", path: "/expedientes" },
+    { id: "ia-velocidad", icon: <Gauge size={20} />,           label: "Estimación IA",   path: "/ia/estimacion-velocidad" },
     { id: "catalogos",    icon: <BookOpen size={20} />,         label: "Catálogos",       path: "/configuracion/catalogos" },
     ...(isAdmin ? [{ id: "usuarios", icon: <Users size={20} />, label: "Usuarios", path: "/admin/usuarios" }] : []),
     { id: "perfil",       icon: <User size={20} />,            label: "Perfil",           path: "/perfil" },
