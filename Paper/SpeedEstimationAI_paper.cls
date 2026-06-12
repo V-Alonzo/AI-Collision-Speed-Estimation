@@ -109,7 +109,7 @@
 \def\thisyear#1{\gdef\@theyear{2026}}
 \def\receptiondate#1{\gdef\@receptiondate{09/06/2026}}
 \def\acceptancedate#1{\gdef\@acceptancedate{}}
-\def\publicationdate#1{\gdef\@publicationdate{qu}}
+\def\publicationdate#1{\gdef\@publicationdate{}}
 \def\abstract#1{\gdef\@englishabstract{#1}}
 \def\keywords#1{\gdef\@englishkeywords{#1}}
 \def\resumen#1{\gdef\@spanishabstract{#1}}
