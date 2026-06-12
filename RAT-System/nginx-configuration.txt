@@ -2,7 +2,7 @@ server {
     listen 80 default_server;
     listen [::]:80 default_server;
 
-    server_name _;
+    server_name rat-system.ddns.net;
 
     root /var/www/AI-Collision-Speed-Estimation/RAT-System/CoreSystem/BackEnd/web/public;
     index index.php;
