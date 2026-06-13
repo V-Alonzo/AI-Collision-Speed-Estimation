@@ -390,6 +390,15 @@ Las curvas de aprendizaje muestran un proceso de convergencia estable tanto para
 	\label{fig:image_mae_curves}
 \end{figure}
 
+El análisis del gráfico de dispersión entre velocidades predichas y velocidades reales permite caracterizar con mayor detalle el comportamiento del modelo a lo largo del rango dinámico de velocidades presente en el conjunto de datos. Para velocidades bajas y medias, las predicciones presentan una dispersión relativamente acotada alrededor de la línea de identidad, indicando que el modelo es capaz de capturar patrones visuales consistentes asociados con niveles moderados de daño estructural. Sin embargo, conforme la velocidad real aumenta, se observa una degradación progresiva en la precisión de las estimaciones. El gráfico de dispersión correspondiente se presenta en la Figura~\ref{fig:image_scatter}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\columnwidth]{Figures/predicted_vs_true_ImageVelocityEstimator.png}
+	\caption{Diagrama de dispersión entre velocidades predichas y velocidades reales para el modelo ImageVelocityEstimator}
+	\label{fig:image_scatter}
+\end{figure}
+
 Con el propósito de analizar la calidad de las representaciones internas aprendidas por la red neuronal, se realizó un estudio adicional sobre los embeddings visuales de 512 dimensiones generados por la arquitectura antes de la etapa final de regresión. Dichos embeddings constituyen la representación latente construida por el modelo a partir de las características visuales extraídas de cada vehículo siniestrado.
 
 Para facilitar su interpretación, los embeddings fueron proyectados a dos dimensiones mediante técnicas de reducción de dimensionalidad como UMAP \cite{mcinnes2018umap}. Como se observa en la Figura~\ref{fig:image_embeddings}, las muestras correspondientes a velocidades similares tienden a concentrarse en regiones próximas del espacio latente, mientras que los eventos asociados a diferentes niveles de severidad se distribuyen progresivamente en zonas diferenciadas. Este comportamiento sugiere que la arquitectura logró aprender representaciones visuales organizadas de acuerdo con patrones relevantes para la estimación de velocidad.
