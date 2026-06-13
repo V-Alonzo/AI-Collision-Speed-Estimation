@@ -95,19 +95,19 @@ Las principales contribuciones de este trabajo son: (i) la construcción de un c
 \section{TRABAJO RELACIONADO}
 La revisión de la literatura en torno a la estimación automatizada de variables dinámicas de colisión mediante técnicas de aprendizaje automático puede organizarse en cuatro líneas de investigación diferenciadas: (i) métodos de reconstrucción de velocidad precolisión basados en datos tabulares estructurados, (ii) detección y clasificación de daño vehicular mediante aprendizaje profundo a partir de imágenes, y (iii) enfoques multimodales que integran fuentes heterogéneas de información para la predicción de variables relacionadas con accidentes. A continuación se examinan los trabajos más relevantes en cada una de estas líneas, identificando sus contribuciones, limitaciones y su relación con el problema abordado en el presente estudio.
 
-\subsection{Estimación de velocidad precolisión}
+\subsection{Estimación de velocidad precolisión mediante aprendizaje automático sobre datos tabulares}
 
 Los primeros enfoques de aprendizaje automático para la estimación de velocidad precolisión se desarrollaron utilizando variables tabulares derivadas de pruebas de choque controladas. Mrowicki et al. \cite{Mrowicki2020} emplearon una red neuronal multicapa (MLP) \cite{Goodfellow2016} para estimar la Velocidad Equivalente de Energía (EES) a partir de parámetros de deformación vehicular, obteniendo un error relativo medio cercano al 9\% y superando los métodos tradicionales basados en regresión. Posteriormente, Czajewski et al. \cite{Czajewski2026} evaluaron modelos de regresión lineal, MLP, Gradient Boosting \cite{Friedman2001} y Random Forest \cite{Breiman2001} sobre 399 pruebas de impacto frontal de la NHTSA, reportando el mejor desempeño mediante Random Forest e identificando explícitamente la estimación de velocidad precolisión mediante aprendizaje automático como una línea de investigación poco explorada.
 
 Desde una perspectiva diferente, Zhao et al. \cite{Zhao2021} formularon la reconstrucción de condiciones de impacto como un problema inverso, empleando redes neuronales entrenadas con simulaciones de elementos finitos \cite{Bathe2006} para recuperar velocidad y ángulo de colisión a partir de deformaciones residuales. Los autores demostraron que es posible identificar de forma aproximadamente única las condiciones iniciales del impacto a partir del estado final de deformación, aunque utilizando exclusivamente datos sintéticos.
 
-\subsection{Análisis de daño vehicular mediante imágenes}
+\subsection{Detección y clasificación de daño vehicular mediante aprendizaje profundo a partir de imágenes}
 
 El uso de aprendizaje profundo para el análisis de daño vehicular ha experimentado un crecimiento significativo durante los últimos años. Patil et al. \cite{Patil2017} reportaron una exactitud del 89.5\% en clasificación de daños utilizando Transfer Learning \cite{pan2010transfer}. Kyu y Woraratpanya \cite{Kyu2020} alcanzaron exactitudes de 95.2\% y 94.6\% en detección de daño mediante VGG16 y VGG19 \cite{Simonyan2015}, respectivamente, mientras que Jameel et al. \cite{Jameel2023} obtuvieron una precisión del 89.13\% y una exactitud global del 92\% utilizando una arquitectura Mask R-CNN \cite{He2017}. Asimismo, van Ruitenbeek y Bhulai \cite{vanRuitenbeek2022} demostraron que modelos entrenados sobre más de 10,000 imágenes pueden alcanzar desempeños comparables al de expertos humanos en evaluación de daños.
 
 El antecedente más cercano al presente estudio corresponde a Argote et al. \cite{Argote2022}, quienes propusieron un modelo basado en imágenes para estimar Delta-V y clasificar la localización del impacto utilizando fotografías reales de accidentes. Los autores reportaron un MAE de 4.19 km/h y un MAPE de 16.2\% sobre 310 imágenes reales, además de una exactitud del 92\% en la clasificación de la localización del impacto. Sin embargo, el estudio se restringió a determinados tipos de colisión y no incorporó información tabular complementaria. Adicionalmente, la revisión sistemática de Hasan et al. \cite{Hasan2025}, que analizó más de 55 estudios relacionados con daño vehicular mediante inteligencia artificial, no identificó trabajos orientados específicamente a la estimación de velocidad precolisión, evidenciando una brecha de investigación en esta área.
 
-\subsection{Enfoques multimodales}
+\subsection{Enfoques multimodales en análisis de accidentes}
 
 La integración de múltiples modalidades de información ha emergido como una estrategia efectiva para mejorar el desempeño de modelos aplicados al análisis de accidentes. Bhowmik y Rateria \cite{Bhowmik2023} desarrollaron un modelo multimodal que combina imágenes y variables tabulares para detección automática de colisiones, obteniendo un ROC-AUC de 1.00 y superando los resultados de los enfoques unimodales. De manera similar, Liu et al. \cite{Liu2025} integraron información estructurada, características de infraestructura vial y descripciones textuales para la predicción de severidad de accidentes, alcanzando una exactitud de 86.5\%, un recall de 86.8\% y un F1-score de 0.712.
 
@@ -380,6 +380,15 @@ El regresor multimodal utiliza una estructura de reducción progresiva de dimens
 Esta sección presenta los resultados obtenidos por ImageVelocityEstimator, arquitectura desarrollada para estimar la velocidad precolisión utilizando exclusivamente imágenes de daños vehiculares posteriores al impacto. El desempeño del modelo fue evaluado mediante el Error Absoluto Medio (MAE) sobre los conjuntos de validación y prueba.
 
 El modelo alcanzó un MAE de validación de 11.504 km/h y un MAE de prueba de 12.534 km/h. Estos resultados demuestran que la información visual contenida en las deformaciones estructurales observables después de una colisión posee capacidad predictiva suficiente para inferir, de manera aproximada, la velocidad precolisión del vehículo.
+
+Las curvas de aprendizaje muestran un proceso de convergencia estable tanto para los conjuntos de entrenamiento como de validación, sin evidencias significativas de sobreajuste durante las etapas finales del entrenamiento. La evolución consistente del Error Absoluto Medio a lo largo de las épocas sugiere que la arquitectura logró extraer características visuales relevantes y generalizables a partir de las imágenes disponibles. Las curvas de aprendizaje correspondientes se presentan en la Figura~\ref{fig:image_mae_curves}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\columnwidth]{Figures/mae_curves_ImageVelocityEstimator.png}
+	\caption{Curvas de aprendizaje del Error Absoluto Medio (MAE) para el modelo ImageVelocityEstimator}
+	\label{fig:image_mae_curves}
+\end{figure}
 
 Con el propósito de analizar la calidad de las representaciones internas aprendidas por la red neuronal, se realizó un estudio adicional sobre los embeddings visuales de 512 dimensiones generados por la arquitectura antes de la etapa final de regresión. Dichos embeddings constituyen la representación latente construida por el modelo a partir de las características visuales extraídas de cada vehículo siniestrado.
 
