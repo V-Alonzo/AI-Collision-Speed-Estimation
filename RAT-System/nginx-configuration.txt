@@ -1,0 +1,81 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name rat-system.ddns.net;
+
+    root /var/www/AI-Collision-Speed-Estimation/RAT-System/CoreSystem/BackEnd/web/public;
+    index index.php;
+
+    access_log /var/log/nginx/backend_access.log;
+    error_log /var/log/nginx/backend_error.log;
+
+    client_max_body_size 50M;
+
+    charset utf-8;
+    server_tokens off;
+
+    add_header X-Content-Type-Options nosniff always;
+    add_header X-Frame-Options SAMEORIGIN always;
+    add_header Referrer-Policy strict-origin-when-cross-origin always;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ^~ /storage/ {
+        try_files $uri =404;
+        access_log off;
+        expires 7d;
+        add_header Cache-Control "public";
+    }
+
+    location ~* \.(?:css|js|mjs|jpg|jpeg|gif|png|svg|ico|webp|avif|woff2?|ttf)$ {
+        try_files $uri =404;
+        access_log off;
+        expires 7d;
+        add_header Cache-Control "public";
+    }
+
+    location = /favicon.ico {
+        access_log off;
+        log_not_found off;
+    }
+
+    location = /robots.txt {
+        access_log off;
+        log_not_found off;
+    }
+
+    location = /index.php {
+        include snippets/fastcgi-php.conf;
+
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+
+        fastcgi_connect_timeout 60s;
+        fastcgi_send_timeout 300s;
+        fastcgi_read_timeout 300s;
+        fastcgi_buffer_size 32k;
+        fastcgi_buffers 8 16k;
+
+        include fastcgi_params;
+    }
+
+    location ~ \.php$ {
+        return 404;
+    }
+
+    location ~* /(composer\.(json|lock)|package(-lock)?\.json|yarn\.lock|phpunit\.xml|\.env.*)$ {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
