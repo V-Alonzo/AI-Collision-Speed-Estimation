@@ -448,7 +448,8 @@ En conjunto, los resultados obtenidos demuestran que la información tabular dis
 
 Esta sección presenta los resultados obtenidos por \textit{HybridVelocityEstimator}, arquitectura multimodal desarrollada para integrar información visual proveniente de imágenes postcolisión con variables tabulares derivadas de procesos de reconstrucción de accidentes. El objetivo de esta evaluación consiste en determinar si la combinación de ambas modalidades permite mejorar la estimación de velocidad precolisión respecto a los enfoques unimodales presentados anteriormente.
 
-El modelo alcanzó un MAE de validación de 4.457 km/h y un MAE de prueba de 4.449 km/h, constituyendo el mejor resultado obtenido entre todas las arquitecturas evaluadas durante el proyecto. En comparación con los modelos unimodales, el enfoque híbrido logró reducir aproximadamente un 50% el error obtenido por ImageVelocityEstimator y entre un 35% y un 40% el error alcanzado por las mejores configuraciones basadas exclusivamente en variables tabulares.
+El modelo multimodal obtuvo el mejor desempeño con un MAE de prueba de 4.45 km/h y MAE de validación de 4.46 km/h, superando al modelo basado en imágenes (12.53 km/h) y al mejor modelo tabular (7.3 km/h). La integración multimodal redujo el error en 64.5\% respecto al modelo visual y en 39.0\% respecto al modelo tabular, evidenciando que ambas modalidades aportan información
+complementaria para la estimación.
 
 Las curvas de aprendizaje mostraron un proceso de convergencia estable a lo largo del entrenamiento, con una evolución consistente de las métricas de entrenamiento y validación. La Figura~\ref{fig:hybrid_mae_curves} presenta las curvas correspondientes al modelo seleccionado.
 
