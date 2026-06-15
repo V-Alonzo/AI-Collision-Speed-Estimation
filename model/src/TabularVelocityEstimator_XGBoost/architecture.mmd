@@ -1,0 +1,52 @@
+%% =========================
+%% XGBOOST ARCHITECTURE
+%% =========================
+flowchart LR
+
+%% INPUT FEATURES
+A[Input Features<br/>7 Selected Tabular Variables]:::input
+
+%% BOOSTING CORE
+subgraph B["Gradient Boosting Ensemble (XGBoost)"]
+direction LR
+
+B1["Tree 1<br/>(Weak Learner)"]:::tree
+B2["Tree 2<br/>(Residual Learner)"]:::tree
+B3["..."]:::tree
+BN["Tree N = 1000<br/>(Final Boosted Ensemble)"]:::tree
+
+B1 --> B2 --> B3 --> BN
+end
+
+%% REGULARIZATION BLOCK
+R["Regularization & Sampling"]:::reg
+R1["max_depth = 5"]:::reg
+R2["learning_rate = 0.05"]:::reg
+R3["subsample = 0.8"]:::reg
+R4["colsample_bytree = 0.8"]:::reg
+
+R --> R1
+R --> R2
+R --> R3
+R --> R4
+
+%% EARLY STOPPING
+E["Early Stopping<br/>patience = 50 rounds<br/>metric = MAE"]:::early
+
+%% OUTPUT
+O[Predicted Impact Velocity<br/>(reg:squarederror)]:::output
+
+%% FLOW
+A --> B1
+BN --> O
+E --> BN
+R --> B1
+
+%% =========================
+%% STYLES
+%% =========================
+classDef input fill:#1f77ff,color:#ffffff,stroke:#0b3d91,stroke-width:2px;
+classDef tree fill:#e8f5e9,color:#1b5e20,stroke:#2e7d32,stroke-width:1.5px;
+classDef reg fill:#fff3e0,color:#e65100,stroke:#ef6c00,stroke-width:1.5px;
+classDef early fill:#f3e5f5,color:#4a148c,stroke:#6a1b9a,stroke-width:1.5px;
+classDef output fill:#e3f2fd,color:#0d47a1,stroke:#1565c0,stroke-width:2px;

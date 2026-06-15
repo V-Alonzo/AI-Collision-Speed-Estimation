@@ -27,3 +27,4 @@ from sklearn.manifold import Isomap
 from sklearn.decomposition import PCA
 import umap
 import seaborn as sns
+from xgboost import XGBRegressor
