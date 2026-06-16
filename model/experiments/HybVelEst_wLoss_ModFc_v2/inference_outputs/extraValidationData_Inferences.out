@@ -1,0 +1,23 @@
+
+[0;34m[start] 2026-06-10 18:25:48.331613[0m
+
+[0;34m[Loading Model...] [0m
+
+[0;34m[Loading Encoder (ImageVelocityEstimator)...] [0m
+
+Model loaded from: model/experiments/ImagVelEst_aug_ModFc_EmbHead_l1Loss_v1/serialized/ImagVelEst_aug_ModFc_EmbHead_l1Loss_v1_weights.pth
+Model loaded from: model/experiments/HybVelEst_wLoss_ModFc_v2/serialized/HybVelEst_wLoss_ModFc_v2_weights.pth
+
+[0;34m[Reading Sample File...] [0m
+
+     Image_Path      :  model/data/ExtraValidationData/Images/43-kmph-27-mph_4-Severe_019_Vehicle4_AIVELTES.jpg
+     Tabular Features:  {'velocity_kph': 50.03574752807617, 'transformed_tabular_features': [-0.18572809957411385, -0.1026575436626871, 1.102105729700408, 0.27507743142336344, 1.003725823650183, 1.284163742343785, -0.17364817766693127, 0.9848077530122079, 0.0]}
+
+[0;34m[Starting Inference Execution...] [0m
+
+
+    [Inference] Predicted speed: 50.67 km/h for image: model/data/ExtraValidationData/Images/43-kmph-27-mph_4-Severe_019_Vehicle4_AIVELTES.jpg
+
+[0;34m[end] 2026-06-10 18:25:49.224350[0m
+
+Exectime:  0.892737
