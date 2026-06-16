@@ -20,6 +20,45 @@ def load_model(model_name, print_model_arq = False):
 
     return velocityEstimator
 
+# Function for executing model custom inference
+def test_inference():
+    
+    print("\033[0;34m" + "[Loading Model...] \033[0m" + "\n")
+    # Load Model  ImagVelEst_augmented_Modifiedfc
+    velocityEstimator = load_model(CONFIG.MODEL_PREFIX, print_model_arq= False)
+
+    BASE_VALIDATION_IMAGE_PATH = "model/data/ExtraValidationData/Images/"
+
+    print("\n\033[0;34m" + "[Reading Sample File...] \033[0m" + "\n")
+    
+    # Sample json file path
+    sample_test_file_path = "model/data/ExtraValidationData/hybrid_input_test.json"
+
+    # Open the file and parse the array
+    with open(sample_test_file_path, "r") as file:
+        sample_json = json.load(file)
+
+    # Extract image path
+    #image_path = sample_json[0]["ImageURL"]
+    image_path = "model/data/ExtraValidationData/Images/43-kmph-27-mph_4-Severe_019_Vehicle4_AIVELTES.jpg"
+    print("     Image_Path      : ", image_path)
+
+    # Extract tabular features
+    tabular_features = sample_json[1]["body"]
+    tabular_features = json.loads(tabular_features)
+    print("     Tabular Features: ", tabular_features)
+
+    # -- Validation sample for inference testing
+    # Get full sample path
+    # path = BASE_VALIDATION_IMAGE_PATH + path
+    
+    print("\n\033[0;34m" + "[Starting Inference Execution...] \033[0m" + "\n")
+    # Get inference
+    prediction = velocityEstimator.inference(image_path, tabular_features["transformed_tabular_features"], return_embedding=True)
+
+    print(f"\n    [Inference] Predicted speed: {prediction:.2f} km/h for image: {image_path}")
+
+
 # Save model
 def save_model_architecture(model:VelocityEstimator, output_path):
 
@@ -35,33 +74,6 @@ def save_model_architecture(model:VelocityEstimator, output_path):
     print(
         f"[INFO] Model architecture saved at: {output_path}"
     )
-
-# Function for executing model custom inference
-def test_inference():
-    
-    print("\033[0;34m" + "[Loading Model...] \033[0m" + "\n")
-    # Load Model  ImagVelEst_augmented_Modifiedfc
-    velocityEstimator = load_model(CONFIG.MODEL_PREFIX, print_model_arq= False)
-
-    BASE_VALIDATION_IMAGE_PATH = "model/data/ExtraValidationData/Images/"
-
-    # Validation images for inference testing
-    validation_images_path = [
-        "43-kmph-27-mph_4-Severe_019_Vehicle4.jpg",
-        "test_conf_1.jpeg",
-        "test_conf_2.jpeg"  
-    ]
-
-    print("\033[0;34m" + "[Starting Inference Execution...] \033[0m" + "\n")
-    for path in validation_images_path:
-        # Get full sample path
-        path = BASE_VALIDATION_IMAGE_PATH + path
-
-        # Get inference
-        prediction = velocityEstimator.inference(path, return_embedding=True)
-
-        print(f"\n    [Inference] Predicted speed: {prediction:.2f} km/h  for image: {path}")
-    
 
 
 # Main file for VelocityEstimator model training execution
@@ -123,8 +135,8 @@ def main():
 if __name__ == "__main__":
     start = datetime.datetime.now()
     print("\n" + "\033[0;34m" + "[start] " + str(start) + "\033[0m" + "\n")
-    main()
-    #test_inference()
+    #main()
+    test_inference()
     end = datetime.datetime.now()
     print("\n" + "\033[0;34m" + "[end] "+ str(end) + "\033[0m" + "\n")
 

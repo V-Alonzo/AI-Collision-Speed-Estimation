@@ -1,0 +1,17 @@
+[
+    {
+        "ImageURL": "https://ai-vel-bucket.s3.us-east-2.amazonaws.com/Images/43-kmph-27-mph_4-Severe_019_Vehicle4_AIVELTEST.jpg",
+        "mais": "4 - Severe",
+        "forceDirection": "350 degrees",
+        "rolloverStatus": "No rollover (no overturning)",
+        "damagePlaneDescription": "Front",
+        "severityDescription": "Severe",
+        "vehicleClass": "Intermediate (wheelbase >=265 but < 278 cm)",
+        "curbWeightKg": 1495,
+        "cargoWeightKg": 0
+    },
+    {
+        "statusCode": 200, 
+        "body": "{\"velocity_kph\": 50.03574752807617, \"transformed_tabular_features\": [-0.18572809957411385, -0.1026575436626871, 1.102105729700408, 0.27507743142336344, 1.003725823650183, 1.284163742343785, -0.17364817766693127, 0.9848077530122079, 0.0]}"
+    }
+]
